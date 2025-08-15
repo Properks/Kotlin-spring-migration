@@ -1,4 +1,4 @@
-package org.jeongmo.kotlin.practice
+package org.jeongmo.practice
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
