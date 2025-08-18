@@ -8,9 +8,23 @@ import org.springframework.security.web.SecurityFilterChain
 @Configuration
 class SecurityConfig {
 
+    private val allowUrl : Array<String> = arrayOf(
+        "/login",
+        "/signup",
+        "/reissue"
+    );
+
     @Bean
     fun filterChain(http : HttpSecurity) : SecurityFilterChain {
-
+        http
+            .authorizeHttpRequests {
+                it
+                    .requestMatchers(*allowUrl).authenticated()
+                    .anyRequest().permitAll()
+            }
+            .httpBasic {it.disable()}
+            .csrf { it.disable() }
+            .formLogin {it.disable()}
         return http.build();
     }
 }
