@@ -3,6 +3,7 @@ package org.jeongmo.practice.global.security
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
 
 @Configuration
@@ -10,7 +11,7 @@ class SecurityConfig {
 
     private val allowUrl : Array<String> = arrayOf(
         "/login",
-        "/signup",
+        "/sign-up",
         "/reissue"
     );
 
@@ -19,12 +20,15 @@ class SecurityConfig {
         http
             .authorizeHttpRequests {
                 it
-                    .requestMatchers(*allowUrl).authenticated()
-                    .anyRequest().permitAll()
+                    .requestMatchers(*allowUrl).permitAll()
+                    .anyRequest().authenticated()
             }
             .httpBasic {it.disable()}
             .csrf { it.disable() }
             .formLogin {it.disable()}
         return http.build();
     }
+
+    @Bean
+    fun passwordEncoder() = BCryptPasswordEncoder()
 }
