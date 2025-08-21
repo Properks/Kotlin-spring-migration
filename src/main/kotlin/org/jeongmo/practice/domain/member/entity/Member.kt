@@ -20,12 +20,14 @@ class Member(
     @Column(name = "password")
     var password : String?,
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "provider_type")
     var providerType : ProviderType,
 
     @Column(name = "nickname")
     var nickname : String,
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "role")
     val role : Role,
 

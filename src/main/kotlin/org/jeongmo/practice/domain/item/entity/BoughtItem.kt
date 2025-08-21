@@ -12,6 +12,7 @@ class BoughtItem(
     @Column(name = "bought_item_id")
     var id : Long?,
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "status")
     var status : BoughtStatus,
 
