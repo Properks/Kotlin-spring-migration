@@ -37,7 +37,7 @@ class JwtTokenService(
         }
     }
 
-    override fun <U> getSubject(token: String, cls: Class<U>): U {
-        return cls.cast(jwtUtil.getClaims(token).payload.subject)
+    override fun getSubject(token: String): String {
+        return jwtUtil.getClaims(token).payload.subject
     }
 }

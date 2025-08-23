@@ -4,5 +4,5 @@ interface TokenService<T> {
     fun createAccessToken(memberInfo: T): String
     fun createRefreshToken(memberInfo: T): String
     fun isValid(token: String): Boolean
-    fun <U> getSubject(token: String, cls: Class<U>): U
+    fun getSubject(token: String): String
 }
