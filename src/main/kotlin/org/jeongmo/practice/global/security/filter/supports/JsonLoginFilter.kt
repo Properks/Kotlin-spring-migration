@@ -8,7 +8,6 @@ import jakarta.servlet.http.HttpServletRequestWrapper
 import jakarta.servlet.http.HttpServletResponse
 import org.jeongmo.practice.global.security.filter.LoginFilter
 import org.jeongmo.practice.global.security.filter.dto.LoginRequestDTO
-import org.jeongmo.practice.global.security.handler.CustomAuthenticationSuccessHandler
 import org.jeongmo.practice.global.util.HttpResponseWriter
 import org.namul.api.payload.code.DefaultResponseErrorCode
 import org.namul.api.payload.code.dto.ErrorReasonDTO

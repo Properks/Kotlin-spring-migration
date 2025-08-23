@@ -12,7 +12,6 @@ import org.namul.api.payload.code.dto.supports.DefaultResponseSuccessReasonDTO
 import org.springframework.security.core.Authentication
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler
 import org.springframework.stereotype.Component
-import java.time.Instant
 import java.time.LocalDateTime
 
 @Component

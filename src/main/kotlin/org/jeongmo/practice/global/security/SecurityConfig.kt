@@ -5,7 +5,6 @@ import org.jeongmo.practice.global.security.filter.supports.JsonLoginFilter
 import org.jeongmo.practice.global.util.HttpResponseWriter
 import org.namul.api.payload.code.dto.supports.DefaultResponseErrorReasonDTO
 import org.namul.api.payload.code.dto.supports.DefaultResponseSuccessReasonDTO
-import org.namul.api.payload.writer.FailureResponseWriter
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.authentication.AuthenticationManager
