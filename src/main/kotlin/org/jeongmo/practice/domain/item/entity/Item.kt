@@ -5,14 +5,10 @@ import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
+import org.jeongmo.practice.global.common.entity.BaseEntity
 
 @Entity
 class Item(
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "item_id")
-    var id: Long?,
 
     @Column(name = "name")
     var name : String,
@@ -29,5 +25,11 @@ class Item(
     @Column(name = "score")
     var score : Double,
 
-) {
+): BaseEntity() {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "item_id")
+    val id: Long = 0
+
 }

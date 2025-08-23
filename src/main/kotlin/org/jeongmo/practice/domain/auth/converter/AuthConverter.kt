@@ -9,7 +9,6 @@ import org.springframework.security.crypto.password.PasswordEncoder
 object AuthConverter {
     fun AuthRequestDTO.SignUp.toEntity(passwordEncoder: PasswordEncoder): Member {
         return Member(
-            id = null,
             username = this.username,
             password = passwordEncoder.encode(this.password),
             providerType = ProviderType.LOCAL,

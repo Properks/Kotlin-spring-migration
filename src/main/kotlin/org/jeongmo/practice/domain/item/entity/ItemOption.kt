@@ -1,14 +1,10 @@
 package org.jeongmo.practice.domain.item.entity
 
 import jakarta.persistence.*
+import org.jeongmo.practice.global.common.entity.BaseEntity
 
 @Entity
 class ItemOption(
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "item_option_id")
-    var id : Long?,
 
     @Column(name = "option_name")
     var optionName : String,
@@ -20,5 +16,11 @@ class ItemOption(
     @JoinColumn(name = "item_id")
     var item : Item,
 
-) {
+): BaseEntity() {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "item_option_id")
+    val id : Long = 0
+
 }

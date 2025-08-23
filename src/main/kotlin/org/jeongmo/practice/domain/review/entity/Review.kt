@@ -7,11 +7,6 @@ import org.jeongmo.practice.global.common.entity.BaseEntity
 @Entity
 class Review (
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "review_id")
-    var id : Long?,
-
     @Column(name = "score")
     var score : Double,
 
@@ -22,4 +17,10 @@ class Review (
     @JoinColumn(name = "bought_item_id")
     var boughtItem : BoughtItem,
 ) : BaseEntity() {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "review_id")
+    val id : Long = 0
+
 }

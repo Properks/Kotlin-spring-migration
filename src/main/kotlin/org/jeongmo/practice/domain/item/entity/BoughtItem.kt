@@ -3,14 +3,10 @@ package org.jeongmo.practice.domain.item.entity
 import jakarta.persistence.*
 import org.jeongmo.practice.domain.item.entity.enums.BoughtStatus
 import org.jeongmo.practice.domain.member.entity.Member
+import org.jeongmo.practice.global.common.entity.BaseEntity
 
 @Entity
 class BoughtItem(
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "bought_item_id")
-    var id : Long?,
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
@@ -23,5 +19,10 @@ class BoughtItem(
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     var member : Member,
-) {
+): BaseEntity() {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "bought_item_id")
+    val id : Long = 0
 }

@@ -9,11 +9,6 @@ import java.time.LocalDateTime
 @Entity
 class Member(
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "member_id")
-    var id : Long?,
-
     @Column(name = "username", unique = true)
     var username : String,
 
@@ -34,4 +29,10 @@ class Member(
     @Column(name = "deleted_at")
     var deletedAt : LocalDateTime?,
 ) : BaseEntity() {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "member_id")
+    val id : Long = 0
+
 }
