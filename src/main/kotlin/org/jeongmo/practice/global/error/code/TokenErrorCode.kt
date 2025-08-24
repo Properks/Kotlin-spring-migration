@@ -10,7 +10,8 @@ enum class TokenErrorCode(
     private val message: String,
 ): BaseErrorCode {
 
-    TOKEN_TIME_EXPIRED(HttpStatus.BAD_REQUEST, "TOKEN400_1", "토큰의 유효기간이 만료되었습니다.")
+    TOKEN_TIME_EXPIRED(HttpStatus.BAD_REQUEST, "TOKEN400_1", "토큰의 유효기간이 만료되었습니다."),
+    INVALID_TOKEN(HttpStatus.BAD_REQUEST, "TOKEN400_1", "토큰이 유효하지 않습니다."),
     ;
 
     override fun getReason(): DefaultResponseErrorReasonDTO {
