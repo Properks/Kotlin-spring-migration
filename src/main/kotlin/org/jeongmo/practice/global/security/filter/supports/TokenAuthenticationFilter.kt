@@ -43,7 +43,7 @@ class TokenAuthenticationFilter(
     override fun handleServerApplicationException(response: HttpServletResponse, exception: ServerApplicationException) {
         val reasonDTO: ErrorReasonDTO = exception.errorReason
         if (reasonDTO is DefaultResponseErrorReasonDTO) {
-            httpResponseWriter.writeSuccessResponse(response, reasonDTO.httpStatus, reasonDTO, null)
+            httpResponseWriter.writeErrorResponse(response, reasonDTO.httpStatus, reasonDTO, null)
         }
         else {
             handleException(response, exception)
@@ -55,7 +55,7 @@ class TokenAuthenticationFilter(
         exception: Exception
     ) {
         val reasonDTO: DefaultResponseErrorReasonDTO = DefaultResponseErrorCode._UNAUTHORIZED.reason
-        httpResponseWriter.writeSuccessResponse(
+        httpResponseWriter.writeErrorResponse(
             response,
             reasonDTO.httpStatus,
             reasonDTO,

@@ -26,7 +26,7 @@ class JsonHttpResponseWriter(
         .registerModule(JavaTimeModule())
         .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
 
-    override fun writeSuccessResponse(httpServletResponse: HttpServletResponse, httpStatus: HttpStatus, reasonDTO: DefaultResponseErrorReasonDTO, result: Any?) {
+    override fun writeErrorResponse(httpServletResponse: HttpServletResponse, httpStatus: HttpStatus, reasonDTO: DefaultResponseErrorReasonDTO, result: Any?) {
         this.writeResponse(httpServletResponse, reasonDTO.httpStatus, failureResponseWriter.onFailure(reasonDTO, result))
     }
 

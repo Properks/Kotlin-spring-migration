@@ -46,7 +46,7 @@ class JsonLoginFilter(
     override fun handleServerApplicationException(response: HttpServletResponse, e: ServerApplicationException) {
         val reasonDTO: ErrorReasonDTO = e.errorReason
         if (reasonDTO is DefaultResponseErrorReasonDTO) {
-            httpResponseWriter.writeSuccessResponse(response, reasonDTO.httpStatus, reasonDTO, null)
+            httpResponseWriter.writeErrorResponse(response, reasonDTO.httpStatus, reasonDTO, null)
         }
         else {
             handleException(response, e)
@@ -55,7 +55,7 @@ class JsonLoginFilter(
 
     override fun handleException(response: HttpServletResponse, e: Exception) {
         val reasonDTO: DefaultResponseErrorReasonDTO = DefaultResponseErrorCode._UNAUTHORIZED.reason
-        httpResponseWriter.writeSuccessResponse(
+        httpResponseWriter.writeErrorResponse(
             response,
             reasonDTO.httpStatus,
             reasonDTO,

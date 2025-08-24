@@ -6,6 +6,6 @@ import org.namul.api.payload.code.dto.SuccessReasonDTO
 import org.springframework.http.HttpStatus
 
 interface HttpResponseWriter<S: SuccessReasonDTO, E: ErrorReasonDTO> {
-    fun writeSuccessResponse(httpServletResponse: HttpServletResponse, httpStatus: HttpStatus, reasonDTO: E, result: Any?)
+    fun writeErrorResponse(httpServletResponse: HttpServletResponse, httpStatus: HttpStatus, reasonDTO: E, result: Any?)
     fun writeSuccessResponse(httpServletResponse: HttpServletResponse, httpStatus: HttpStatus, reasonDTO: S, result: Any?)
 }
