@@ -3,6 +3,7 @@ package org.jeongmo.practice.global.security.filter
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import org.jeongmo.practice.global.security.handler.FilterExceptionHandler
 import org.namul.api.payload.error.exception.ServerApplicationException
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.AuthenticationException
@@ -15,6 +16,7 @@ import kotlin.jvm.Throws
 
 abstract class AuthenticationFilter(
     private val securityContextRepository: SecurityContextRepository,
+    private val exceptionHandler: FilterExceptionHandler,
 ): OncePerRequestFilter() {
 
     private val securityContextHolderStrategy: SecurityContextHolderStrategy = SecurityContextHolder.getContextHolderStrategy()
@@ -30,18 +32,17 @@ abstract class AuthenticationFilter(
 
                 onAuthentication(request, response, authentication)
             } catch (e: ServerApplicationException) {
-                handleServerApplicationException(response, e)
+                exceptionHandler.handleServerApplicationException(request, response, exception = e)
             } catch (e: Exception) {
-                handleException(response, e)
+                exceptionHandler.handleException(request, response, exception = e)
             }
         }
+        filterChain.doFilter(request, response)
     }
 
     @Throws(ServerApplicationException::class, AuthenticationException::class)
     protected abstract fun requireAuthentication(request: HttpServletRequest): Boolean
     protected abstract fun getAuthentication(request: HttpServletRequest): Authentication
-    protected abstract fun handleServerApplicationException(response: HttpServletResponse, exception: ServerApplicationException)
-    protected abstract fun handleException(response: HttpServletResponse, exception: java.lang.Exception)
 
     protected open fun onAuthentication(request: HttpServletRequest, response: HttpServletResponse, authentication: Authentication) {
         val context: SecurityContext = securityContextHolderStrategy.createEmptyContext()

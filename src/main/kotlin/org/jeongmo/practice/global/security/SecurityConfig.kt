@@ -1,7 +1,12 @@
 package org.jeongmo.practice.global.security
 
 import jakarta.servlet.Filter
+import org.jeongmo.practice.global.security.domain.CustomUserDetails
 import org.jeongmo.practice.global.security.filter.supports.JsonLoginFilter
+import org.jeongmo.practice.global.security.filter.supports.TokenAuthenticationFilter
+import org.jeongmo.practice.global.security.handler.JsonResponseFilterExceptionHandler
+import org.jeongmo.practice.global.security.token.manager.AuthorizationHeaderTokenManager
+import org.jeongmo.practice.global.security.token.service.TokenService
 import org.jeongmo.practice.global.util.HttpResponseWriter
 import org.namul.api.payload.code.dto.supports.DefaultResponseErrorReasonDTO
 import org.namul.api.payload.code.dto.supports.DefaultResponseSuccessReasonDTO
@@ -10,6 +15,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
+import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
@@ -21,6 +27,8 @@ import org.springframework.security.web.context.SecurityContextRepository
 @Configuration
 class SecurityConfig(
     private val authenticationConfiguration: AuthenticationConfiguration,
+    private val tokenService: TokenService<CustomUserDetails>,
+    private val userDetailsService: UserDetailsService,
     private val authenticationSuccessHandler: AuthenticationSuccessHandler,
     private val httpResponseWriter: HttpResponseWriter<DefaultResponseSuccessReasonDTO, DefaultResponseErrorReasonDTO>,
 ) {
@@ -50,9 +58,20 @@ class SecurityConfig(
     fun loginFilter(): Filter = JsonLoginFilter(
         authenticationManager = authenticationManager(),
         securityContextRepository = securityContextRepository(),
-        httpResponseWriter = httpResponseWriter,
-        authenticationSuccessHandler = authenticationSuccessHandler
+        authenticationSuccessHandler = authenticationSuccessHandler,
+        filterExceptionHandler = filterExceptionHandler(),
     )
+    @Bean
+    fun authenticationFilter(): Filter = TokenAuthenticationFilter(
+        tokenManager = tokenManager(),
+        exceptionHandler = filterExceptionHandler(),
+        userDetailsService = userDetailsService,
+        tokenService = tokenService,
+        securityContextRepository = securityContextRepository(),
+    )
+
+    @Bean
+    fun tokenManager() = AuthorizationHeaderTokenManager()
 
     @Bean
     fun authenticationManager(): AuthenticationManager = authenticationConfiguration.authenticationManager
@@ -62,4 +81,7 @@ class SecurityConfig(
 
     @Bean
     fun passwordEncoder(): PasswordEncoder = BCryptPasswordEncoder()
+
+    @Bean
+    fun filterExceptionHandler() = JsonResponseFilterExceptionHandler(httpResponseWriter)
 }
