@@ -1,6 +1,6 @@
-package org.jeongmo.practice.domain.auth.converter
+package org.jeongmo.practice.global.security.auth.converter
 
-import org.jeongmo.practice.domain.auth.dto.AuthRequestDTO
+import org.jeongmo.practice.global.security.auth.dto.AuthRequestDTO
 import org.jeongmo.practice.domain.member.entity.Member
 import org.jeongmo.practice.domain.member.entity.enums.ProviderType
 import org.jeongmo.practice.domain.member.entity.enums.Role

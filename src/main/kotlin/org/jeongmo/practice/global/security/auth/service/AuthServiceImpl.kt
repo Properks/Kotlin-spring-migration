@@ -1,7 +1,7 @@
-package org.jeongmo.practice.domain.auth.service
+package org.jeongmo.practice.global.security.auth.service
 
-import org.jeongmo.practice.domain.auth.converter.AuthConverter.toEntity
-import org.jeongmo.practice.domain.auth.dto.AuthRequestDTO
+import org.jeongmo.practice.global.security.auth.converter.AuthConverter.toEntity
+import org.jeongmo.practice.global.security.auth.dto.AuthRequestDTO
 import org.jeongmo.practice.domain.member.entity.Member
 import org.jeongmo.practice.domain.member.repository.MemberRepository
 import org.springframework.security.crypto.password.PasswordEncoder

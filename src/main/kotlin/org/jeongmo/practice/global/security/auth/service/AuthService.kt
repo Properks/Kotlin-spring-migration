@@ -1,6 +1,6 @@
-package org.jeongmo.practice.domain.auth.service
+package org.jeongmo.practice.global.security.auth.service
 
-import org.jeongmo.practice.domain.auth.dto.AuthRequestDTO
+import org.jeongmo.practice.global.security.auth.dto.AuthRequestDTO
 import org.jeongmo.practice.domain.member.entity.Member
 
 interface AuthService {
