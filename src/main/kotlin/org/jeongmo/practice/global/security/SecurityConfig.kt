@@ -4,6 +4,8 @@ import jakarta.servlet.Filter
 import org.jeongmo.practice.global.security.domain.CustomUserDetails
 import org.jeongmo.practice.global.security.filter.supports.JsonLoginFilter
 import org.jeongmo.practice.global.security.filter.supports.TokenAuthenticationFilter
+import org.jeongmo.practice.global.security.handler.CustomAccessDeniedHandler
+import org.jeongmo.practice.global.security.handler.CustomAuthenticationEntryPoint
 import org.jeongmo.practice.global.security.handler.JsonResponseFilterExceptionHandler
 import org.jeongmo.practice.global.security.token.manager.AuthorizationHeaderTokenManager
 import org.jeongmo.practice.global.security.token.service.TokenService
@@ -51,6 +53,11 @@ class SecurityConfig(
             .httpBasic {it.disable()}
             .csrf { it.disable() }
             .formLogin {it.disable()}
+            .exceptionHandling {
+                it
+                    .accessDeniedHandler(accessDeniedHandler())
+                    .authenticationEntryPoint(authenticationEntryPoint())
+            }
         return http.build();
     }
 
@@ -84,4 +91,10 @@ class SecurityConfig(
 
     @Bean
     fun filterExceptionHandler() = JsonResponseFilterExceptionHandler(httpResponseWriter)
+
+    @Bean
+    fun authenticationEntryPoint() = CustomAuthenticationEntryPoint(filterExceptionHandler())
+
+    @Bean
+    fun accessDeniedHandler() = CustomAccessDeniedHandler(filterExceptionHandler())
 }
