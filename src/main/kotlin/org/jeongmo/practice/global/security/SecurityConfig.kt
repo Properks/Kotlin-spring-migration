@@ -38,7 +38,10 @@ class SecurityConfig(
     private val allowUrl : Array<String> = arrayOf(
         "/login",
         "/sign-up",
-        "/reissue"
+        "/reissue",
+        "/swagger-ui/**",
+        "/swagger-resources/**",
+        "/v3/api-docs/**",
     );
 
     @Bean
