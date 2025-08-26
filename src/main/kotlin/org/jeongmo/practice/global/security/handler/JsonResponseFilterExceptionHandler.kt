@@ -48,7 +48,12 @@ class JsonResponseFilterExceptionHandler(
     }
 
     private fun logError(exception: Exception, message: String) {
-        logger.error("Filter Error(${exception::class.simpleName}): $message")
+        if (exception is ServerApplicationException) {
+            logger.warn("Filter Error(${exception::class.simpleName}): $message")
+        }
+        else {
+            logger.error("Filter Error(${exception::class.simpleName}): $message")
+        }
     }
 
     private fun writeException(
