@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletResponse
 import org.jeongmo.practice.global.security.domain.CustomUserDetails
 import org.jeongmo.practice.global.security.filter.dto.LoginResponseDTO
 import org.jeongmo.practice.global.security.token.service.TokenService
+import org.jeongmo.practice.global.security.token.service.TokenStorageService
 import org.jeongmo.practice.global.util.HttpResponseWriter
 import org.namul.api.payload.code.DefaultResponseSuccessCode
 import org.namul.api.payload.code.dto.supports.DefaultResponseErrorReasonDTO
@@ -17,6 +18,7 @@ import java.time.LocalDateTime
 @Component
 class CustomAuthenticationSuccessHandler(
     private val tokenService: TokenService<CustomUserDetails>,
+    private val tokenStorageService: TokenStorageService,
     private val httpResponseWriter: HttpResponseWriter<DefaultResponseSuccessReasonDTO, DefaultResponseErrorReasonDTO>,
 ): AuthenticationSuccessHandler{
     override fun onAuthenticationSuccess(
@@ -27,6 +29,7 @@ class CustomAuthenticationSuccessHandler(
         val userDetails: CustomUserDetails = CustomUserDetails::class.java.cast(authentication?.principal)
         val accessToken: String = tokenService.createAccessToken(userDetails)
         val refreshToken: String = tokenService.createRefreshToken(userDetails)
+        tokenStorageService.saveRefreshToken(userDetails.username, refreshToken)
 
         val successReasonDTO: DefaultResponseSuccessReasonDTO = DefaultResponseSuccessCode._OK.reason
         httpResponseWriter.writeSuccessResponse(

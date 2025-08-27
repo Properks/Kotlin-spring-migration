@@ -9,6 +9,7 @@ import org.jeongmo.practice.global.security.handler.CustomAuthenticationEntryPoi
 import org.jeongmo.practice.global.security.handler.JsonResponseFilterExceptionHandler
 import org.jeongmo.practice.global.security.token.manager.AuthorizationHeaderTokenManager
 import org.jeongmo.practice.global.security.token.service.TokenService
+import org.jeongmo.practice.global.security.token.service.TokenStorageService
 import org.jeongmo.practice.global.util.HttpResponseWriter
 import org.namul.api.payload.code.dto.supports.DefaultResponseErrorReasonDTO
 import org.namul.api.payload.code.dto.supports.DefaultResponseSuccessReasonDTO
@@ -30,6 +31,7 @@ import org.springframework.security.web.context.SecurityContextRepository
 class SecurityConfig(
     private val authenticationConfiguration: AuthenticationConfiguration,
     private val tokenService: TokenService<CustomUserDetails>,
+    private val tokenStorageService: TokenStorageService,
     private val userDetailsService: UserDetailsService,
     private val authenticationSuccessHandler: AuthenticationSuccessHandler,
     private val httpResponseWriter: HttpResponseWriter<DefaultResponseSuccessReasonDTO, DefaultResponseErrorReasonDTO>,
@@ -77,6 +79,7 @@ class SecurityConfig(
         exceptionHandler = filterExceptionHandler(),
         userDetailsService = userDetailsService,
         tokenService = tokenService,
+        tokenStorageService = tokenStorageService,
         securityContextRepository = securityContextRepository(),
     )
 
