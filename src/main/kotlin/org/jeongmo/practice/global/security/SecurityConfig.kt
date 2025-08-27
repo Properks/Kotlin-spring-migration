@@ -1,7 +1,6 @@
 package org.jeongmo.practice.global.security
 
 import jakarta.servlet.Filter
-import org.jeongmo.practice.global.security.domain.CustomUserDetails
 import org.jeongmo.practice.global.security.filter.supports.JsonLoginFilter
 import org.jeongmo.practice.global.security.filter.supports.TokenAuthenticationFilter
 import org.jeongmo.practice.global.security.handler.CustomAccessDeniedHandler
@@ -30,7 +29,7 @@ import org.springframework.security.web.context.SecurityContextRepository
 @Configuration
 class SecurityConfig(
     private val authenticationConfiguration: AuthenticationConfiguration,
-    private val tokenService: TokenService<CustomUserDetails>,
+    private val tokenService: TokenService,
     private val tokenStorageService: TokenStorageService,
     private val userDetailsService: UserDetailsService,
     private val authenticationSuccessHandler: AuthenticationSuccessHandler,

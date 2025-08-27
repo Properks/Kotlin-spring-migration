@@ -3,7 +3,6 @@ package org.jeongmo.practice.global.security.filter.supports
 import jakarta.servlet.http.HttpServletRequest
 import org.jeongmo.practice.global.error.code.TokenErrorCode
 import org.jeongmo.practice.global.error.exception.TokenException
-import org.jeongmo.practice.global.security.domain.CustomUserDetails
 import org.jeongmo.practice.global.security.filter.AuthenticationFilter
 import org.jeongmo.practice.global.security.handler.FilterExceptionHandler
 import org.jeongmo.practice.global.security.token.manager.TokenManager
@@ -17,7 +16,7 @@ import org.springframework.security.web.context.SecurityContextRepository
 
 class TokenAuthenticationFilter(
     private val tokenManager: TokenManager,
-    private val tokenService: TokenService<CustomUserDetails>,
+    private val tokenService: TokenService,
     private val tokenStorageService: TokenStorageService,
     private val userDetailsService: UserDetailsService,
 

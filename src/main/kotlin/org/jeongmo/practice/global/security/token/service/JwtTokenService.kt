@@ -7,22 +7,22 @@ import io.jsonwebtoken.JwtException
 import org.jeongmo.practice.global.data.JwtConfigData
 import org.jeongmo.practice.global.error.code.TokenErrorCode
 import org.jeongmo.practice.global.error.exception.TokenException
-import org.jeongmo.practice.global.security.domain.CustomUserDetails
 import org.jeongmo.practice.global.security.token.util.TokenUtil
+import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.stereotype.Service
 
 @Service
 class JwtTokenService(
-    private val jwtUtil: TokenUtil<CustomUserDetails, Jws<Claims>>,
+    private val jwtUtil: TokenUtil<Jws<Claims>>,
     private val configData: JwtConfigData
-): TokenService<CustomUserDetails> {
+): TokenService {
 
 
-    override fun createAccessToken(memberInfo: CustomUserDetails): String {
+    override fun createAccessToken(memberInfo: UserDetails): String {
         return jwtUtil.createToken(memberInfo, configData.time.accessToken)
     }
 
-    override fun createRefreshToken(memberInfo: CustomUserDetails): String {
+    override fun createRefreshToken(memberInfo: UserDetails): String {
         return jwtUtil.createToken(memberInfo, configData.time.refreshToken)
     }
 
