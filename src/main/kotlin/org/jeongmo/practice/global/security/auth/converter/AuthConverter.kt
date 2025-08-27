@@ -4,6 +4,7 @@ import org.jeongmo.practice.global.security.auth.dto.AuthRequestDTO
 import org.jeongmo.practice.domain.member.entity.Member
 import org.jeongmo.practice.domain.member.entity.enums.ProviderType
 import org.jeongmo.practice.domain.member.entity.enums.Role
+import org.jeongmo.practice.global.security.auth.dto.AuthResponseDTO
 import org.springframework.security.crypto.password.PasswordEncoder
 
 object AuthConverter {
@@ -17,4 +18,5 @@ object AuthConverter {
             deletedAt = null
         )
     }
+
 }
