@@ -1,12 +1,16 @@
 package org.jeongmo.practice.domain.member.entity
 
 import jakarta.persistence.*
+import org.hibernate.annotations.SQLDelete
+import org.hibernate.annotations.SQLRestriction
 import org.jeongmo.practice.domain.member.entity.enums.ProviderType
 import org.jeongmo.practice.domain.member.entity.enums.Role
 import org.jeongmo.practice.global.common.entity.BaseEntity
 import java.time.LocalDateTime
 
 @Entity
+@SQLDelete(sql = "UPDATE member SET deleted_at = now() where member_id = ?")
+@SQLRestriction("deleted_at IS NULL")
 class Member(
 
     @Column(name = "username", unique = true)
