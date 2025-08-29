@@ -1,10 +1,7 @@
 package org.jeongmo.practice.domain.item.entity
 
-import jakarta.persistence.Column
-import jakarta.persistence.Entity
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.GenerationType
-import jakarta.persistence.Id
+import jakarta.persistence.*
+import org.jeongmo.practice.domain.item.entity.enums.ItemStatus
 import org.jeongmo.practice.global.common.entity.BaseEntity
 
 @Entity
@@ -16,15 +13,6 @@ class Item(
     @Column(name = "price")
     var price : Long,
 
-    @Column(name = "discount")
-    var discount : Double = 0.0,
-
-    @Column(name = "discountPrice")
-    var discountPrice : Long?,
-
-    @Column(name = "score")
-    var score : Double,
-
 ): BaseEntity() {
 
     @Id
@@ -32,4 +20,16 @@ class Item(
     @Column(name = "item_id")
     val id: Long = 0
 
+    @Column(name = "discount")
+    var discount : Double = 0.0
+
+    @Column(name = "discountPrice")
+    var discountPrice : Long? = null
+
+    @Column(name = "score")
+    var score : Double = 0.0
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "item_status")
+    var itemStatus: ItemStatus = ItemStatus.IN_STOCK
 }
