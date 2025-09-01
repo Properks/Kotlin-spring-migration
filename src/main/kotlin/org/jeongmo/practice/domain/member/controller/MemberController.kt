@@ -1,5 +1,6 @@
 package org.jeongmo.practice.domain.member.controller
 
+import io.swagger.v3.oas.annotations.tags.Tag
 import org.jeongmo.practice.domain.member.converter.toFindMemberInfo
 import org.jeongmo.practice.domain.member.converter.toUpdateMemberInfo
 import org.jeongmo.practice.domain.member.dto.*
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/members")
+@Tag(name = "사용자 API")
 class MemberController(
     private val memberService: MemberService,
 ) {

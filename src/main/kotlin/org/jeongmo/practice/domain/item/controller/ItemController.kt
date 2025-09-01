@@ -1,5 +1,6 @@
 package org.jeongmo.practice.domain.item.controller
 
+import io.swagger.v3.oas.annotations.tags.Tag
 import org.jeongmo.practice.domain.item.converter.toFindItemResponse
 import org.jeongmo.practice.domain.item.converter.toRegisterItemResponse
 import org.jeongmo.practice.domain.item.converter.toUpdateItemResponse
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/items")
+@Tag(name = "상품 API")
 class ItemController(
     private val itemService: ItemService,
 ) {
