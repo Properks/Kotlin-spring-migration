@@ -1,7 +1,7 @@
 package org.jeongmo.practice.domain.review.entity
 
 import jakarta.persistence.*
-import org.jeongmo.practice.domain.item.entity.BoughtItem
+import org.jeongmo.practice.domain.item.bought.entity.BoughtItem
 import org.jeongmo.practice.global.common.entity.BaseEntity
 
 @Entity

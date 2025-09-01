@@ -1,6 +1,7 @@
-package org.jeongmo.practice.domain.item.entity
+package org.jeongmo.practice.domain.item.options.entity
 
 import jakarta.persistence.*
+import org.jeongmo.practice.domain.item.entity.Item
 import org.jeongmo.practice.global.common.entity.BaseEntity
 
 @Entity
@@ -16,7 +17,7 @@ class ItemOption(
     @JoinColumn(name = "item_id")
     var item : Item,
 
-): BaseEntity() {
+    ): BaseEntity() {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

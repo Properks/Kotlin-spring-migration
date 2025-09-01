@@ -1,7 +1,8 @@
-package org.jeongmo.practice.domain.item.entity
+package org.jeongmo.practice.domain.item.bought.entity
 
 import jakarta.persistence.*
-import org.jeongmo.practice.domain.item.entity.enums.BoughtStatus
+import org.jeongmo.practice.domain.item.entity.Item
+import org.jeongmo.practice.domain.item.bought.entity.enums.BoughtStatus
 import org.jeongmo.practice.domain.member.entity.Member
 import org.jeongmo.practice.global.common.entity.BaseEntity
 
