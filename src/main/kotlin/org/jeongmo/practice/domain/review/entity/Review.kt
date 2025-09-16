@@ -1,10 +1,15 @@
 package org.jeongmo.practice.domain.review.entity
 
 import jakarta.persistence.*
+import org.hibernate.annotations.SQLDelete
+import org.hibernate.annotations.SQLRestriction
 import org.jeongmo.practice.domain.item.bought.entity.BoughtItem
 import org.jeongmo.practice.global.common.entity.BaseEntity
+import java.time.LocalDateTime
 
 @Entity
+@SQLDelete(sql = "UPDATE review SET deleted_at = NOW() WHERE review_id = ?")
+@SQLRestriction("deleted_at IS NULL")
 class Review (
 
     @Column(name = "score")
@@ -15,7 +20,7 @@ class Review (
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "bought_item_id")
-    var boughtItem : BoughtItem,
+    val boughtItem : BoughtItem
 ) : BaseEntity() {
 
     @Id
@@ -23,4 +28,6 @@ class Review (
     @Column(name = "review_id")
     val id : Long = 0
 
+    @Column(name = "deleted_at")
+    var deletedAt: LocalDateTime? = null
 }
