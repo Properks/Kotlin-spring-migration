@@ -9,3 +9,8 @@ spring:
           uri: ${CONFIG_REPOSITORY_URI}
           private-key: ${CONFIG_REPOSITORY_PRIVATE_KEY}
           ignoreLocalSshSettings: true
+
+
+security:
+  username: ${CLOUD_CONFIG_USERNAME}
+  password: ${CLOUD_CONFIG_PASSWORD}
