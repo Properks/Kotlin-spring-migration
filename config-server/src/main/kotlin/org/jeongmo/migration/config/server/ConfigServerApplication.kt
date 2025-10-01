@@ -1,4 +1,4 @@
-package org.jeongmo.migration
+package org.jeongmo.migration.config.server
 
 import io.github.cdimascio.dotenv.Dotenv
 import org.springframework.boot.autoconfigure.SpringBootApplication

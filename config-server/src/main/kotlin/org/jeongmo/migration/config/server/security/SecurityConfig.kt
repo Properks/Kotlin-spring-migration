@@ -1,4 +1,4 @@
-package org.jeongmo.migration.security
+package org.jeongmo.migration.config.server.security
 
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
