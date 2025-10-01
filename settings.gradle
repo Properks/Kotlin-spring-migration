@@ -3,4 +3,5 @@ plugins {
 }
 rootProject.name = 'Kotlin-spring-migration'
 include 'config-server'
+include 'eureka-server'
 

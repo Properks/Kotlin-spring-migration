@@ -1,0 +1,12 @@
+server:
+  port: ${EUREKA_SERVER_PORT}
+
+eureka:
+  client:
+    fetch-registry: false
+    register-with-eureka: false
+    service-url:
+      default-zone: http://${EUREKA_SERVER_USERNAME}:${EUREKA_SERVER_PASSWORD}@${EUREKA_SERVER_IP}:${EUREKA_SERVER_PORT}/eureka
+  security:
+    username: ${EUREKA_SERVER_USERNAME}
+    password: ${EUREKA_SERVER_PASSWORD}
