@@ -53,6 +53,10 @@ subprojects {
         }
     }
 
+    dependencies {
+        implementation("org.namul:api-payload:0.7.2")
+    }
+
     allOpen {
         annotation 'jakarta.persistence.Entity'
         annotation 'jakarta.persistence.MappedSuperclass'
