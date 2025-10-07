@@ -1,6 +1,5 @@
 package org.jeongmo.migration.config.server
 
-import io.github.cdimascio.dotenv.Dotenv
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import org.springframework.cloud.config.server.EnableConfigServer
@@ -17,11 +16,8 @@ fun main(args: Array<String>) {
 }
 
 fun setPrivateKeyEnv() {
-    val dotenv = Dotenv.configure()
-        .directory("./")
-        .load()
 
-    val base64Key = dotenv["CONFIG_REPOSITORY_PRIVATE_KEY"]
+    val base64Key = System.getenv("CONFIG_REPOSITORY_PRIVATE_KEY") ?: return
     val privateKey= String(Base64.getDecoder().decode(base64Key))
 
     System.setProperty("CONFIG_REPOSITORY_PRIVATE_KEY", privateKey)

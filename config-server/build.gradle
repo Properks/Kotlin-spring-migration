@@ -1,6 +1,5 @@
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.cloud:spring-cloud-config-server'
-    implementation 'io.github.cdimascio:dotenv-kotlin:6.4.2'
     testImplementation 'org.jetbrains.kotlin:kotlin-test'
 }
