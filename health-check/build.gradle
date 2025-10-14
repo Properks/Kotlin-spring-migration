@@ -13,5 +13,6 @@ dependencies {
     implementation(project(":common-config"))
     testImplementation 'org.jetbrains.kotlin:kotlin-test'
 
-
+    //actuator
+    implementation 'org.springframework.boot:spring-boot-starter-actuator:3.5.5'
 }

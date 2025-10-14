@@ -8,3 +8,9 @@ spring:
   config:
     import: optional:configserver:http://${CLOUD_CONFIG_USERNAME}:${CLOUD_CONFIG_PASSWORD}@${CLOUD_CONFIG_IP}:${CLOUD_CONFIG_PORT}
 
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://${EUREKA_SERVER_USERNAME}:${EUREKA_SERVER_PASSWORD}@${EUREKA_SERVER_IP}:${EUREKA_SERVER_PORT}/eureka

@@ -9,5 +9,3 @@ class HealthCheckApplication
 fun main(args: Array<String>) {
     runApplication<HealthCheckApplication>(*args)
 }
-
-// 클라우드 config 사용 안함...
