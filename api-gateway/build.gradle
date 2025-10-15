@@ -9,7 +9,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-actuator:3.5.5'
 
     //security
-//    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
 
     // eureka
     implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
