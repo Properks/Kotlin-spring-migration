@@ -1,5 +1,6 @@
 package org.jeongmo.migration.api.gateway.security
 
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.Customizer
@@ -14,7 +15,10 @@ import org.springframework.security.web.server.SecurityWebFilterChain
 
 @Configuration
 @EnableWebFluxSecurity
-class SecurityConfig {
+class SecurityConfig(
+    @Value("\${actuator.username}") private val username: String,
+    @Value("\${actuator.password}") private val password: String,
+) {
 
     @Bean
     fun filterCharin(http: ServerHttpSecurity): SecurityWebFilterChain {
@@ -28,14 +32,14 @@ class SecurityConfig {
             .csrf{it.disable()}
             .formLogin{it.disable()}
             .httpBasic(Customizer.withDefaults())
-        return http.build();
+        return http.build()
     }
 
     @Bean
     fun userDetailService(): ReactiveUserDetailsService {
         val user = User.builder()
-            .username("username")
-            .password(passwordEncoder().encode("password"))
+            .username(this.username)
+            .password(passwordEncoder().encode(this.password))
             .roles("ENDPOINT_ADMIN")
             .build()
         return MapReactiveUserDetailsService(user)

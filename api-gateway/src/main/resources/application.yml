@@ -15,3 +15,7 @@ eureka:
     fetch-registry: true
     service-url:
       defaultZone: http://${EUREKA_SERVER_USERNAME}:${EUREKA_SERVER_PASSWORD}@${EUREKA_SERVER_IP}:${EUREKA_SERVER_PORT}/eureka
+
+actuator:
+  username: ${ACTUATOR_USERNAME}
+  password: ${ACTUATOR_PASSWORD}
