@@ -10,6 +10,7 @@ import org.jeongmo.migration.auth.application.error.code.TokenErrorCode
 import org.jeongmo.migration.auth.application.error.exception.TokenException
 import org.jeongmo.migration.auth.domain.model.CustomUserDetails
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.stereotype.Component
 import java.time.Instant
@@ -40,14 +41,14 @@ class JwtTokenUtil(
 
     override fun parseToken(token: String): TokenInfoDTO {
         val claims: Jws<Claims> = getClaims(token)
-        val id: Long = claims.payload["id", Long::class.java]
+        val idPayload = claims.payload["id"]
         val username = claims.payload.subject
+        val roles = getAuthorities(claims)
 
-        val roles: List<String> = claims.payload["roles", List::class.java] as? List<String> ?: emptyList()
         return TokenInfoDTO(
-            id = id,
+            id = idPayload.toString(),
             username = username,
-            roles = roles.map { SimpleGrantedAuthority(it) }.toMutableSet(),
+            roles = roles,
         )
     }
 
@@ -63,5 +64,17 @@ class JwtTokenUtil(
         } catch (e: Exception) {
             throw TokenException(TokenErrorCode.TOKEN_NOT_VALID)
         }
+    }
+
+    private fun getAuthorities(claims: Jws<Claims>): MutableCollection<out GrantedAuthority> {
+        val rawRolesList: List<*> = claims.payload["roles", List::class.java] ?: emptyList<Any>()
+
+        val roleStrings: List<String> = rawRolesList
+            .filterIsInstance<LinkedHashMap<*, *>>()
+            .mapNotNull { it["authority"] as? String }
+
+        return roleStrings
+            .map { SimpleGrantedAuthority(it) }
+            .toMutableSet()
     }
 }
