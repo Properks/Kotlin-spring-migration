@@ -1,4 +1,17 @@
 dependencies {
     testImplementation 'org.jetbrains.kotlin:kotlin-test'
 
+    // Web
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    // Spring Cloud
+    implementation 'org.springframework.cloud:spring-cloud-starter-config'
+
+    //security
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+
+    // JWT
+    implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
+    implementation 'io.jsonwebtoken:jjwt-impl:0.12.3'
+    implementation 'io.jsonwebtoken:jjwt-jackson:0.12.3'
 }
