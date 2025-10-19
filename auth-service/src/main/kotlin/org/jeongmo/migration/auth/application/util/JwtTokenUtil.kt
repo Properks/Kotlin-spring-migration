@@ -22,7 +22,7 @@ class JwtTokenUtil(
     @Value("\${token.jwt.secret}") secret: String,
 ): TokenUtil {
 
-    private val secretKey: SecretKey = Keys.hmacShaKeyFor(secret.toByteArray())
+    private val secretKey: SecretKey = Keys.hmacShaKeyFor(secret.toByteArray(Charsets.UTF_8)) // 지정하지 않으면 OS에 따라 다르게 작동
     private val issuer = "org.jeongmo.migration"
     private val clock: Long = 10
 
@@ -31,7 +31,7 @@ class JwtTokenUtil(
         return Jwts.builder()
             .subject(userDetails.username)
             .claim("id", userDetails.id)
-            .claim("roles", userDetails.authorities)
+            .claim("roles", userDetails.authorities.map {it.authority})
             .issuer(issuer)
             .issuedAt(Date.from(now))
             .expiration(Date.from(now.plusMillis(expiration)))
@@ -69,11 +69,8 @@ class JwtTokenUtil(
     private fun getAuthorities(claims: Jws<Claims>): MutableCollection<out GrantedAuthority> {
         val rawRolesList: List<*> = claims.payload["roles", List::class.java] ?: emptyList<Any>()
 
-        val roleStrings: List<String> = rawRolesList
-            .filterIsInstance<LinkedHashMap<*, *>>()
-            .mapNotNull { it["authority"] as? String }
-
-        return roleStrings
+        return rawRolesList
+            .filterIsInstance<String>()
             .map { SimpleGrantedAuthority(it) }
             .toMutableSet()
     }
