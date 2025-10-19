@@ -4,6 +4,6 @@ interface TokenRepository {
 
     fun saveToken(token: String, ttl: Long): Boolean
     fun removeToken(token: String): Boolean
-    fun blackListToken(token: String, ttl: Long): Boolean
+    fun blacklistToken(token: String, ttl: Long): Boolean
 
 }
