@@ -4,4 +4,8 @@ spring:
   profiles:
     active: dev
   config:
-    import: optional:configserver:http://${CLOUD_CONFIG_USERNAME}:${CLOUD_CONFIG_PASSWORD}@${CLOUD_CONFIG_IP}:${CLOUD_CONFIG_PORT}
+    import: optional:configserver:http://${CLOUD_CONFIG_IP}:${CLOUD_CONFIG_PORT}
+  cloud:
+    config:
+      username: ${CLOUD_CONFIG_USERNAME}
+      password: ${CLOUD_CONFIG_PASSWORD}
