@@ -9,6 +9,7 @@ import org.jeongmo.migration.auth.application.dto.TokenInfoDTO
 import org.jeongmo.migration.auth.application.error.code.TokenErrorCode
 import org.jeongmo.migration.auth.application.error.exception.TokenException
 import org.jeongmo.migration.auth.domain.model.CustomUserDetails
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
@@ -21,6 +22,8 @@ import javax.crypto.SecretKey
 class JwtTokenUtil(
     @Value("\${token.jwt.secret}") secret: String,
 ): TokenUtil {
+
+    private val logger = LoggerFactory.getLogger(JwtTokenUtil::class.java)
 
     private val secretKey: SecretKey = Keys.hmacShaKeyFor(secret.toByteArray(Charsets.UTF_8)) // 지정하지 않으면 OS에 따라 다르게 작동
     private val issuer = "org.jeongmo.migration"
@@ -60,8 +63,10 @@ class JwtTokenUtil(
                 .build()
                 .parseSignedClaims(token)
         } catch (e: ExpiredJwtException) {
+            logger.debug("Token expired", e)
             throw TokenException(TokenErrorCode.TOKEN_EXPIRED)
         } catch (e: Exception) {
+            logger.warn("Invalid Token", e)
             throw TokenException(TokenErrorCode.TOKEN_NOT_VALID)
         }
     }
