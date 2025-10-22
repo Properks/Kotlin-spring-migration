@@ -8,4 +8,5 @@ include 'health-check'
 include 'common-config'
 include 'api-gateway'
 include 'auth-service'
+include 'member-service'
 
