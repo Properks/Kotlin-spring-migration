@@ -10,14 +10,14 @@ import java.time.LocalDateTime
 
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener::class)
-class JpaBaseEntity(
+open class JpaBaseEntity(
 
     @CreatedDate
     @Column(name = "created_at")
-    var createdAt: LocalDateTime = LocalDateTime.now(),
+    var createdAt: LocalDateTime? = null,
 
     @LastModifiedDate
     @Column(name = "updated_at")
-    var updatedAt : LocalDateTime = LocalDateTime.now(),
+    var updatedAt : LocalDateTime? = null,
 ) {
 }
