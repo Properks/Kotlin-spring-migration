@@ -18,6 +18,6 @@ open class JpaBaseEntity(
 
     @LastModifiedDate
     @Column(name = "updated_at")
-    var updatedAt : LocalDateTime? = null,
+    var updatedAt: LocalDateTime? = null,
 ) {
 }
