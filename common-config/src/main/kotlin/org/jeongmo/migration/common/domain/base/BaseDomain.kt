@@ -1,9 +1,9 @@
-package org.jeongmo.migration.common.domain
+package org.jeongmo.migration.common.domain.base
 
 import java.time.LocalDateTime
 
 open class BaseDomain(
-    var createAt: LocalDateTime?,
+    var createdAt: LocalDateTime?,
     var updatedAt: LocalDateTime?,
 ) {
 }
