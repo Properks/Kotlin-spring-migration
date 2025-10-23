@@ -1,6 +1,7 @@
 dependencies {
 
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
     // api-payload
 //    api(files('/Users/seojeongmo/Desktop/Github_Collection/others/back-study/beginner/api-payload/target/api-payload-0.7.2.jar'))
