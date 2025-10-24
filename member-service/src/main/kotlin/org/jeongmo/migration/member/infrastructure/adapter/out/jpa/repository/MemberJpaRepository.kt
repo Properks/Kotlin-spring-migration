@@ -31,7 +31,8 @@ class MemberJpaRepository(
 
     override fun delete(id: Long): Boolean {
         var exist = jpaRepository.existsById(id)
+        if (!exist) return false
         jpaRepository.deleteById(id)
-        return exist
+        return true
     }
 }

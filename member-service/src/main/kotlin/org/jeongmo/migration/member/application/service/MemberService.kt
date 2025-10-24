@@ -6,7 +6,7 @@ import org.jeongmo.migration.member.application.dto.MemberInfoResponse
 import org.jeongmo.migration.member.application.error.code.MemberErrorCode
 import org.jeongmo.migration.member.application.error.exception.MemberException
 import org.jeongmo.migration.member.application.port.`in`.MemberCommandUseCase
-import org.jeongmo.migration.member.application.port.`in`.MemberQueryUserCase
+import org.jeongmo.migration.member.application.port.`in`.MemberQueryUseCase
 import org.jeongmo.migration.member.domain.model.Member
 import org.jeongmo.migration.member.domain.repository.MemberRepository
 import org.springframework.stereotype.Service
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service
 @Service
 class MemberService(
     private val memberRepository: MemberRepository
-): MemberQueryUserCase, MemberCommandUseCase {
+): MemberQueryUseCase, MemberCommandUseCase {
 
     override fun createMember(request: CreateMemberRequest): CreateMemberResponse {
         val member = memberRepository.save(request.toDomain())

@@ -33,7 +33,7 @@ class JpaMemberMapper {
             role = memberJpaEntity.role,
             deletedAt = memberJpaEntity.deletedAt,
             createdAt = memberJpaEntity.createdAt,
-            updateAt = memberJpaEntity.updatedAt,
+            updatedAt = memberJpaEntity.updatedAt,
         )
     }
 }

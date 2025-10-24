@@ -14,6 +14,6 @@ class Member(
     val role : Role,
     var deletedAt : LocalDateTime?,
     createdAt: LocalDateTime? = null,
-    updateAt: LocalDateTime? = null,
-): BaseDomain(createdAt, updateAt) {
+    updatedAt: LocalDateTime? = null,
+): BaseDomain(createdAt, updatedAt) {
 }

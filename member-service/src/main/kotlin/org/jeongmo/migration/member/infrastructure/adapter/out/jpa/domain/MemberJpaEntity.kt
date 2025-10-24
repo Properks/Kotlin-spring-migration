@@ -14,7 +14,7 @@ class MemberJpaEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "member_id")
-    val id: Long,
+    val id: Long? = null,
 
     @Column(name = "username", unique = true)
     var username : String,
@@ -39,7 +39,7 @@ class MemberJpaEntity(
 
     companion object {
         fun fromDomain(member: Member): MemberJpaEntity = MemberJpaEntity(
-            id = member.id ?: 0L,
+            id = member.id,
             username = member.username,
             password = member.password,
             providerType = member.providerType,

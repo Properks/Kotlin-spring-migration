@@ -4,7 +4,7 @@ import org.jeongmo.migration.member.application.dto.CreateMemberRequest
 import org.jeongmo.migration.member.application.dto.CreateMemberResponse
 import org.jeongmo.migration.member.application.dto.MemberInfoResponse
 import org.jeongmo.migration.member.application.port.`in`.MemberCommandUseCase
-import org.jeongmo.migration.member.application.port.`in`.MemberQueryUserCase
+import org.jeongmo.migration.member.application.port.`in`.MemberQueryUseCase
 import org.namul.api.payload.response.DefaultResponse
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/internal/api/member")
 class MemberInternalApi(
     private val memberCommandUseCase: MemberCommandUseCase,
-    private val memberQueryUserCase: MemberQueryUserCase,
+    private val memberQueryUseCase: MemberQueryUseCase,
 ) {
 
     @PostMapping
@@ -26,5 +26,5 @@ class MemberInternalApi(
 
     @GetMapping("/{memberId}")
     fun getMember(@PathVariable("memberId") memberId: Long): DefaultResponse<MemberInfoResponse> =
-        DefaultResponse.ok(memberQueryUserCase.findById(memberId))
+        DefaultResponse.ok(memberQueryUseCase.findById(memberId))
 }
