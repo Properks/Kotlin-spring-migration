@@ -1,0 +1,30 @@
+package org.jeongmo.migration.member.application.service
+
+import org.jeongmo.migration.member.application.dto.CreateMemberRequest
+import org.jeongmo.migration.member.application.dto.CreateMemberResponse
+import org.jeongmo.migration.member.application.dto.MemberInfoResponse
+import org.jeongmo.migration.member.application.error.code.MemberErrorCode
+import org.jeongmo.migration.member.application.error.exception.MemberException
+import org.jeongmo.migration.member.application.port.`in`.MemberCommandUseCase
+import org.jeongmo.migration.member.application.port.`in`.MemberQueryUserCase
+import org.jeongmo.migration.member.domain.model.Member
+import org.jeongmo.migration.member.domain.repository.MemberRepository
+import org.springframework.stereotype.Service
+
+@Service
+class MemberService(
+    private val memberRepository: MemberRepository
+): MemberQueryUserCase, MemberCommandUseCase {
+
+    override fun createMember(request: CreateMemberRequest): CreateMemberResponse {
+        val member = memberRepository.save(request.toDomain())
+        return CreateMemberResponse.fromDomain(member)
+    }
+
+    override fun findById(id: Long): MemberInfoResponse {
+        val foundMember: Member? = memberRepository.findById(id)
+        return MemberInfoResponse.fromDomain(
+            foundMember ?: throw MemberException(MemberErrorCode.NOT_FOUND)
+        )
+    }
+}
