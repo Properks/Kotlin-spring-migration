@@ -13,7 +13,7 @@ class MemberJpaEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "member_id")
-    val id: Long? = null,
+    var id: Long? = null,
 
     @Column(name = "username", unique = true)
     var username : String,
