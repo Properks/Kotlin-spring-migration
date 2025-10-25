@@ -11,7 +11,7 @@ class Member(
     var password : String?,
     var providerType : ProviderType,
     var nickname : String,
-    val role : Role,
+    var role : Role,
     var deletedAt : LocalDateTime?,
     createdAt: LocalDateTime? = null,
     updatedAt: LocalDateTime? = null,
