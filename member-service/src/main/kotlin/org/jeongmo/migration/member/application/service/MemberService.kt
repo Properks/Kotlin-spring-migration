@@ -7,6 +7,7 @@ import org.jeongmo.migration.member.application.error.code.MemberErrorCode
 import org.jeongmo.migration.member.application.error.exception.MemberException
 import org.jeongmo.migration.member.application.port.`in`.MemberCommandUseCase
 import org.jeongmo.migration.member.application.port.`in`.MemberQueryUseCase
+import org.jeongmo.migration.member.domain.enum.ProviderType
 import org.jeongmo.migration.member.domain.model.Member
 import org.jeongmo.migration.member.domain.repository.MemberRepository
 import org.springframework.stereotype.Service
@@ -17,6 +18,7 @@ class MemberService(
 ): MemberQueryUseCase, MemberCommandUseCase {
 
     override fun createMember(request: CreateMemberRequest): CreateMemberResponse {
+        if (request.providerType == ProviderType.LOCAL && request.encodedPassword == null) throw MemberException(MemberErrorCode.INVALID_DATA)
         val member = memberRepository.save(request.toDomain())
         return CreateMemberResponse.fromDomain(member)
     }

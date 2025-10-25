@@ -6,7 +6,7 @@ import org.jeongmo.migration.member.domain.model.Member
 
 data class CreateMemberRequest(
     val username: String,
-    val encodedPassword: String,
+    val encodedPassword: String?,
     val providerType: ProviderType,
     val nickname: String,
     val role: Role,
