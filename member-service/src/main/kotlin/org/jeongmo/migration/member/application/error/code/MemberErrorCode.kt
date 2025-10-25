@@ -12,7 +12,7 @@ enum class MemberErrorCode(
 ): BaseErrorCode {
 
     NOT_FOUND(HttpStatus.NOT_FOUND, "MEMBER_404_1", "사용자를 찾지 못했습니다."),
-    INVALID_DATA(HttpStatus.BAD_REQUEST, "Member_400_1", "사용자 유형에 따른 데이터 양식이 맞지 않습니다.")
+    INVALID_DATA(HttpStatus.BAD_REQUEST, "MEMBER_400_1", "사용자 유형에 따른 데이터 양식이 맞지 않습니다.")
     ;
 
     override fun getReason(): ErrorReasonDTO =
