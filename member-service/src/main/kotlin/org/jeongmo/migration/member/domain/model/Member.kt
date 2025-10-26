@@ -19,7 +19,7 @@ class Member(
     updatedAt: LocalDateTime? = null,
 ): BaseDomain(createdAt, updatedAt) {
     init {
-        require(providerType != ProviderType.LOCAL || password != null) {
+        if (providerType == ProviderType.LOCAL && password == null) {
             throw MemberException(MemberErrorCode.INVALID_DATA)
         }
     }
