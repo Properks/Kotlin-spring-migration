@@ -1,4 +1,4 @@
-package org.jeongmo.migration.auth.application.error.code
+package org.jeongmo.migration.common.token.application.error.code
 
 import org.namul.api.payload.code.BaseErrorCode
 import org.namul.api.payload.code.dto.ErrorReasonDTO
@@ -13,6 +13,7 @@ enum class TokenErrorCode(
 
     TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "TOKEN_401_1", "토큰의 유효기간이 만료되었습니다."),
     TOKEN_NOT_VALID(HttpStatus.UNAUTHORIZED, "TOKEN_401_2", "토큰 인증에 실패했습니다."),
+    FAIL_READ_TOKEN(HttpStatus.UNAUTHORIZED, "TOKEN_401_3", "토큰 읽기에 실패했습니다."),
     ;
 
     override fun getReason(): ErrorReasonDTO = DefaultResponseErrorReasonDTO.builder()

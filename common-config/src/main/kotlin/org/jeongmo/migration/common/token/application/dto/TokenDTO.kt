@@ -1,4 +1,4 @@
-package org.jeongmo.migration.auth.application.dto
+package org.jeongmo.migration.common.token.application.dto
 
 import org.springframework.security.core.GrantedAuthority
 
