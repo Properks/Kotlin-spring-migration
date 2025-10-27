@@ -1,4 +1,4 @@
-package org.jeongmo.migration.auth.domain.model
+package org.jeongmo.migration.common.token.domain.model
 
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority

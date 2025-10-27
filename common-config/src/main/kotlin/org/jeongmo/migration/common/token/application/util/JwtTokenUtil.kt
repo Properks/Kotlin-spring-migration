@@ -1,14 +1,14 @@
-package org.jeongmo.migration.auth.application.util
+package org.jeongmo.migration.common.token.application.util
 
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.ExpiredJwtException
 import io.jsonwebtoken.Jws
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.security.Keys
-import org.jeongmo.migration.auth.application.dto.TokenInfoDTO
-import org.jeongmo.migration.auth.application.error.code.TokenErrorCode
-import org.jeongmo.migration.auth.application.error.exception.TokenException
-import org.jeongmo.migration.auth.domain.model.CustomUserDetails
+import org.jeongmo.migration.common.token.domain.model.CustomUserDetails
+import org.jeongmo.migration.common.token.application.dto.TokenInfoDTO
+import org.jeongmo.migration.common.token.application.error.code.TokenErrorCode
+import org.jeongmo.migration.common.token.application.error.exception.TokenException
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.core.GrantedAuthority
