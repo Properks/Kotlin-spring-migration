@@ -21,13 +21,12 @@ import javax.crypto.SecretKey
 @Component
 class JwtTokenUtil(
     @Value("\${token.jwt.secret}") secret: String,
+    @Value("\${token.jwt.issuer:org.jeongmo.migration}") private val issuer: String,
+    @Value("\${token.jwt.clock-skew:10}") private val clock: Long,
 ): TokenUtil {
 
     private val logger = LoggerFactory.getLogger(JwtTokenUtil::class.java)
-
     private val secretKey: SecretKey = Keys.hmacShaKeyFor(secret.toByteArray(Charsets.UTF_8)) // 지정하지 않으면 OS에 따라 다르게 작동
-    private val issuer = "org.jeongmo.migration"
-    private val clock: Long = 10
 
     override fun createToken(userDetails: CustomUserDetails, expiration: Long): String {
         val now: Instant = Instant.now()
@@ -44,12 +43,12 @@ class JwtTokenUtil(
 
     override fun parseToken(token: String): TokenInfoDTO {
         val claims: Jws<Claims> = getClaims(token)
-        val idPayload = claims.payload["id"]
+        val idPayload = claims.payload["id"]?.toString() ?: throw TokenException(TokenErrorCode.FAIL_READ_TOKEN)
         val username = claims.payload.subject
         val roles = getAuthorities(claims)
 
         return TokenInfoDTO(
-            id = idPayload.toString(),
+            id = idPayload,
             username = username,
             roles = roles,
         )
