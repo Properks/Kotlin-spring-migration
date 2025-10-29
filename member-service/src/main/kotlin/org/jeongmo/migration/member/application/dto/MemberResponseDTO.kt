@@ -36,3 +36,26 @@ data class MemberInfoResponse(
             )
     }
 }
+
+data class FoundMemberInfoResponse(
+    val id: Long,
+    val username: String,
+    val password: String?,
+    val nickname: String,
+    val providerType: ProviderType,
+    val role: Role,
+    val deletedAt: LocalDateTime?,
+) {
+    companion object {
+        fun fromDomain(member: Member) =
+            FoundMemberInfoResponse(
+                id = member.id,
+                username = member.username,
+                password = member.password,
+                nickname = member.nickname,
+                providerType = member.providerType,
+                role = member.role,
+                deletedAt = member.deletedAt,
+            )
+    }
+}

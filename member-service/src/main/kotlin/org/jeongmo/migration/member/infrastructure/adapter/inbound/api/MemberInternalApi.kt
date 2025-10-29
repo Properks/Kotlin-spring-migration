@@ -1,8 +1,6 @@
 package org.jeongmo.migration.member.infrastructure.adapter.inbound.api
 
-import org.jeongmo.migration.member.application.dto.CreateMemberRequest
-import org.jeongmo.migration.member.application.dto.CreateMemberResponse
-import org.jeongmo.migration.member.application.dto.MemberInfoResponse
+import org.jeongmo.migration.member.application.dto.*
 import org.jeongmo.migration.member.application.port.`in`.MemberCommandUseCase
 import org.jeongmo.migration.member.application.port.`in`.MemberQueryUseCase
 import org.namul.api.payload.response.DefaultResponse
@@ -27,4 +25,8 @@ class MemberInternalApi(
     @GetMapping("/{memberId}")
     fun getMember(@PathVariable("memberId") memberId: Long): DefaultResponse<MemberInfoResponse> =
         DefaultResponse.ok(memberQueryUseCase.findById(memberId))
+
+    @GetMapping("/usernames-providers")
+    fun getMemberByRequestBody(@RequestBody request: FindMemberInfoRequest): DefaultResponse<FoundMemberInfoResponse> =
+        DefaultResponse.ok(memberQueryUseCase.findByUsernameAndProviderType(request))
 }

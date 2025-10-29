@@ -13,7 +13,6 @@ data class CreateMemberRequest(
 ) {
     fun toDomain(): Member =
         Member(
-            id = null,
             username = this.username,
             password = this.encodedPassword,
             providerType = this.providerType,
@@ -22,3 +21,8 @@ data class CreateMemberRequest(
             deletedAt = null,
         )
 }
+
+data class FindMemberInfoRequest(
+    val username: String,
+    val providerType: ProviderType,
+)

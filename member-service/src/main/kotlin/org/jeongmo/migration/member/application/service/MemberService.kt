@@ -1,8 +1,6 @@
 package org.jeongmo.migration.member.application.service
 
-import org.jeongmo.migration.member.application.dto.CreateMemberRequest
-import org.jeongmo.migration.member.application.dto.CreateMemberResponse
-import org.jeongmo.migration.member.application.dto.MemberInfoResponse
+import org.jeongmo.migration.member.application.dto.*
 import org.jeongmo.migration.member.application.error.code.MemberErrorCode
 import org.jeongmo.migration.member.application.error.exception.MemberException
 import org.jeongmo.migration.member.application.port.`in`.MemberCommandUseCase
@@ -26,6 +24,13 @@ class MemberService(
     override fun findById(id: Long): MemberInfoResponse {
         val foundMember: Member? = memberRepository.findById(id)
         return MemberInfoResponse.fromDomain(
+            foundMember ?: throw MemberException(MemberErrorCode.NOT_FOUND)
+        )
+    }
+
+    override fun findByUsernameAndProviderType(request: FindMemberInfoRequest): FoundMemberInfoResponse {
+        val foundMember: Member? = memberRepository.findByUsernameAndProviderType(request.username, request.providerType)
+        return FoundMemberInfoResponse.fromDomain(
             foundMember ?: throw MemberException(MemberErrorCode.NOT_FOUND)
         )
     }
