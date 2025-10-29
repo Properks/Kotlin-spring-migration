@@ -7,10 +7,13 @@ import org.jeongmo.migration.member.domain.enum.Role
 import java.time.LocalDateTime
 
 @Entity
-@Table(name = "member")
+@Table(
+    name = "member",
+    uniqueConstraints = [UniqueConstraint(columnNames = ["username", "provider_type"])],
+)
 class MemberJpaEntity(
 
-    @Column(name = "username", unique = true)
+    @Column(name = "username")
     var username : String,
 
     @Column(name = "password")
