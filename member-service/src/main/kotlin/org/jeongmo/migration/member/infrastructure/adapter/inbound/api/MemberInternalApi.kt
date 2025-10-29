@@ -26,7 +26,7 @@ class MemberInternalApi(
     fun getMember(@PathVariable("memberId") memberId: Long): DefaultResponse<MemberInfoResponse> =
         DefaultResponse.ok(memberQueryUseCase.findById(memberId))
 
-    @GetMapping("/usernames-providers")
-    fun getMemberByRequestBody(@RequestBody request: FindMemberInfoRequest): DefaultResponse<FoundMemberInfoResponse> =
+    @PostMapping("/usernames-providers/search")
+    fun getMemberByUsernameAndProvider(@RequestBody request: FindMemberInfoRequest): DefaultResponse<FoundMemberInfoResponse> =
         DefaultResponse.ok(memberQueryUseCase.findByUsernameAndProviderType(request))
 }
