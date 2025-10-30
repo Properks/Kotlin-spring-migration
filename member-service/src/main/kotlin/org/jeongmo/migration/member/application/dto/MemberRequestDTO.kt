@@ -15,7 +15,7 @@ data class CreateMemberRequest(
     fun toDomain(passwordEncoder: PasswordEncoder): Member =
         Member(
             username = this.username,
-            password = passwordEncoder.encode(this.password),
+            password = password?.let {passwordEncoder.encode(it)},
             providerType = this.providerType,
             nickname = this.nickname,
             role = this.role,

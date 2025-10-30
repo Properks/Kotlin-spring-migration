@@ -2,6 +2,9 @@ dependencies {
     // Web
     implementation 'org.springframework.boot:spring-boot-starter-web'
 
+    // Security
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+
     // Spring cloud
     implementation 'org.springframework.cloud:spring-cloud-config-client'
 
