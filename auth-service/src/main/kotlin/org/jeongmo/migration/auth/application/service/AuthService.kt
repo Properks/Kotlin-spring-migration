@@ -7,8 +7,8 @@ import org.jeongmo.migration.auth.application.port.`in`.AuthCommandUseCase
 import org.jeongmo.migration.auth.application.port.out.member.MemberServiceClient
 import org.jeongmo.migration.auth.application.port.out.member.dto.CreateMemberRequest
 import org.jeongmo.migration.auth.application.port.out.member.dto.VerifyMemberRequest
-import org.jeongmo.migration.auth.application.port.out.member.enums.ProviderType
-import org.jeongmo.migration.auth.application.port.out.member.enums.Role
+import org.jeongmo.migration.common.enums.member.ProviderType
+import org.jeongmo.migration.common.enums.member.Role
 import org.jeongmo.migration.common.token.application.error.code.TokenErrorCode
 import org.jeongmo.migration.common.token.application.error.exception.TokenException
 import org.jeongmo.migration.common.token.domain.model.CustomUserDetails

@@ -1,7 +1,7 @@
 package org.jeongmo.migration.member.application.dto
 
-import org.jeongmo.migration.member.domain.enum.ProviderType
-import org.jeongmo.migration.member.domain.enum.Role
+import org.jeongmo.migration.common.enums.member.ProviderType
+import org.jeongmo.migration.common.enums.member.Role
 import org.jeongmo.migration.member.domain.model.Member
 import java.time.LocalDateTime
 

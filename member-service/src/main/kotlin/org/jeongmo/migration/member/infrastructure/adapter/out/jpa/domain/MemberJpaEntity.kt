@@ -2,8 +2,8 @@ package org.jeongmo.migration.member.infrastructure.adapter.out.jpa.domain
 
 import jakarta.persistence.*
 import org.jeongmo.migration.common.domain.jpa.JpaBaseEntity
-import org.jeongmo.migration.member.domain.enum.ProviderType
-import org.jeongmo.migration.member.domain.enum.Role
+import org.jeongmo.migration.common.enums.member.ProviderType
+import org.jeongmo.migration.common.enums.member.Role
 import java.time.LocalDateTime
 
 @Entity

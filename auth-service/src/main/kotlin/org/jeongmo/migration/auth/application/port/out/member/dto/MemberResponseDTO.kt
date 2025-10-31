@@ -1,7 +1,7 @@
 package org.jeongmo.migration.auth.application.port.out.member.dto
 
-import org.jeongmo.migration.auth.application.port.out.member.enums.ProviderType
-import org.jeongmo.migration.auth.application.port.out.member.enums.Role
+import org.jeongmo.migration.common.enums.member.ProviderType
+import org.jeongmo.migration.common.enums.member.Role
 import java.time.LocalDateTime
 
 data class CreateMemberResponse(
