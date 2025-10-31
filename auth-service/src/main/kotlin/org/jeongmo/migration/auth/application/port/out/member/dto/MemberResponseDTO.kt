@@ -5,11 +5,9 @@ import org.jeongmo.migration.auth.application.port.out.member.enums.Role
 import java.time.LocalDateTime
 
 data class CreateMemberResponse(
-    val id: Long?,
+    val id: Long,
     val createdAt: LocalDateTime?,
-) {
-
-}
+)
 
 data class MemberInfoResponse(
     val id: Long,
@@ -17,9 +15,8 @@ data class MemberInfoResponse(
     val nickname: String,
     val providerType: ProviderType,
     val role: Role,
-) {
+)
 
-}
 
 data class VerifyMemberResponse(
     val id: Long,
@@ -27,6 +24,4 @@ data class VerifyMemberResponse(
     val nickname: String,
     val providerType: ProviderType,
     val role: Role,
-) {
-
-}
+)
