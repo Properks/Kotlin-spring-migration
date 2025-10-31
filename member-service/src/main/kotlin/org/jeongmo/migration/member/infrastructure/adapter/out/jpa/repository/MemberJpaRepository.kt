@@ -1,5 +1,6 @@
 package org.jeongmo.migration.member.infrastructure.adapter.out.jpa.repository
 
+import org.jeongmo.migration.member.domain.enum.ProviderType
 import org.jeongmo.migration.member.domain.model.Member
 import org.jeongmo.migration.member.domain.repository.MemberRepository
 import org.jeongmo.migration.member.infrastructure.adapter.out.jpa.mapper.JpaMemberMapper
@@ -22,6 +23,12 @@ class MemberJpaRepository(
     override fun findById(id: Long): Member? {
         val foundEntity = jpaRepository.findById(id).orElse(null)
         return if (foundEntity == null) null else mapper.toDomain(foundEntity)
+    }
+
+    @Transactional(readOnly = true)
+    override fun findByUsernameAndProviderType(username: String, providerType: ProviderType): Member? {
+        val foundEntity = jpaRepository.findByUsernameAndProviderType(username, providerType)
+        return foundEntity?.let { mapper.toDomain(it) }
     }
 
     @Transactional(readOnly = true)

@@ -8,7 +8,7 @@ import org.jeongmo.migration.member.domain.enum.Role
 import java.time.LocalDateTime
 
 class Member(
-    val id: Long?,
+    val id: Long = 0L,
     var username: String,
     var password: String?,
     var providerType: ProviderType,

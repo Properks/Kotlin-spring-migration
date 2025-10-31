@@ -3,22 +3,28 @@ package org.jeongmo.migration.member.application.dto
 import org.jeongmo.migration.member.domain.enum.ProviderType
 import org.jeongmo.migration.member.domain.enum.Role
 import org.jeongmo.migration.member.domain.model.Member
+import org.springframework.security.crypto.password.PasswordEncoder
 
 data class CreateMemberRequest(
     val username: String,
-    val encodedPassword: String?,
+    val password: String?,
     val providerType: ProviderType,
     val nickname: String,
     val role: Role,
 ) {
-    fun toDomain(): Member =
+    fun toDomain(passwordEncoder: PasswordEncoder): Member =
         Member(
-            id = null,
             username = this.username,
-            password = this.encodedPassword,
+            password = password?.let {passwordEncoder.encode(it)},
             providerType = this.providerType,
             nickname = this.nickname,
             role = this.role,
             deletedAt = null,
         )
 }
+
+data class VerifyMemberRequest(
+    val username: String,
+    val password: String,
+    val providerType: ProviderType,
+)

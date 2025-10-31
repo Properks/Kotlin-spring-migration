@@ -10,7 +10,6 @@ class JpaMemberMapper {
 
     fun fromDomain(member: Member): MemberJpaEntity {
         return MemberJpaEntity(
-            id = member.id,
             username = member.username,
             password = member.password,
             providerType = member.providerType,

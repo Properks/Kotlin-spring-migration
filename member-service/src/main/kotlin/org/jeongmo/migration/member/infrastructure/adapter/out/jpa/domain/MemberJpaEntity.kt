@@ -7,15 +7,13 @@ import org.jeongmo.migration.member.domain.enum.Role
 import java.time.LocalDateTime
 
 @Entity
-@Table(name = "member")
+@Table(
+    name = "member",
+    uniqueConstraints = [UniqueConstraint(columnNames = ["username", "provider_type"])],
+)
 class MemberJpaEntity(
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "member_id")
-    var id: Long? = null,
-
-    @Column(name = "username", unique = true)
+    @Column(name = "username")
     var username : String,
 
     @Column(name = "password")
@@ -35,4 +33,9 @@ class MemberJpaEntity(
     @Column(name = "deleted_at")
     var deletedAt : LocalDateTime?,
 ): JpaBaseEntity() {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "member_id")
+    val id: Long = 0L
 }
