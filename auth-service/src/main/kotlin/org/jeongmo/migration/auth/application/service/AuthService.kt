@@ -9,6 +9,7 @@ import org.jeongmo.migration.auth.application.port.out.member.dto.CreateMemberRe
 import org.jeongmo.migration.auth.application.port.out.member.dto.VerifyMemberRequest
 import org.jeongmo.migration.common.enums.member.ProviderType
 import org.jeongmo.migration.common.enums.member.Role
+import org.jeongmo.migration.common.token.application.constants.TokenType
 import org.jeongmo.migration.common.token.application.error.code.TokenErrorCode
 import org.jeongmo.migration.common.token.application.error.exception.TokenException
 import org.jeongmo.migration.common.token.domain.model.CustomUserDetails
@@ -47,6 +48,7 @@ class AuthService(
 
     override fun reissueToken(request: ReissueTokenRequest): ReissueTokenResponse {
         val tokenInfo = tokenAuthService.getTokenInfo(request.refreshToken)
+        if (tokenInfo.type != TokenType.REFRESH) throw TokenException(TokenErrorCode.INVALID_TOKEN_TYPE)
         val userDetails = CustomUserDetails(
             id = tokenInfo.id.toLongOrNull() ?: throw TokenException(TokenErrorCode.TOKEN_NOT_VALID),
             username = tokenInfo.username,

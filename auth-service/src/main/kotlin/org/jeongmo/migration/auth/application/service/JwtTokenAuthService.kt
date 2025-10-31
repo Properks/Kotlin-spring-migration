@@ -1,5 +1,6 @@
 package org.jeongmo.migration.auth.application.service
 
+import org.jeongmo.migration.common.token.application.constants.TokenType
 import org.jeongmo.migration.common.token.application.dto.TokenInfoDTO
 import org.jeongmo.migration.common.token.application.util.TokenUtil
 import org.jeongmo.migration.common.token.domain.model.CustomUserDetails
@@ -17,6 +18,7 @@ class JwtTokenAuthService(
         return tokenUtil.createToken(
             userDetails = userDetails,
             expiration = accessTokenExpiration,
+            type = TokenType.ACCESS,
         )
     }
 
@@ -24,6 +26,7 @@ class JwtTokenAuthService(
         return tokenUtil.createToken(
             userDetails = userDetails,
             expiration = refreshTokenExpiration,
+            type = TokenType.REFRESH,
         )
     }
 
