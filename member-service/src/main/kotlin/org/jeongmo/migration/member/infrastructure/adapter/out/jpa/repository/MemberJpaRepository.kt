@@ -1,6 +1,6 @@
 package org.jeongmo.migration.member.infrastructure.adapter.out.jpa.repository
 
-import org.jeongmo.migration.member.domain.enum.ProviderType
+import org.jeongmo.migration.common.enums.member.ProviderType
 import org.jeongmo.migration.member.domain.model.Member
 import org.jeongmo.migration.member.domain.repository.MemberRepository
 import org.jeongmo.migration.member.infrastructure.adapter.out.jpa.mapper.JpaMemberMapper

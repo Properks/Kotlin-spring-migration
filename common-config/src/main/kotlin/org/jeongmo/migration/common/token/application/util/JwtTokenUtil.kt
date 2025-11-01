@@ -5,6 +5,7 @@ import io.jsonwebtoken.ExpiredJwtException
 import io.jsonwebtoken.Jws
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.security.Keys
+import org.jeongmo.migration.common.token.application.constants.TokenType
 import org.jeongmo.migration.common.token.domain.model.CustomUserDetails
 import org.jeongmo.migration.common.token.application.dto.TokenInfoDTO
 import org.jeongmo.migration.common.token.application.error.code.TokenErrorCode
@@ -28,9 +29,10 @@ class JwtTokenUtil(
     private val logger = LoggerFactory.getLogger(JwtTokenUtil::class.java)
     private val secretKey: SecretKey = Keys.hmacShaKeyFor(secret.toByteArray(Charsets.UTF_8)) // 지정하지 않으면 OS에 따라 다르게 작동
 
-    override fun createToken(userDetails: CustomUserDetails, expiration: Long): String {
+    override fun createToken(userDetails: CustomUserDetails, expiration: Long, type: TokenType): String {
         val now: Instant = Instant.now()
         return Jwts.builder()
+            .header().type(type.name).and()
             .subject(userDetails.username)
             .claim("id", userDetails.id)
             .claim("roles", userDetails.authorities.map {it.authority})
@@ -43,6 +45,12 @@ class JwtTokenUtil(
 
     override fun parseToken(token: String): TokenInfoDTO {
         val claims: Jws<Claims> = getClaims(token)
+        val type = try {
+            TokenType.valueOf(claims.header.type)
+        } catch (e: Exception) {
+            logger.warn("Invalid Token Type: ${claims.header.type}", e)
+            throw TokenException(TokenErrorCode.INVALID_TOKEN_TYPE)
+        }
         val idPayload = claims.payload["id"]?.toString() ?: throw TokenException(TokenErrorCode.FAIL_READ_TOKEN)
         val username = claims.payload.subject
         val roles = getAuthorities(claims)
@@ -51,6 +59,7 @@ class JwtTokenUtil(
             id = idPayload,
             username = username,
             roles = roles,
+            type = type,
         )
     }
 
