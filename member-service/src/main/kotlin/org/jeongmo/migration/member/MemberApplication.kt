@@ -8,7 +8,6 @@ import org.springframework.boot.runApplication
     "org.jeongmo.migration.common.domain.base",
     "org.jeongmo.migration.common.domain.jpa",
     "org.jeongmo.migration.common.config",
-    "org.jeongmo.migration.common.enums.member",
 ])
 class MemberApplication
 
