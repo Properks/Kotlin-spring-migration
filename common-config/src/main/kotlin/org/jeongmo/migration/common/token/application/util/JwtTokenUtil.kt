@@ -45,7 +45,12 @@ class JwtTokenUtil(
 
     override fun parseToken(token: String): TokenInfoDTO {
         val claims: Jws<Claims> = getClaims(token)
-        val type = claims.header.type
+        val type = try {
+            TokenType.valueOf(claims.header.type)
+        } catch (e: Exception) {
+            logger.warn("Invalid Token Type: ${claims.header.type}", e)
+            throw TokenException(TokenErrorCode.INVALID_TOKEN_TYPE)
+        }
         val idPayload = claims.payload["id"]?.toString() ?: throw TokenException(TokenErrorCode.FAIL_READ_TOKEN)
         val username = claims.payload.subject
         val roles = getAuthorities(claims)
@@ -54,7 +59,7 @@ class JwtTokenUtil(
             id = idPayload,
             username = username,
             roles = roles,
-            type = TokenType.valueOf(type),
+            type = type,
         )
     }
 
