@@ -5,9 +5,11 @@ import org.jeongmo.migration.auth.application.port.`in`.AuthCommandUseCase
 import org.namul.api.payload.response.DefaultResponse
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
+@RequestMapping("/auth")
 class AuthController(
     private val authCommandUseCase: AuthCommandUseCase,
 ) {
