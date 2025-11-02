@@ -1,18 +1,48 @@
 package org.jeongmo.migration.auth.infrastructure.adapter.out.member.api
 
+import org.jeongmo.migration.auth.application.error.code.AuthErrorCode
+import org.jeongmo.migration.auth.application.error.exception.AuthException
 import org.jeongmo.migration.auth.application.port.out.member.MemberServiceClient
 import org.jeongmo.migration.auth.application.port.out.member.dto.*
+import org.namul.api.payload.response.DefaultResponse
+import org.slf4j.LoggerFactory
+import org.springframework.core.ParameterizedTypeReference
 import org.springframework.stereotype.Component
+import org.springframework.web.reactive.function.client.WebClient
+import java.time.Duration
 
 @Component
-class MemberApiGateway: MemberServiceClient {
+class MemberApiGateway(
+    private val memberWebClient: WebClient,
+): MemberServiceClient {
+    private val logger = LoggerFactory.getLogger(MemberApiGateway::class.java)
 
     override fun createMember(request: CreateMemberRequest): CreateMemberResponse {
-        TODO("Not yet implemented")
+        val type = object: ParameterizedTypeReference<DefaultResponse<CreateMemberResponse?>>() {}
+        val response = sendRequest("/internal/api/member", request, type)
+
+        return response?.result ?: run {
+            logger.warn("Member Domain과의 통신에 실패했습니다. (회원 가입 요청)")
+            throw AuthException(AuthErrorCode.FAIL_SIGN_UP)
+        }
     }
 
-    override fun verifyMember(id: VerifyMemberRequest): VerifyMemberResponse? {
-        TODO("Not yet implemented")
+    override fun verifyMember(request: VerifyMemberRequest): VerifyMemberResponse {
+        val type = object: ParameterizedTypeReference<DefaultResponse<VerifyMemberResponse?>>() {}
+        val response = sendRequest("/internal/api/member/verify", request, type)
+
+        return response?.result ?: run {
+            logger.warn("Member Domain과의 통신에 실패했습니다. (사용자 검증 요청)")
+            throw AuthException(AuthErrorCode.FAIL_TO_VERIFY)
+        }
     }
+
+    private fun <T> sendRequest(uri: String, request: Any, responseType: ParameterizedTypeReference<T>): T? =
+        memberWebClient.post()
+            .uri(uri)
+            .bodyValue(request)
+            .retrieve()
+            .bodyToMono(responseType)
+            .block(Duration.ofSeconds(5))
 
 }

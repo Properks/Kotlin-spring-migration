@@ -16,3 +16,7 @@ eureka:
     fetch-registry: true
     service-url:
       defaultZone: http://${EUREKA_SERVER_USERNAME}:${EUREKA_SERVER_PASSWORD}@${EUREKA_SERVER_IP}:${EUREKA_SERVER_PORT}/eureka
+
+web-client:
+  base-url:
+    member: ${MEMBER_DOMAIN_URL}
