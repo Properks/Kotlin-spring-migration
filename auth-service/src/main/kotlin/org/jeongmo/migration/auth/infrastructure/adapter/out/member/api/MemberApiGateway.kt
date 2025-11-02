@@ -37,12 +37,22 @@ class MemberApiGateway(
         }
     }
 
+    /**
+     * @return 성공 시 responseType 반환, 실패 시 null 반환
+     */
     private fun <T> sendRequest(uri: String, request: Any, responseType: ParameterizedTypeReference<T>): T? =
-        memberWebClient.post()
-            .uri(uri)
-            .bodyValue(request)
-            .retrieve()
-            .bodyToMono(responseType)
-            .block(Duration.ofSeconds(5))
+        try {
+            memberWebClient.post()
+                .uri(uri)
+                .bodyValue(request)
+                .retrieve()
+                .bodyToMono(responseType)
+                .block(Duration.ofSeconds(5))
+
+        } catch (e: Exception) {
+            logger.warn("Member 도메인에서 에러 발생: ${e.message}")
+            null
+        }
+
 
 }
