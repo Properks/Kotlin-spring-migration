@@ -7,6 +7,7 @@ data class SignUpRequest(
     @field:NotBlank(message = "사용자 이름이 비어있습니다.")
     val username: String,
 
+    @field:NotBlank(message = "비밀번호가 비어있습니다.")
     @field:Size(min = 8, message = "비밀번호는 8자 이상이여야 합니다.")
     val password: String,
 
@@ -17,6 +18,7 @@ data class LoginRequest(
     @field:NotBlank(message = "사용자 이름이 비어있습니다.")
     val username: String,
 
+    @field:NotBlank(message = "비밀번호가 비어있습니다.")
     @field:Size(min = 8, message = "비밀번호는 8자 이상이여야 합니다.")
     val password: String
 )
