@@ -11,6 +11,12 @@ dependencies {
     //security
     implementation 'org.springframework.boot:spring-boot-starter-security'
 
+    // Spring cloud
+    implementation 'org.springframework.cloud:spring-cloud-config-client'
+
     // eureka
     implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+
+    // project
+    implementation(project(":common-config"))
 }
