@@ -1,10 +1,10 @@
 package org.jeongmo.migration.member.domain.model
 
 import org.jeongmo.migration.common.domain.base.BaseDomain
+import org.jeongmo.migration.common.enums.member.ProviderType
+import org.jeongmo.migration.common.enums.member.Role
 import org.jeongmo.migration.member.application.error.code.MemberErrorCode
 import org.jeongmo.migration.member.application.error.exception.MemberException
-import org.jeongmo.migration.member.domain.enum.ProviderType
-import org.jeongmo.migration.member.domain.enum.Role
 import java.time.LocalDateTime
 
 class Member(

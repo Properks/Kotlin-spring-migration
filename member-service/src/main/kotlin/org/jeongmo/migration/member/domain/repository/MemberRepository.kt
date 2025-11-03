@@ -1,6 +1,6 @@
 package org.jeongmo.migration.member.domain.repository
 
-import org.jeongmo.migration.member.domain.enum.ProviderType
+import org.jeongmo.migration.common.enums.member.ProviderType
 import org.jeongmo.migration.member.domain.model.Member
 
 interface MemberRepository {
