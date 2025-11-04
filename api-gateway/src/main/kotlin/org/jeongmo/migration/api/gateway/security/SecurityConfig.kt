@@ -42,7 +42,7 @@ class SecurityConfig(
 
     @Bean
     @Order(0)
-    fun actuatorFilterCharin(http: ServerHttpSecurity): SecurityWebFilterChain {
+    fun actuatorFilterChain(http: ServerHttpSecurity): SecurityWebFilterChain {
 
         http
             .securityMatcher(PathPatternParserServerWebExchangeMatcher("/actuator/**"))
