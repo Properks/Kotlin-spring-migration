@@ -14,8 +14,8 @@ class CustomAccessDeniedHandler(
 
     private val logger = LoggerFactory.getLogger(CustomAccessDeniedHandler::class.java)
 
-    override fun handle(exchange: ServerWebExchange?, denied: AccessDeniedException?): Mono<Void> {
+    override fun handle(exchange: ServerWebExchange, denied: AccessDeniedException?): Mono<Void> {
         logger.warn("인가 실패(권한 없음) ${denied?.message}", denied)
-        return httpResponseUtil.writeResponse(exchange!!, DefaultResponseErrorCode._FORBIDDEN, denied?.message)
+        return httpResponseUtil.writeResponse(exchange, DefaultResponseErrorCode._FORBIDDEN, denied?.message)
     }
 }

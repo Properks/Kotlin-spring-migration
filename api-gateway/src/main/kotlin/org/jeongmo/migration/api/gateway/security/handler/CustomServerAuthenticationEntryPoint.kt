@@ -14,8 +14,8 @@ class CustomServerAuthenticationEntryPoint(
 
     private val logger = LoggerFactory.getLogger(CustomServerAuthenticationEntryPoint::class.java)
 
-    override fun commence(exchange: ServerWebExchange?, ex: AuthenticationException?): Mono<Void> {
+    override fun commence(exchange: ServerWebExchange, ex: AuthenticationException?): Mono<Void> {
         logger.warn("인증 실패 ${ex?.message}", ex)
-        return httpResponseUtil.writeResponse(exchange!!, DefaultResponseErrorCode._UNAUTHORIZED, ex?.message)
+        return httpResponseUtil.writeResponse(exchange, DefaultResponseErrorCode._UNAUTHORIZED, ex?.message)
     }
 }
