@@ -11,9 +11,8 @@ import reactor.core.publisher.Mono
 @Component
 class HttpResponseUtil(
     private val failureResponseWriter: FailureResponseWriter,
+    private val objectMapper: ObjectMapper, // 자동으로 생성된 ObjectMapper의 설정을 그대로 사용하기 위해 의존성 주입
 ) {
-
-    private val objectMapper = ObjectMapper()
 
     fun <T> writeResponse(exchange: ServerWebExchange, code: BaseErrorCode, result: T): Mono<Void> {
         val response = exchange.response
