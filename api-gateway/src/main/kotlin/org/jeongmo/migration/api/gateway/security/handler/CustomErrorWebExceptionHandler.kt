@@ -15,6 +15,9 @@ class CustomErrorWebExceptionHandler(
 ): ErrorWebExceptionHandler {
 
     override fun handle(exchange: ServerWebExchange, ex: Throwable): Mono<Void> {
+        if (exchange.response.isCommitted) {
+            return Mono.error(ex)
+        }
         return httpResponseUtil.writeResponse(exchange, DefaultResponseErrorCode._INTERNAL_SERVER_ERROR, ex.message)
     }
 }
