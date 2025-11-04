@@ -19,7 +19,7 @@ class CustomErrorWebExceptionHandler(
     private val clientMessage = "Internal Server Error"
 
     override fun handle(exchange: ServerWebExchange, ex: Throwable): Mono<Void> {
-        logger.warn("Unhandled Server Error in API-GATEWAY", ex)
+        logger.error("Unhandled Server Error in API-GATEWAY: ${exchange.request.method} ${exchange.request.path}", ex)
         if (exchange.response.isCommitted) {
             return Mono.error(ex)
         }
