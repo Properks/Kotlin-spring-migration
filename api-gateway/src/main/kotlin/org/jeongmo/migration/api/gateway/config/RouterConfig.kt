@@ -21,6 +21,11 @@ class RouterConfig {
                     .path("/auth/**")
                     .uri("lb://AUTH-SERVICE")
             }
+            .route("member-service") {
+                it
+                    .path("/members/**")
+                    .uri("lb://MEMBER-SERVICE")
+            }
             .build()
     }
 
