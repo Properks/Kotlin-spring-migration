@@ -1,6 +1,8 @@
 package org.jeongmo.migration.api.gateway.security.filter
 
 import org.jeongmo.migration.api.gateway.security.util.HttpResponseUtil
+import org.jeongmo.migration.common.auth.constants.INTERNAL_SERVER_AUTH_HEADER_NAME
+import org.jeongmo.migration.common.token.application.constants.TokenType
 import org.jeongmo.migration.common.token.application.dto.TokenInfoDTO
 import org.jeongmo.migration.common.token.application.error.code.TokenErrorCode
 import org.jeongmo.migration.common.token.application.error.exception.TokenException
@@ -20,12 +22,13 @@ abstract class TokenAuthenticationFilter(
 ): WebFilter  {
 
     private val logger = LoggerFactory.getLogger(TokenAuthenticationFilter::class.java)
-    private val userIdHeader = "X-User-Id"
 
     final override fun filter(exchange: ServerWebExchange, chain: WebFilterChain): Mono<Void> {
         val token = extractToken(exchange) ?: return chain.filter(exchange)
         val info = try {
-            tokenUtil.parseToken(token)
+            tokenUtil.parseToken(token).also {
+                if (it.type != TokenType.ACCESS) throw TokenException(TokenErrorCode.INVALID_TOKEN_TYPE)
+            }
         } catch (e: TokenException) {
             // tokenUtil에서 에러 로깅
             return httpResponseUtil.writeResponse(exchange, e.code, e.message)
@@ -43,7 +46,7 @@ abstract class TokenAuthenticationFilter(
 
     private fun addHeader(exchange: ServerWebExchange, tokenInfo: TokenInfoDTO): ServerWebExchange {
         val request = exchange.request.mutate()
-            .header(userIdHeader, tokenInfo.id)
+            .header(INTERNAL_SERVER_AUTH_HEADER_NAME, tokenInfo.id)
             .build()
         return exchange.mutate().request(request).build()
 
