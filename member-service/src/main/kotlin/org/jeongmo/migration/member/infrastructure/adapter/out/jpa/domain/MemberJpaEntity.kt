@@ -1,6 +1,8 @@
 package org.jeongmo.migration.member.infrastructure.adapter.out.jpa.domain
 
 import jakarta.persistence.*
+import org.hibernate.annotations.SQLDelete
+import org.hibernate.annotations.SQLRestriction
 import org.jeongmo.migration.common.domain.jpa.JpaBaseEntity
 import org.jeongmo.migration.common.enums.member.ProviderType
 import org.jeongmo.migration.common.enums.member.Role
@@ -11,6 +13,8 @@ import java.time.LocalDateTime
     name = "member",
     uniqueConstraints = [UniqueConstraint(columnNames = ["username", "provider_type"])],
 )
+@SQLDelete(sql = "UPDATE member SET deleted_at = now() where member_id = ?")
+@SQLRestriction("deleted_at IS NULL")
 class MemberJpaEntity(
 
     @Id
