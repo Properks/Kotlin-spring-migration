@@ -41,4 +41,20 @@ class MemberService(
             }
         } ?: throw MemberException(MemberErrorCode.NOT_FOUND)
     }
+
+    override fun updateMemberInfos(id: Long, request: UpdateMemberInfoRequest): UpdateMemberInfoResponse {
+        val foundMember = memberRepository.findById(id) ?: throw MemberException(MemberErrorCode.NOT_FOUND)
+        foundMember.changeNickname(request.nickname)
+        return UpdateMemberInfoResponse.fromDomain(memberRepository.save(member = foundMember))
+    }
+
+    override fun deleteMember(id: Long) {
+        try {
+            if (!memberRepository.delete(id)) {
+                throw MemberException(MemberErrorCode.ALREADY_DELETE)
+            }
+        } catch (e: Exception) {
+            throw MemberException(MemberErrorCode.CANNOT_DELETE)
+        }
+    }
 }

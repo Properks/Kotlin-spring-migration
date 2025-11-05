@@ -1,5 +1,6 @@
 package org.jeongmo.migration.member.application.dto
 
+import jakarta.validation.constraints.NotBlank
 import org.jeongmo.migration.common.enums.member.ProviderType
 import org.jeongmo.migration.common.enums.member.Role
 import org.jeongmo.migration.member.domain.model.Member
@@ -27,4 +28,10 @@ data class VerifyMemberRequest(
     val username: String,
     val password: String,
     val providerType: ProviderType,
+)
+
+// Controller
+data class UpdateMemberInfoRequest(
+    @NotBlank
+    val nickname: String,
 )

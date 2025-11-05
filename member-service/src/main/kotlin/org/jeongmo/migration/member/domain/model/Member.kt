@@ -23,4 +23,8 @@ class Member(
             throw MemberException(MemberErrorCode.INVALID_DATA)
         }
     }
+
+    fun changeNickname(nickname: String) {
+        this.nickname = nickname
+    }
 }
