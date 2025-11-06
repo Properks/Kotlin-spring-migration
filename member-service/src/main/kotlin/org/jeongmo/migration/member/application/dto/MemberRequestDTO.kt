@@ -32,6 +32,6 @@ data class VerifyMemberRequest(
 
 // Controller
 data class UpdateMemberInfoRequest(
-    @NotBlank
+    @field:NotBlank
     val nickname: String,
 )

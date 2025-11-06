@@ -1,5 +1,6 @@
 package org.jeongmo.migration.member.infrastructure.adapter.inbound.controller
 
+import jakarta.validation.Valid
 import org.jeongmo.migration.common.auth.annotation.LoginUserId
 import org.jeongmo.migration.member.application.dto.MemberInfoResponse
 import org.jeongmo.migration.member.application.dto.UpdateMemberInfoRequest
@@ -21,7 +22,7 @@ class MemberController(
         = DefaultResponse.ok(memberQueryUseCase.findById(userId))
 
     @PatchMapping("/infos")
-    fun updateMemberInfo(@LoginUserId userId: Long, @RequestBody request: UpdateMemberInfoRequest): DefaultResponse<UpdateMemberInfoResponse> =
+    fun updateMemberInfo(@LoginUserId userId: Long, @Valid @RequestBody request: UpdateMemberInfoRequest): DefaultResponse<UpdateMemberInfoResponse> =
         DefaultResponse.ok(memberCommandUseCase.updateMemberInfos(userId, request))
 
     @DeleteMapping
