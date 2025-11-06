@@ -48,8 +48,8 @@ class MemberService(
 
     override fun updateMemberInfos(id: Long, request: UpdateMemberInfoRequest): UpdateMemberInfoResponse {
         val foundMember = memberRepository.findById(id) ?: throw MemberException(MemberErrorCode.NOT_FOUND)
-        foundMember.changeNickname(request.nickname)
-        return UpdateMemberInfoResponse.fromDomain(memberRepository.save(member = foundMember))
+        val updatedMember = if (foundMember.changeNickname(request.nickname)) memberRepository.save(member = foundMember) else foundMember
+        return UpdateMemberInfoResponse.fromDomain(updatedMember)
     }
 
     override fun deleteMember(id: Long) {
