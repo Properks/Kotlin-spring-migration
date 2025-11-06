@@ -23,4 +23,15 @@ class Member(
             throw MemberException(MemberErrorCode.INVALID_DATA)
         }
     }
+
+    /**
+     * @return true: it changed, false: nickname parameter is the same as field
+     */
+    fun changeNickname(nickname: String): Boolean {
+        if (this.nickname == nickname) {
+            return false
+        }
+        this.nickname = nickname
+        return true
+    }
 }

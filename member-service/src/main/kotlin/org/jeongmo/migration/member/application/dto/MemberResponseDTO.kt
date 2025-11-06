@@ -55,3 +55,21 @@ data class VerifyMemberResponse(
             )
     }
 }
+
+// Controller
+data class UpdateMemberInfoResponse(
+    val id: Long,
+    val username: String,
+    val nickname: String,
+    val updatedAt: LocalDateTime,
+) {
+    companion object {
+        fun fromDomain(member: Member) =
+            UpdateMemberInfoResponse(
+                id = member.id,
+                username = member.username,
+                nickname = member.nickname,
+                updatedAt = member.updatedAt ?: LocalDateTime.now(),
+            )
+    }
+}
