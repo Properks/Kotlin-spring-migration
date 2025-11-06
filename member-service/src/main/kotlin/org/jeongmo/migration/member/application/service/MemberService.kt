@@ -8,6 +8,8 @@ import org.jeongmo.migration.member.application.port.`in`.MemberCommandUseCase
 import org.jeongmo.migration.member.application.port.`in`.MemberQueryUseCase
 import org.jeongmo.migration.member.domain.model.Member
 import org.jeongmo.migration.member.domain.repository.MemberRepository
+import org.namul.api.payload.error.exception.ServerApplicationException
+import org.slf4j.LoggerFactory
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 
@@ -16,6 +18,8 @@ class MemberService(
     private val memberRepository: MemberRepository,
     private val passwordEncoder: PasswordEncoder,
 ): MemberQueryUseCase, MemberCommandUseCase {
+
+    private val logger = LoggerFactory.getLogger(MemberService::class.java)
 
     override fun createMember(request: CreateMemberRequest): CreateMemberResponse {
         if (request.providerType == ProviderType.LOCAL && request.password == null) throw MemberException(MemberErrorCode.INVALID_DATA)
@@ -53,7 +57,11 @@ class MemberService(
             if (!memberRepository.delete(id)) {
                 throw MemberException(MemberErrorCode.ALREADY_DELETE)
             }
+        } catch (e: ServerApplicationException) {
+            logger.warn("ServerApplicationException 발생 ${e.message}", e)
+            throw e
         } catch (e: Exception) {
+            logger.error("Unknown Error 발생 ${e.message}", e)
             throw MemberException(MemberErrorCode.CANNOT_DELETE)
         }
     }
