@@ -3,7 +3,7 @@ package org.jeongmo.migration.auth.application.service
 import org.jeongmo.migration.auth.application.dto.*
 import org.jeongmo.migration.auth.application.error.code.AuthErrorCode
 import org.jeongmo.migration.auth.application.error.exception.AuthException
-import org.jeongmo.migration.auth.application.port.`in`.AuthCommandUseCase
+import org.jeongmo.migration.auth.application.port.inbound.AuthCommandUseCase
 import org.jeongmo.migration.auth.application.port.out.member.MemberServiceClient
 import org.jeongmo.migration.auth.application.port.out.member.dto.CreateMemberRequest
 import org.jeongmo.migration.auth.application.port.out.member.dto.VerifyMemberRequest

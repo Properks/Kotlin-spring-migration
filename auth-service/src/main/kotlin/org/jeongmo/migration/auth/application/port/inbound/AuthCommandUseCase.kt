@@ -1,4 +1,4 @@
-package org.jeongmo.migration.auth.application.port.`in`
+package org.jeongmo.migration.auth.application.port.inbound
 
 import org.jeongmo.migration.auth.application.dto.*
 

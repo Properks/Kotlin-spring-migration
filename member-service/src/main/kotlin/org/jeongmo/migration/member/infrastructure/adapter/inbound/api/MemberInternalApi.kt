@@ -1,8 +1,8 @@
 package org.jeongmo.migration.member.infrastructure.adapter.inbound.api
 
 import org.jeongmo.migration.member.application.dto.*
-import org.jeongmo.migration.member.application.port.`in`.MemberCommandUseCase
-import org.jeongmo.migration.member.application.port.`in`.MemberQueryUseCase
+import org.jeongmo.migration.member.application.port.inbound.MemberCommandUseCase
+import org.jeongmo.migration.member.application.port.inbound.MemberQueryUseCase
 import org.namul.api.payload.response.DefaultResponse
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable

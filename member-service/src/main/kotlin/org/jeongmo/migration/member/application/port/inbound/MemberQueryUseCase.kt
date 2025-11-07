@@ -1,4 +1,4 @@
-package org.jeongmo.migration.member.application.port.`in`
+package org.jeongmo.migration.member.application.port.inbound
 
 import org.jeongmo.migration.member.application.dto.MemberInfoResponse
 

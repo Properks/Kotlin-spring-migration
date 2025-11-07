@@ -2,7 +2,7 @@ package org.jeongmo.migration.auth.infrastructure.adapter.inbound.controller
 
 import jakarta.validation.Valid
 import org.jeongmo.migration.auth.application.dto.*
-import org.jeongmo.migration.auth.application.port.`in`.AuthCommandUseCase
+import org.jeongmo.migration.auth.application.port.inbound.AuthCommandUseCase
 import org.namul.api.payload.response.DefaultResponse
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.PostMapping
