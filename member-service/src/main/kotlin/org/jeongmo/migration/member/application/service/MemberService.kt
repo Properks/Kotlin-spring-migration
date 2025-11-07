@@ -4,8 +4,8 @@ import org.jeongmo.migration.common.enums.member.ProviderType
 import org.jeongmo.migration.member.application.dto.*
 import org.jeongmo.migration.member.application.error.code.MemberErrorCode
 import org.jeongmo.migration.member.application.error.exception.MemberException
-import org.jeongmo.migration.member.application.port.`in`.MemberCommandUseCase
-import org.jeongmo.migration.member.application.port.`in`.MemberQueryUseCase
+import org.jeongmo.migration.member.application.port.inbound.MemberCommandUseCase
+import org.jeongmo.migration.member.application.port.inbound.MemberQueryUseCase
 import org.jeongmo.migration.member.domain.model.Member
 import org.jeongmo.migration.member.domain.repository.MemberRepository
 import org.namul.api.payload.error.exception.ServerApplicationException
