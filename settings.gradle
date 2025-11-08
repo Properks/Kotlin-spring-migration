@@ -9,4 +9,5 @@ include 'common-config'
 include 'api-gateway'
 include 'auth-service'
 include 'member-service'
+include 'item-service'
 
