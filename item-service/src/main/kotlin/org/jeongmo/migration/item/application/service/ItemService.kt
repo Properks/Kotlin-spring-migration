@@ -1,6 +1,8 @@
 package org.jeongmo.migration.item.application.service
 
 import org.jeongmo.migration.item.application.dto.*
+import org.jeongmo.migration.item.application.error.code.ItemErrorCode
+import org.jeongmo.migration.item.application.error.exception.ItemException
 import org.jeongmo.migration.item.application.port.inbound.ItemCommandUseCase
 import org.jeongmo.migration.item.application.port.inbound.ItemQueryUseCase
 import org.jeongmo.migration.item.domain.repository.ItemRepository
@@ -17,7 +19,7 @@ class ItemService(
     }
 
     override fun findById(id: Long): ItemInfoResponse {
-        val item = itemRepository.findById(id)
+        val item = itemRepository.findById(id) ?: throw ItemException(ItemErrorCode.NOT_FOUND)
         return ItemInfoResponse.fromDomain(item)
     }
 
@@ -29,7 +31,7 @@ class ItemService(
     }
 
     override fun updateItem(id: Long, request: UpdateItemRequest): UpdateItemResponse {
-        val item = itemRepository.findById(id)
+        val item = itemRepository.findById(id) ?: throw ItemException(ItemErrorCode.NOT_FOUND)
         request.name?.let { item.changeName(it) }
         request.price?.let { item.changePrice(it) }
         request.discount?.let { item.changeDiscount(it) }
@@ -38,6 +40,8 @@ class ItemService(
     }
 
     override fun deleteItem(id: Long) {
-        itemRepository.deleteById(id)
+        if (itemRepository.deleteById(id)) {
+            throw ItemException(ItemErrorCode.ALREADY_DELETE)
+        }
     }
 }

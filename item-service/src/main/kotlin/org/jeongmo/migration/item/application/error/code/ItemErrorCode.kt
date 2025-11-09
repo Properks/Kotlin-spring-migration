@@ -11,6 +11,8 @@ enum class ItemErrorCode(
     private val message: String,
 ): BaseErrorCode {
 
+    NOT_FOUND(HttpStatus.NOT_FOUND, "ITEM_404_1", "상품을 찾지 못했습니다."),
+    ALREADY_DELETE(HttpStatus.BAD_REQUEST, "ITEM_400_1", "이미 삭제된 상품입니다.")
     ;
 
     override fun getReason(): ErrorReasonDTO =
