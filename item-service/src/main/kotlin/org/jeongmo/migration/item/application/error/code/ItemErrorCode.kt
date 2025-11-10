@@ -12,7 +12,8 @@ enum class ItemErrorCode(
 ): BaseErrorCode {
 
     NOT_FOUND(HttpStatus.NOT_FOUND, "ITEM_404_1", "상품을 찾지 못했습니다."),
-    ALREADY_DELETE(HttpStatus.BAD_REQUEST, "ITEM_400_1", "이미 삭제된 상품입니다.")
+    ALREADY_DELETE(HttpStatus.BAD_REQUEST, "ITEM_400_1", "이미 삭제되었거나 존재하지 않는 상품입니다."),
+    FAIL_ITEM_DELETE(HttpStatus.INTERNAL_SERVER_ERROR, "ITEM_500_1", "상품 삭제에 실패했습니다."),
     ;
 
     override fun getReason(): ErrorReasonDTO =
