@@ -1,9 +1,15 @@
-package org.jeongmo.migration.org.jeongmo.migration.item
+package org.jeongmo.migration.item
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 
-@SpringBootApplication
+@SpringBootApplication(
+    scanBasePackages = [
+        "org.jeongmo.migration.item",
+        "org.jeongmo.migration.common.config",
+        "org.jeongmo.migration.common.domain.jpa",
+    ]
+)
 class ItemApplication
 
 fun main(args: Array<String>) {
