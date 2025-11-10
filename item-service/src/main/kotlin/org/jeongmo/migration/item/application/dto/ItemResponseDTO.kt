@@ -27,6 +27,7 @@ data class UpdateItemResponse(
     val price: Long,
     val discount: Double,
     val discountPrice: Long?,
+    val itemStatus: ItemStatus,
     val updatedAt: LocalDateTime,
 ) {
     companion object {
@@ -37,6 +38,7 @@ data class UpdateItemResponse(
                 price = item.price,
                 discount = item.discount,
                 discountPrice = item.getDiscountPrice(),
+                itemStatus = item.itemStatus,
                 updatedAt = item.updatedAt ?: LocalDateTime.now(),
             )
     }
