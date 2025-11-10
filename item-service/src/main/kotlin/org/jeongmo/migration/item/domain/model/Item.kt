@@ -17,7 +17,7 @@ class Item(
 ): BaseDomain(createdAt, updatedAt) {
 
     fun getDiscountPrice(): Long =
-        (this.price * this.discount).toLong()
+        (this.price * (1 - this.discount)).toLong()
 
     fun changeName(name: String) {
         this.name = name
