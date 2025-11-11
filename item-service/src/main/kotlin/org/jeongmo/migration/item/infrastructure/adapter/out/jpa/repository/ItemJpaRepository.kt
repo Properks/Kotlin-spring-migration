@@ -31,8 +31,6 @@ class ItemJpaRepository(
     }
 
     override fun deleteById(id: Long): Boolean {
-        if (!itemSpringDataJpaRepository.existsById(id)) return false
-        itemSpringDataJpaRepository.deleteById(id)
-        return true
+        return itemSpringDataJpaRepository.softDeleteById(id) > 0
     }
 }
