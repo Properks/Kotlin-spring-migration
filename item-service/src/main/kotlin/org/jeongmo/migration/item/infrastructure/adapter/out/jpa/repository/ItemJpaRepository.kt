@@ -20,11 +20,13 @@ class ItemJpaRepository(
         )
     }
 
+    @Transactional(readOnly = true)
     override fun findById(id: Long): Item? {
         val foundItem = itemSpringDataJpaRepository.findById(id).orElse(null)
         return foundItem?.let { itemJpaMapper.toDomain(it) }
     }
 
+    @Transactional(readOnly = true)
     override fun findAll(): List<Item> {
         val foundItems = itemSpringDataJpaRepository.findAll()
         return foundItems.map { itemJpaMapper.toDomain(it) }
