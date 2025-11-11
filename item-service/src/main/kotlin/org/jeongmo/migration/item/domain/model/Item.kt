@@ -1,6 +1,8 @@
 package org.jeongmo.migration.item.domain.model
 
 import org.jeongmo.migration.common.domain.base.BaseDomain
+import org.jeongmo.migration.item.application.error.code.ItemErrorCode
+import org.jeongmo.migration.item.application.error.exception.ItemException
 import org.jeongmo.migration.item.domain.enums.ItemStatus
 import java.time.LocalDateTime
 
@@ -28,6 +30,7 @@ class Item(
     }
 
     fun changeDiscount(discount: Double) {
+        if (discount !in 0.0..1.0) throw ItemException(ItemErrorCode.INVALID_DOMAIN_DATA)
         this.discount = discount
     }
 
