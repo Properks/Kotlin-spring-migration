@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: item-service
+  profiles:
+    active: dev
+  cloud:
+    config:
+      username: ${CLOUD_CONFIG_USERNAME}
+      password: ${CLOUD_CONFIG_PASSWORD}
+  config:
+    import: optional:configserver:http://${CLOUD_CONFIG_IP}:${CLOUD_CONFIG_PORT}
