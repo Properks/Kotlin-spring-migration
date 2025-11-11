@@ -34,7 +34,7 @@ class ItemController(
         DefaultResponse.ok(itemQueryUseCase.findAll())
 
     @PatchMapping("/{itemId}")
-    fun updateItem(@PathVariable itemId: Long, @RequestBody request: UpdateItemRequest): DefaultResponse<UpdateItemResponse> =
+    fun updateItem(@PathVariable itemId: Long, @Valid @RequestBody request: UpdateItemRequest): DefaultResponse<UpdateItemResponse> =
         DefaultResponse.ok(itemCommandUseCase.updateItem(itemId, request))
 
     @DeleteMapping("/{itemId}")
