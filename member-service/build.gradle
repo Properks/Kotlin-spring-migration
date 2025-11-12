@@ -16,5 +16,15 @@ dependencies {
     runtimeOnly 'com.mysql:mysql-connector-j'
     testImplementation 'org.jetbrains.kotlin:kotlin-test'
 
+
+    // Logging
+    implementation 'io.micrometer:micrometer-tracing-bridge-brave'
+//    implementation 'io.zipkin.reporter2:zipkin-reporter-brave'
+
+    implementation 'net.logstash.logback:logstash-logback-encoder'
+
+    // Actuator
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
     implementation(project(":common-config"))
 }
