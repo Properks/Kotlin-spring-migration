@@ -13,6 +13,7 @@ import org.jeongmo.migration.common.token.application.constants.TokenType
 import org.jeongmo.migration.common.token.application.error.code.TokenErrorCode
 import org.jeongmo.migration.common.token.application.error.exception.TokenException
 import org.jeongmo.migration.common.token.domain.model.CustomUserDetails
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 import java.util.*
@@ -23,6 +24,8 @@ class AuthService(
     private val memberServiceClient: MemberServiceClient,
 ): AuthCommandUseCase {
 
+    private val logger = LoggerFactory.getLogger(AuthService::class.java)
+
     override fun signUp(request: SignUpRequest) {
         val clientRequest = CreateMemberRequest(
             username = request.username,
@@ -31,7 +34,7 @@ class AuthService(
             providerType = ProviderType.LOCAL,
             role = Role.USER
             )
-        memberServiceClient.createMember(clientRequest)
+        memberServiceClient.createMember(clientRequest).also { logger.info("[SUCCESS_SIGN_UP] auth | id: ${it.id}") }
     }
 
     override fun login(request: LoginRequest): LoginResponse {
@@ -43,7 +46,8 @@ class AuthService(
             password = "",
             roles = Collections.singletonList(memberInfo.role.name)
         )
-        return processLogin(userDetails)
+
+        return processLogin(userDetails).also { logger.info("[SUCCESS_LOGIN] auth | id: ${memberInfo.id}, loginTime: ${it.loginTime}") }
     }
 
     override fun reissueToken(request: ReissueTokenRequest): ReissueTokenResponse {
@@ -57,7 +61,7 @@ class AuthService(
         )
         return ReissueTokenResponse(
             accessToken = tokenAuthService.createAccessToken(userDetails)
-        )
+        ).also { logger.info("[SUCCESS_REISSUE_TOKEN] auth | id: ${tokenInfo.id}") }
     }
 
     private fun processLogin(userDetails: CustomUserDetails): LoginResponse {

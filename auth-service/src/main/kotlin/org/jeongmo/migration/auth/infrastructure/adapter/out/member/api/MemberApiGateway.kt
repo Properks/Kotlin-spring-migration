@@ -22,7 +22,7 @@ class MemberApiGateway(
         val response = sendRequest("/internal/api/member", request, type)
 
         return response?.result ?: run {
-            logger.warn("Member Domain과의 통신에 실패했습니다. (회원 가입 요청)")
+            logger.warn("[FAIL_API] auth | Fail api call to member service (sign-up request)")
             throw AuthException(AuthErrorCode.FAIL_SIGN_UP)
         }
     }
@@ -32,7 +32,7 @@ class MemberApiGateway(
         val response = sendRequest("/internal/api/member/verify", request, type)
 
         return response?.result ?: run {
-            logger.warn("Member Domain과의 통신에 실패했습니다. (사용자 검증 요청)")
+            logger.warn("[FAIL_API] auth | Fail api call to member service (login request)")
             throw AuthException(AuthErrorCode.FAIL_TO_VERIFY)
         }
     }
@@ -50,7 +50,7 @@ class MemberApiGateway(
                 .block(Duration.ofSeconds(5))
 
         } catch (e: Exception) {
-            logger.warn("Member 도메인에서 에러 발생: ${e.message}")
+            logger.warn("[EXTERNAL_DOMAIN_ERROR] auth | Error in member domain service: ${e.message}")
             null
         }
 
