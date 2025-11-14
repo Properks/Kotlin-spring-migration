@@ -18,13 +18,13 @@ class ItemService(
 
     override fun createItem(request: CreateItemRequest): CreateItemResponse {
         val item = itemRepository.save(request.toDomain())
-        logger.info("[SUCCESS_CREATE] item | id: ${item.id}")
+        logger.info("[SUCCESS_CREATE] item-service | id: ${item.id}")
         return CreateItemResponse.fromDomain(item)
     }
 
     override fun findById(id: Long): ItemInfoResponse {
         val item = itemRepository.findById(id) ?: throw ItemException(ItemErrorCode.NOT_FOUND)
-        return ItemInfoResponse.fromDomain(item).also { logger.info("[FIND_DOMAIN] item | id: ${it.id}") }
+        return ItemInfoResponse.fromDomain(item).also { logger.info("[FIND_DOMAIN] item-service | id: ${it.id}") }
     }
 
     override fun findAll(): List<ItemInfoResponse> {
@@ -40,7 +40,7 @@ class ItemService(
         request.price?.let { item.changePrice(it) }
         request.discount?.let { item.changeDiscount(it) }
         request.itemStatus?.let { item.changeItemStatus(it) }
-        return UpdateItemResponse.fromDomain(itemRepository.save(item)).also { logger.info("[SUCCESS_UPDATE] item | id: ${it.id}") }
+        return UpdateItemResponse.fromDomain(itemRepository.save(item)).also { logger.info("[SUCCESS_UPDATE] item-service | id: ${it.id}") }
     }
 
     override fun deleteItem(id: Long) {
@@ -49,10 +49,10 @@ class ItemService(
                 throw ItemException(ItemErrorCode.ALREADY_DELETE)
             }
         } catch (e: ItemException) {
-            logger.warn("[FAIL_DELETE] item | ServerApplicationException: ${e.message}", e)
+            logger.warn("[FAIL_DELETE] item-service | ServerApplicationException: ${e.message}", e)
             throw e
         } catch (e: Exception) {
-            logger.error("[FAIL_DELETE] item | Unknown Error: ${e.message}", e)
+            logger.error("[FAIL_DELETE] item-service | Unknown Error: ${e.message}", e)
             throw ItemException(ItemErrorCode.FAIL_ITEM_DELETE)
         }
     }

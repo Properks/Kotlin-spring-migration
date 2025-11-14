@@ -1,8 +1,6 @@
 package org.jeongmo.migration.auth.application.service
 
 import org.jeongmo.migration.auth.application.dto.*
-import org.jeongmo.migration.auth.application.error.code.AuthErrorCode
-import org.jeongmo.migration.auth.application.error.exception.AuthException
 import org.jeongmo.migration.auth.application.port.inbound.AuthCommandUseCase
 import org.jeongmo.migration.auth.application.port.out.member.MemberServiceClient
 import org.jeongmo.migration.auth.application.port.out.member.dto.CreateMemberRequest
@@ -34,12 +32,12 @@ class AuthService(
             providerType = ProviderType.LOCAL,
             role = Role.USER
             )
-        memberServiceClient.createMember(clientRequest).also { logger.info("[SUCCESS_SIGN_UP] auth | id: ${it.id}") }
+        memberServiceClient.createMember(clientRequest).also { logger.info("[SUCCESS_SIGN_UP] auth-service") }
     }
 
     override fun login(request: LoginRequest): LoginResponse {
         val clientRequest = VerifyMemberRequest(request.username, request.password, ProviderType.LOCAL)
-        val memberInfo = memberServiceClient.verifyMember(clientRequest) ?: throw AuthException(AuthErrorCode.UNAUTHORIZED_DATA)
+        val memberInfo = memberServiceClient.verifyMember(clientRequest)
         val userDetails = CustomUserDetails(
             id = memberInfo.id,
             username = memberInfo.username,
@@ -47,7 +45,7 @@ class AuthService(
             roles = Collections.singletonList(memberInfo.role.name)
         )
 
-        return processLogin(userDetails).also { logger.info("[SUCCESS_LOGIN] auth | id: ${memberInfo.id}, loginTime: ${it.loginTime}") }
+        return processLogin(userDetails).also { logger.info("[SUCCESS_LOGIN] auth-service") }
     }
 
     override fun reissueToken(request: ReissueTokenRequest): ReissueTokenResponse {
@@ -61,7 +59,7 @@ class AuthService(
         )
         return ReissueTokenResponse(
             accessToken = tokenAuthService.createAccessToken(userDetails)
-        ).also { logger.info("[SUCCESS_REISSUE_TOKEN] auth | id: ${tokenInfo.id}") }
+        ).also { logger.info("[SUCCESS_REISSUE_TOKEN] auth-service") }
     }
 
     private fun processLogin(userDetails: CustomUserDetails): LoginResponse {
