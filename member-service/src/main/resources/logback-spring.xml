@@ -2,7 +2,7 @@
 <configuration>
     <springProperty scope="context" name="APPLICATION_NAME" source="spring.application.name"/>
 
-    <property name="DIR" value="member-service/log"/>
+    <property name="DIR" value="${LOG_PATH:-./member-service/log}"/>
 
     <appender name="CONSOLE_APPENDER" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
@@ -24,8 +24,27 @@
         </rollingPolicy>
     </appender>
 
-    <root level="INFO">
-        <appender-ref ref="FILE_JSON_APPENDER"/>
-        <appender-ref ref="CONSOLE_APPENDER"/>
-    </root>
+    <springProfile name="dev,local">
+        <logger name="org.jeongmo.migration.member" level="DEBUG" additivity="false">
+            <appender-ref ref="CONSOLE_APPENDER"/>
+            <appender-ref ref="FILE_JSON_APPENDER"/>
+        </logger>
+
+        <logger name="org.springframework" level="INFO" additivity="false">
+            <appender-ref ref="CONSOLE_APPENDER"/>
+        </logger>
+
+        <root level="INFO">
+            <appender-ref ref="CONSOLE_APPENDER"/>
+        </root>
+    </springProfile>
+
+<!--    나머지 처리 로직 (현재 미운영) -->
+    <springProfile name="!dev &amp; !local">
+        <root level="INFO">
+            <appender-ref ref="FILE_JSON_APPENDER"/>
+            <appender-ref ref="CONSOLE_APPENDER"/>
+        </root>
+    </springProfile>
+
 </configuration>
