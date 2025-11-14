@@ -56,16 +56,10 @@
             <appender-ref ref="FILE_JSON_APPENDER"/>
         </logger>
 
-        <root level="WARN">
+        <root level="INFO">
             <appender-ref ref="FILE_JSON_APPENDER"/>
         </root>
     </springProfile>
 
-    <springProfile name="!dev &amp; !local &amp; !prod">
-        <root level="INFO">
-            <appender-ref ref="FILE_JSON_APPENDER"/>
-            <appender-ref ref="CONSOLE_APPENDER"/>
-        </root>
-    </springProfile>
 
 </configuration>
