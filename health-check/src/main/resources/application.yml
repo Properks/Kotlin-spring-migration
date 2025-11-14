@@ -3,7 +3,7 @@ spring:
     name: health-check
 
   profiles:
-    active: dev
+    active: ${SPRING_APPLICATION_ACTIVE:dev}
 
   config:
     import: optional:configserver:http://${CLOUD_CONFIG_IP}:${CLOUD_CONFIG_PORT}

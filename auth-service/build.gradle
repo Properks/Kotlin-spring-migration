@@ -19,6 +19,16 @@ dependencies {
     // Netty
     implementation 'io.netty:netty-resolver-dns-native-macos:4.1.68.Final:osx-aarch_64'
 
+
+    // Logging
+    implementation 'io.micrometer:micrometer-tracing-bridge-brave'
+//    implementation 'io.zipkin.reporter2:zipkin-reporter-brave'
+
+    implementation 'net.logstash.logback:logstash-logback-encoder'
+
+    // Actuator
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
     // common-config
     implementation(project(":common-config"))
 }

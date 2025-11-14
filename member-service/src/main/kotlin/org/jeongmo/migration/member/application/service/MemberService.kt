@@ -24,21 +24,21 @@ class MemberService(
     override fun createMember(request: CreateMemberRequest): CreateMemberResponse {
         if (request.providerType == ProviderType.LOCAL && request.password == null) throw MemberException(MemberErrorCode.INVALID_DATA)
         val member = memberRepository.save(request.toDomain(passwordEncoder))
-        return CreateMemberResponse.fromDomain(member)
+        return CreateMemberResponse.fromDomain(member).also { logger.info("[SUCCESS_CREATE_MEMBER] member-service") }
     }
 
     override fun findById(id: Long): MemberInfoResponse {
         val foundMember: Member? = memberRepository.findById(id)
         return MemberInfoResponse.fromDomain(
             foundMember ?: throw MemberException(MemberErrorCode.NOT_FOUND)
-        )
+        ).also { logger.info("[FIND_DOMAIN] member-service") }
     }
 
     override fun verifyMember(request: VerifyMemberRequest): VerifyMemberResponse? {
         val foundMember: Member? = memberRepository.findByUsernameAndProviderType(request.username, request.providerType)
         return foundMember?.let {
             if (passwordEncoder.matches(request.password, it.password)) {
-                return VerifyMemberResponse.fromDomain(member = it)
+                return VerifyMemberResponse.fromDomain(member = it).also { logger.info("[SUCCESS_VERIFY] member-service") }
             }
             else {
                 throw MemberException(MemberErrorCode.INCORRECT_PASSWORD)
@@ -49,7 +49,7 @@ class MemberService(
     override fun updateMemberInfos(id: Long, request: UpdateMemberInfoRequest): UpdateMemberInfoResponse {
         val foundMember = memberRepository.findById(id) ?: throw MemberException(MemberErrorCode.NOT_FOUND)
         val updatedMember = if (foundMember.changeNickname(request.nickname)) memberRepository.save(member = foundMember) else foundMember
-        return UpdateMemberInfoResponse.fromDomain(updatedMember)
+        return UpdateMemberInfoResponse.fromDomain(updatedMember).also { logger.info("[SUCCESS_UPDATE] member-service") }
     }
 
     override fun deleteMember(id: Long) {
@@ -58,10 +58,12 @@ class MemberService(
                 throw MemberException(MemberErrorCode.ALREADY_DELETE)
             }
         } catch (e: ServerApplicationException) {
-            logger.warn("ServerApplicationException 발생 ${e.message}", e)
+            logger.warn("[FAIL_DELETE] member-service | ServerApplicationException")
+            logger.debug("Exception Details: ", e)
             throw e
         } catch (e: Exception) {
-            logger.error("Unknown Error 발생 ${e.message}", e)
+            logger.error("[FAIL_DELETE] member-service | Unknown Error:", e)
+            logger.debug("Exception Details: ", e)
             throw MemberException(MemberErrorCode.CANNOT_DELETE)
         }
     }
