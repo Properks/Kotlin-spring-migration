@@ -61,7 +61,7 @@
         </root>
     </springProfile>
 
-    <springProfile name="!dev &amp; !local &amp; !dev">
+    <springProfile name="!dev &amp; !local &amp; !prod">
         <root level="INFO">
             <appender-ref ref="FILE_JSON_APPENDER"/>
             <appender-ref ref="CONSOLE_APPENDER"/>
