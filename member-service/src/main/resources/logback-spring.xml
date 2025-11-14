@@ -39,8 +39,21 @@
         </root>
     </springProfile>
 
-<!--    나머지 처리 로직 (현재 미운영) -->
-    <springProfile name="!dev &amp; !local">
+    <springProfile name="prod">
+        <logger name="org.jeongmo.migration.member" level="INFO" additivity="false">
+            <appender-ref ref="FILE_JSON_APPENDER"/>
+        </logger>
+
+        <logger name="org.springframework" level="WARN" additivity="false">
+            <appender-ref ref="FILE_JSON_APPENDER"/>
+        </logger>
+
+        <root level="WARN">
+            <appender-ref ref="FILE_JSON_APPENDER"/>
+        </root>
+    </springProfile>
+
+    <springProfile name="!dev &amp; !local &amp; prod">
         <root level="INFO">
             <appender-ref ref="FILE_JSON_APPENDER"/>
             <appender-ref ref="CONSOLE_APPENDER"/>
