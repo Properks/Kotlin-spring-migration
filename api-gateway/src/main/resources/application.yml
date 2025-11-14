@@ -7,7 +7,7 @@ spring:
   application:
     name: api-gateway
   profiles:
-    active: dev
+    active: ${SPRING_APPLICATION_ACTIVE:dev}
   cloud:
     config:
       username: ${CLOUD_CONFIG_USERNAME}
