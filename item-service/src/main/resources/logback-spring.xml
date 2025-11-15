@@ -8,6 +8,11 @@
             <appender-ref ref="FILE_JSON_APPENDER"/>
         </logger>
 
+        <logger name="org.jeongmo.migration.common" level="DEBUG" additivity="false">
+            <appender-ref ref="CONSOLE_APPENDER"/>
+            <appender-ref ref="FILE_JSON_APPENDER"/>
+        </logger>
+
         <logger name="org.springframework" level="INFO" additivity="false">
             <appender-ref ref="CONSOLE_APPENDER"/>
         </logger>
@@ -19,6 +24,10 @@
 
     <springProfile name="prod">
         <logger name="org.jeongmo.migration.item" level="INFO" additivity="false">
+            <appender-ref ref="FILE_JSON_APPENDER"/>
+        </logger>
+
+        <logger name="org.jeongmo.migration.common" level="INFO" additivity="false">
             <appender-ref ref="FILE_JSON_APPENDER"/>
         </logger>
 
