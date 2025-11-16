@@ -1,32 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <configuration>
-    <springProperty scope="context" name="APPLICATION_NAME" source="spring.application.name"/>
-
-    <property name="DIR" value="${LOG_PATH:-./item-service/log}"/>
-
-    <appender name="CONSOLE_APPENDER" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %highlight(%-5level) %cyan(%logger{36}) - %msg%n</pattern>
-        </encoder>
-    </appender>
-
-    <appender name="FILE_JSON_APPENDER" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${DIR}/${APPLICATION_NAME}.json</file>
-        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
-            <includeMdc>true</includeMdc>
-            <includeCallerData>false</includeCallerData>
-        </encoder>
-
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${DIR}/archived/${APPLICATION_NAME}-%d{yyyy-MM-dd}.json</fileNamePattern>
-            <maxHistory>30</maxHistory>
-            <totalSizeCap>1GB</totalSizeCap>
-        </rollingPolicy>
-    </appender>
-
+    <include resource="logback-base.xml"/>
 
     <springProfile name="dev,local">
         <logger name="org.jeongmo.migration.item" level="DEBUG" additivity="false">
+            <appender-ref ref="CONSOLE_APPENDER"/>
+            <appender-ref ref="FILE_JSON_APPENDER"/>
+        </logger>
+
+        <logger name="org.jeongmo.migration.common" level="DEBUG" additivity="false">
             <appender-ref ref="CONSOLE_APPENDER"/>
             <appender-ref ref="FILE_JSON_APPENDER"/>
         </logger>
@@ -42,6 +24,10 @@
 
     <springProfile name="prod">
         <logger name="org.jeongmo.migration.item" level="INFO" additivity="false">
+            <appender-ref ref="FILE_JSON_APPENDER"/>
+        </logger>
+
+        <logger name="org.jeongmo.migration.common" level="INFO" additivity="false">
             <appender-ref ref="FILE_JSON_APPENDER"/>
         </logger>
 
