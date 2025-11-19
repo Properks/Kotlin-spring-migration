@@ -22,8 +22,9 @@ services:
 
   eureka-server:
     build: ./eureka-server
-    ports:
-      - "8761:8761"
+    image: properks/eureka-server
+#    ports:
+#      - "8761:8761"
     container_name: eureka-server
     env_file:
       - ./.env
@@ -38,8 +39,9 @@ services:
 
   config-server:
     build: ./config-server
-    ports:
-      - "9000:9000"
+    image: properks/config-server
+#    ports:
+#      - "9000:9000"
     container_name: config-server
     env_file:
       - ./.env
@@ -54,6 +56,7 @@ services:
 
   api-gateway:
     build: ./api-gateway
+    image: properks/api-gateway
     ports:
       - "8080:8080"
     container_name: api-gateway
@@ -69,6 +72,7 @@ services:
 
   item-service:
     build: ./item-service
+    image: properks/item-service
     container_name: item-service
     env_file:
       - ./.env
@@ -84,6 +88,7 @@ services:
 
   auth-service:
     build: ./auth-service
+    image: properks/auth-service
     container_name: auth-service
     env_file:
       - ./.env
@@ -99,6 +104,7 @@ services:
 
   member-service:
     build: ./member-service
+    image: properks/member-service
     container_name: member-service
     env_file:
       - ./.env
