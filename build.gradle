@@ -72,3 +72,36 @@ subprojects {
         useJUnitPlatform()
     }
 }
+
+tasks.register('buildDomain') {
+    group("Custom gradle")
+    description("Cleans and builds bootJar for specified domain microservices.")
+    def domainModules = [
+            "eureka-server",
+            "config-server",
+            "api-gateway",
+            "member-service",
+            "auth-service",
+            "item-service",
+    ]
+
+    domainModules.each { moduleName ->
+        def project = findProject(":$moduleName")
+        if (project != null) {
+            def cleanTask = project.tasks.named("clean")
+            def bootJarTask = project.tasks.named("bootJar")
+            if (cleanTask.isPresent() && bootJarTask.isPresent()) {
+                dependsOn bootJarTask
+                cleanTask.configure { it.finalizedBy bootJarTask }
+                bootJarTask.configure { it.dependsOn cleanTask }
+            }
+            else {
+                logger.warn("Cannot find clean or bootJar task in $moduleName")
+            }
+        }
+
+        doLast {
+            logger.info("Success clean and build")
+        }
+    }
+}
