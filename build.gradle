@@ -91,9 +91,9 @@ tasks.register('buildDomain') {
             def cleanTask = project.tasks.named("clean")
             def bootJarTask = project.tasks.named("bootJar")
             if (cleanTask.isPresent() && bootJarTask.isPresent()) {
+                dependsOn cleanTask
                 dependsOn bootJarTask
-                cleanTask.configure { it.finalizedBy bootJarTask }
-                bootJarTask.configure { it.dependsOn cleanTask }
+                bootJarTask.configure { it.mustRunAfter cleanTask }
             }
             else {
                 logger.warn("Cannot find clean or bootJar task in $moduleName")
