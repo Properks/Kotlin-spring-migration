@@ -1,0 +1,123 @@
+version: '3.8'
+
+services:
+
+  mysql:
+    image: mysql
+    container_name: mysql
+    ports:
+      - "3307:3306"
+    networks:
+      - my-network
+    environment:
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+      - MYSQL_DATABASE=${DB_DATABASE}
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -uroot -p$${MYSQL_ROOT_PASSWORD} || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    restart: always
+
+  eureka-server:
+    build: ./eureka-server
+    image: properks/eureka-server
+#    ports:
+#      - "8761:8761"
+    container_name: eureka-server
+    env_file:
+      - ./.env
+    networks:
+      - my-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8761/actuator/health || exit 1"]
+      retries: 5
+      interval: 5s
+      timeout: 3s
+      start_period: 30s
+
+  config-server:
+    build: ./config-server
+    image: properks/config-server
+#    ports:
+#      - "9000:9000"
+    container_name: config-server
+    env_file:
+      - ./.env
+    networks:
+      - my-network
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -f http://localhost:9000/actuator/health || exit 1" ]
+      retries: 5
+      interval: 5s
+      timeout: 3s
+      start_period: 30s
+
+  api-gateway:
+    build: ./api-gateway
+    image: properks/api-gateway
+    ports:
+      - "8080:8080"
+    container_name: api-gateway
+    env_file:
+      - ./.env
+    networks:
+      - my-network
+    depends_on:
+      config-server:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+
+  item-service:
+    build: ./item-service
+    image: properks/item-service
+    container_name: item-service
+    env_file:
+      - ./.env
+    networks:
+      - my-network
+    depends_on:
+      config-server:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+      mysql:
+        condition: service_healthy
+
+  auth-service:
+    build: ./auth-service
+    image: properks/auth-service
+    container_name: auth-service
+    env_file:
+      - ./.env
+    networks:
+      - my-network
+    depends_on:
+      config-server:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+      mysql:
+        condition: service_healthy
+
+  member-service:
+    build: ./member-service
+    image: properks/member-service
+    container_name: member-service
+    env_file:
+      - ./.env
+    networks:
+      - my-network
+    depends_on:
+      config-server:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+      mysql:
+        condition: service_healthy
+
+networks:
+  my-network:
+    driver: bridge

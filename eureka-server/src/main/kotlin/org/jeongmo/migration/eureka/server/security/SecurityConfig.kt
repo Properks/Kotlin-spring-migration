@@ -24,7 +24,10 @@ class SecurityConfig(
     fun filterChain(http: HttpSecurity): SecurityFilterChain {
         http
             .csrf {it.disable()}
-            .authorizeHttpRequests { it.anyRequest().authenticated() }
+            .authorizeHttpRequests { it
+                .requestMatchers("/actuator/health").permitAll()
+                .anyRequest().authenticated()
+            }
             .httpBasic(Customizer.withDefaults())
         return http.build()
     }

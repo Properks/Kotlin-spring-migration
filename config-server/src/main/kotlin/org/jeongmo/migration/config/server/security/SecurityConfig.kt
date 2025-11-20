@@ -22,7 +22,10 @@ class SecurityConfig(
     @Bean
     fun filterChain(http: HttpSecurity): SecurityFilterChain {
         http
-            .authorizeHttpRequests { it.anyRequest().authenticated() }
+            .authorizeHttpRequests { it
+                .requestMatchers("/actuator/health").permitAll()
+                .anyRequest().authenticated()
+            }
             .csrf {it.disable()}
             .httpBasic(Customizer.withDefaults())
         return http.build()
