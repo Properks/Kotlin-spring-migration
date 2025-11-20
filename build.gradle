@@ -99,9 +99,9 @@ tasks.register('buildDomain') {
                 logger.warn("Cannot find clean or bootJar task in $moduleName")
             }
         }
+    }
 
-        doLast {
-            logger.info("Success clean and build")
-        }
+    doLast {
+        logger.info("Success clean and build")
     }
 }
