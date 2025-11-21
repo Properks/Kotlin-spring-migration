@@ -16,3 +16,7 @@ dependencies {
     //actuator
     implementation 'org.springframework.boot:spring-boot-starter-actuator:3.5.5'
 }
+
+bootBuildImage {
+    imageName = "${dockerUsername}/${project.name}"
+}
