@@ -46,6 +46,7 @@ subprojects {
     ext {
         set('springCloudVersion', "2025.0.0")
         set('logstashLogbackEncoder', "7.4")
+        set('dockerUsername', 'properks')
     }
 
     dependencyManagement {
@@ -76,24 +77,21 @@ subprojects {
 tasks.register('buildDomain') {
     group("Custom gradle")
     description("Cleans and builds bootJar for specified domain microservices.")
-    def domainModules = [
-            "eureka-server",
-            "config-server",
-            "api-gateway",
-            "member-service",
-            "auth-service",
-            "item-service",
-    ]
+    def domainModules = project.subprojects.name
+    domainModules.remove("common-config")
 
     domainModules.each { moduleName ->
         def project = findProject(":$moduleName")
         if (project != null) {
             def cleanTask = project.tasks.named("clean")
-            def bootJarTask = project.tasks.named("bootJar")
-            if (cleanTask.isPresent() && bootJarTask.isPresent()) {
+            def buildImageTask = project.tasks.named("bootBuildImage")
+            if (cleanTask.isPresent() && buildImageTask.isPresent()) {
                 dependsOn cleanTask
-                dependsOn bootJarTask
-                bootJarTask.configure { it.mustRunAfter cleanTask }
+                dependsOn buildImageTask
+                buildImageTask.configure {it.mustRunAfter cleanTask}
+            }
+            else if (buildImageTask.isPresent()) {
+                dependsOn buildImageTask
             }
             else {
                 logger.warn("Cannot find clean or bootJar task in $moduleName")
