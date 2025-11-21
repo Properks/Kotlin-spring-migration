@@ -4,6 +4,7 @@ plugins {
     id 'org.springframework.boot' version '3.5.4'
     id 'io.spring.dependency-management' version '1.1.7'
     id 'org.jetbrains.kotlin.plugin.jpa' version '1.9.25'
+    id 'com.google.cloud.tools.jib' version '3.4.2'
 }
 
 
@@ -24,6 +25,7 @@ subprojects {
     apply plugin: 'org.springframework.boot' // Spring Boot 플러그인 적용
     apply plugin: 'io.spring.dependency-management'
     apply plugin: 'org.jetbrains.kotlin.plugin.jpa'
+    apply plugin: 'com.google.cloud.tools.jib'
 
     java {
         toolchain {
@@ -69,6 +71,29 @@ subprojects {
         annotation 'jakarta.persistence.Embeddable'
     }
 
+
+//    tasks.named('bootBuildImage') {
+//        imageName = "${dockerUsername}/${project.name}"
+//        buildpacks = ["docker.io/paketobuildpacks/amazon-corretto", "urn:cnb:builder:paketo-buildpacks/java"]
+//    }
+
+    jib {
+        from {
+            image = 'amazoncorretto:17'
+        }
+
+        to {
+            image = "${dockerUsername}/${project.name}"
+        }
+
+//        container {
+//            jvmFlags = [
+//                    "java",
+//                    "-jar"
+//            ]
+//        }
+    }
+
     tasks.named('test') {
         useJUnitPlatform()
     }
@@ -84,11 +109,13 @@ tasks.register('buildDomain') {
         def project = findProject(":$moduleName")
         if (project != null) {
             def cleanTask = project.tasks.named("clean")
-            def buildImageTask = project.tasks.named("bootBuildImage")
+            def buildImageTask = project.tasks.named("jib")
             if (cleanTask.isPresent() && buildImageTask.isPresent()) {
                 dependsOn cleanTask
                 dependsOn buildImageTask
-                buildImageTask.configure {it.mustRunAfter cleanTask}
+                buildImageTask.configure {
+                    it.mustRunAfter cleanTask
+                }
             }
             else if (buildImageTask.isPresent()) {
                 dependsOn buildImageTask

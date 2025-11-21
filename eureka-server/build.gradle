@@ -4,7 +4,3 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     testImplementation 'org.jetbrains.kotlin:kotlin-test'
 }
-
-bootBuildImage {
-    imageName = "${dockerUsername}/${project.name}"
-}
