@@ -23,3 +23,7 @@ dependencies {
     // project
     implementation(project(":common-config"))
 }
+
+bootBuildImage {
+    imageName = "${dockerUsername}/${project.name}"
+}
