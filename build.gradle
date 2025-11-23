@@ -101,7 +101,7 @@ subprojects {
 
 tasks.register('buildDomain') {
     group("Custom gradle")
-    description("Cleans and builds bootJar for specified domain microservices.")
+    description("Cleans and builds Docker image for specified domain microservices using jib.")
     def domainModules = project.subprojects.name
     domainModules.remove("common-config")
 
@@ -121,7 +121,7 @@ tasks.register('buildDomain') {
                 dependsOn buildImageTask
             }
             else {
-                logger.warn("Cannot find clean or bootJar task in $moduleName")
+                logger.warn("Cannot find clean or jib task in $moduleName")
             }
         }
     }
