@@ -7,6 +7,10 @@ plugins {
     id 'com.google.cloud.tools.jib' version '3.5.1'
 }
 
+ext {
+    set('dockerUsername', System.getenv("DOCKER_USERNAME") ?: findProperty('docker.username'))
+}
+
 
 allprojects {
 
@@ -48,7 +52,6 @@ subprojects {
     ext {
         set('springCloudVersion', "2025.0.0")
         set('logstashLogbackEncoder', "7.4")
-        set('dockerUsername', 'properks')
     }
 
     dependencyManagement {
@@ -102,6 +105,9 @@ subprojects {
 tasks.register('buildDomain') {
     group("Custom gradle")
     description("Cleans and builds Docker image for specified domain microservices using jib.")
+    if (dockerUsername == null) {
+        throw new GradleException("Cannot find dockerUsername in env and gradle.properties")
+    }
     def domainModules = project.subprojects.name
     domainModules.remove("common-config")
 
