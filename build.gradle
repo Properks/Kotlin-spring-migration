@@ -74,12 +74,6 @@ subprojects {
         annotation 'jakarta.persistence.Embeddable'
     }
 
-
-//    tasks.named('bootBuildImage') {
-//        imageName = "${dockerUsername}/${project.name}"
-//        buildpacks = ["docker.io/paketobuildpacks/amazon-corretto", "urn:cnb:builder:paketo-buildpacks/java"]
-//    }
-
     jib {
         from {
             image = 'amazoncorretto:17'
@@ -88,13 +82,6 @@ subprojects {
         to {
             image = "${dockerUsername}/${project.name}"
         }
-
-//        container {
-//            jvmFlags = [
-//                    "java",
-//                    "-jar"
-//            ]
-//        }
     }
 
     tasks.named('test') {
