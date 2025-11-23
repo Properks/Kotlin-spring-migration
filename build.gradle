@@ -4,6 +4,11 @@ plugins {
     id 'org.springframework.boot' version '3.5.4'
     id 'io.spring.dependency-management' version '1.1.7'
     id 'org.jetbrains.kotlin.plugin.jpa' version '1.9.25'
+    id 'com.google.cloud.tools.jib' version '3.5.1'
+}
+
+ext {
+    set('dockerUsername', System.getenv("DOCKER_USERNAME") ?: findProperty('docker.username'))
 }
 
 
@@ -24,6 +29,7 @@ subprojects {
     apply plugin: 'org.springframework.boot' // Spring Boot 플러그인 적용
     apply plugin: 'io.spring.dependency-management'
     apply plugin: 'org.jetbrains.kotlin.plugin.jpa'
+    apply plugin: 'com.google.cloud.tools.jib'
 
     java {
         toolchain {
@@ -68,6 +74,16 @@ subprojects {
         annotation 'jakarta.persistence.Embeddable'
     }
 
+    jib {
+        from {
+            image = 'amazoncorretto:17'
+        }
+
+        to {
+            image = "${dockerUsername}/${project.name}"
+        }
+    }
+
     tasks.named('test') {
         useJUnitPlatform()
     }
@@ -75,28 +91,30 @@ subprojects {
 
 tasks.register('buildDomain') {
     group("Custom gradle")
-    description("Cleans and builds bootJar for specified domain microservices.")
-    def domainModules = [
-            "eureka-server",
-            "config-server",
-            "api-gateway",
-            "member-service",
-            "auth-service",
-            "item-service",
-    ]
+    description("Cleans and builds Docker image for specified domain microservices using jib.")
+    if (dockerUsername == null) {
+        throw new GradleException("Cannot find dockerUsername in env and gradle.properties")
+    }
+    def domainModules = project.subprojects.name
+    domainModules.remove("common-config")
 
     domainModules.each { moduleName ->
         def project = findProject(":$moduleName")
         if (project != null) {
             def cleanTask = project.tasks.named("clean")
-            def bootJarTask = project.tasks.named("bootJar")
-            if (cleanTask.isPresent() && bootJarTask.isPresent()) {
+            def buildImageTask = project.tasks.named("jib")
+            if (cleanTask.isPresent() && buildImageTask.isPresent()) {
                 dependsOn cleanTask
-                dependsOn bootJarTask
-                bootJarTask.configure { it.mustRunAfter cleanTask }
+                dependsOn buildImageTask
+                buildImageTask.configure {
+                    it.mustRunAfter cleanTask
+                }
+            }
+            else if (buildImageTask.isPresent()) {
+                dependsOn buildImageTask
             }
             else {
-                logger.warn("Cannot find clean or bootJar task in $moduleName")
+                logger.warn("Cannot find clean or jib task in $moduleName")
             }
         }
     }
