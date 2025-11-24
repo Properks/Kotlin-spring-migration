@@ -64,6 +64,12 @@ services:
       - ./.env
     networks:
       - my-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/actuator/health || exit 1"]
+      retries: 5
+      interval: 5s
+      timeout: 3s
+      start_period: 30s
     depends_on:
       config-server:
         condition: service_healthy
@@ -78,6 +84,12 @@ services:
       - ./.env
     networks:
       - my-network
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -f http://localhost:8081/actuator/health || exit 1" ]
+      retries: 5
+      interval: 5s
+      timeout: 3s
+      start_period: 30s
     depends_on:
       config-server:
         condition: service_healthy
@@ -94,6 +106,12 @@ services:
       - ./.env
     networks:
       - my-network
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -f http://localhost:8081/actuator/health || exit 1" ]
+      retries: 5
+      interval: 5s
+      timeout: 3s
+      start_period: 30s
     depends_on:
       config-server:
         condition: service_healthy
@@ -110,6 +128,12 @@ services:
       - ./.env
     networks:
       - my-network
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -f http://localhost:8081/actuator/health || exit 1" ]
+      retries: 5
+      interval: 5s
+      timeout: 3s
+      start_period: 30s
     depends_on:
       config-server:
         condition: service_healthy
