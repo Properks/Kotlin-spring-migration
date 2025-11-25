@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/internal/api/member")
+@RequestMapping("/internal/api/members")
 class MemberInternalApi(
     private val memberCommandUseCase: MemberCommandUseCase,
     private val memberQueryUseCase: MemberQueryUseCase,
