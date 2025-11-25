@@ -4,7 +4,6 @@ plugins {
 rootProject.name = 'Kotlin-spring-migration'
 include 'config-server'
 include 'eureka-server'
-include 'health-check'
 include 'common-config'
 include 'api-gateway'
 include 'auth-service'
