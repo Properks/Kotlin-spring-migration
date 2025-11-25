@@ -29,6 +29,9 @@ class ItemJpaEntity(
     @Column(name = "score")
     var score : Double? = null,
 
+    @Column(name = "item_count")
+    var itemCount: Long,
+
     @Enumerated(EnumType.STRING)
     @Column(name = "item_status")
     var itemStatus: ItemStatus = ItemStatus.IN_STOCK,

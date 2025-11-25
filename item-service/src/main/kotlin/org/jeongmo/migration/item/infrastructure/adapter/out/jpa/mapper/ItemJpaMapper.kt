@@ -14,6 +14,7 @@ class ItemJpaMapper {
             price = item.price,
             discount = item.discount,
             score = item.score,
+            itemCount = item.itemCount,
             itemStatus = item.itemStatus,
             deletedAt = item.deletedAt,
         ).apply {
@@ -29,6 +30,7 @@ class ItemJpaMapper {
             price = itemJpaEntity.price,
             discount = itemJpaEntity.discount,
             score =  itemJpaEntity.score,
+            itemCount = itemJpaEntity.itemCount,
             itemStatus = itemJpaEntity.itemStatus,
             deletedAt = itemJpaEntity.deletedAt,
             createdAt = itemJpaEntity.createdAt,

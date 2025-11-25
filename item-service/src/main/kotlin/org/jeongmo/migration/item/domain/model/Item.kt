@@ -11,6 +11,7 @@ class Item(
     var name: String,
     var price: Long,
     var discount: Double = 0.0,
+    var itemCount: Long,
     var itemStatus: ItemStatus,
     var deletedAt: LocalDateTime? = null,
     var score: Double? = null,
@@ -36,5 +37,13 @@ class Item(
 
     fun changeItemStatus(itemStatus: ItemStatus) {
         this.itemStatus = itemStatus
+    }
+
+    fun changeItemCount(itemCount: Long) {
+        this.itemCount = itemCount
+    }
+
+    fun decreaseItemCount() {
+        this.itemCount--
     }
 }
