@@ -22,6 +22,12 @@ class ItemService(
         return CreateItemResponse.fromDomain(item)
     }
 
+    override fun decreaseItemCount(id: Long) {
+        val foundItem = itemRepository.findById(id) ?: throw ItemException(ItemErrorCode.NOT_FOUND)
+        foundItem.decreaseItemCount()
+        itemRepository.save(foundItem)
+    }
+
     override fun findById(id: Long): ItemInfoResponse {
         val item = itemRepository.findById(id) ?: throw ItemException(ItemErrorCode.NOT_FOUND)
         return ItemInfoResponse.fromDomain(item).also { logger.info("[FIND_DOMAIN] item-service | id: ${it.id}") }
