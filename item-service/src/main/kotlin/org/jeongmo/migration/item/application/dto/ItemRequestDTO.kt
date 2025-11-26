@@ -12,11 +12,14 @@ data class CreateItemRequest(
     val name: String,
     @field:PositiveOrZero
     val price: Long,
+    @field:PositiveOrZero
+    val itemCount: Long,
 ) {
     fun toDomain(): Item {
         return Item(
             name = this.name,
             price = this.price,
+            itemCount = itemCount,
             itemStatus = ItemStatus.IN_STOCK,
         )
     }
