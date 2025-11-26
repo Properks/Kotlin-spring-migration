@@ -7,6 +7,7 @@ import org.jeongmo.migration.item.application.port.inbound.ItemCommandUseCase
 import org.jeongmo.migration.item.application.port.inbound.ItemQueryUseCase
 import org.jeongmo.migration.item.domain.repository.ItemRepository
 import org.slf4j.LoggerFactory
+import org.springframework.orm.ObjectOptimisticLockingFailureException
 import org.springframework.stereotype.Service
 
 @Service
@@ -22,10 +23,20 @@ class ItemService(
         return CreateItemResponse.fromDomain(item)
     }
 
-    override fun decreaseItemCount(id: Long) {
-        val foundItem = itemRepository.findById(id) ?: throw ItemException(ItemErrorCode.NOT_FOUND)
-        foundItem.decreaseItemCount()
-        itemRepository.save(foundItem)
+    override fun decreaseItemCount(id: Long, retryCount: Int) {
+        for (i in 0 until retryCount) {
+            try {
+                decreaseItemCount(id)
+                return
+            } catch (e: ObjectOptimisticLockingFailureException) {
+                logger.warn("[FAIL_DECREASE_ITEM] item-service | retry: $i / $retryCount")
+                Thread.sleep(100)
+            } catch (e: Exception) {
+                logger.error("[FAIL_DECREASE_ITEM] item-service | ${e.javaClass}: ${e.message}")
+                throw e
+            }
+        }
+        throw ItemException(ItemErrorCode.OPTIMISTIC_LOCKING_ERROR)
     }
 
     override fun findById(id: Long): ItemInfoResponse {
@@ -61,5 +72,11 @@ class ItemService(
             logger.error("[FAIL_DELETE] item-service | Unknown Error: ${e.message}", e)
             throw ItemException(ItemErrorCode.FAIL_ITEM_DELETE)
         }
+    }
+
+    fun decreaseItemCount(id: Long) {
+        val foundItem = itemRepository.findById(id) ?: throw ItemException(ItemErrorCode.NOT_FOUND)
+        foundItem.decreaseItemCount()
+        itemRepository.save(foundItem)
     }
 }
