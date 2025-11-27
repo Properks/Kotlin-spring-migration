@@ -9,6 +9,7 @@ import org.jeongmo.migration.item.domain.repository.ItemRepository
 import org.slf4j.LoggerFactory
 import org.springframework.orm.ObjectOptimisticLockingFailureException
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class ItemService(
@@ -17,12 +18,14 @@ class ItemService(
 
     private val logger = LoggerFactory.getLogger(ItemService::class.java)
 
+    @Transactional
     override fun createItem(request: CreateItemRequest): CreateItemResponse {
         val item = itemRepository.save(request.toDomain())
         logger.info("[SUCCESS_CREATE] item-service | id: ${item.id}")
         return CreateItemResponse.fromDomain(item)
     }
 
+    @Transactional
     override fun decreaseItemCount(id: Long, retryCount: Int) {
         for (i in 0 until retryCount) {
             try {
@@ -39,11 +42,13 @@ class ItemService(
         throw ItemException(ItemErrorCode.OPTIMISTIC_LOCKING_ERROR)
     }
 
+    @Transactional(readOnly = true)
     override fun findById(id: Long): ItemInfoResponse {
         val item = itemRepository.findById(id) ?: throw ItemException(ItemErrorCode.NOT_FOUND)
         return ItemInfoResponse.fromDomain(item).also { logger.info("[FIND_DOMAIN] item-service | id: ${it.id}") }
     }
 
+    @Transactional(readOnly = true)
     override fun findAll(): List<ItemInfoResponse> {
         return itemRepository.findAll()
             .map {
@@ -51,6 +56,7 @@ class ItemService(
             }
     }
 
+    @Transactional
     override fun updateItem(id: Long, request: UpdateItemRequest): UpdateItemResponse {
         val item = itemRepository.findById(id) ?: throw ItemException(ItemErrorCode.NOT_FOUND)
         request.name?.let { item.changeName(it) }
@@ -60,6 +66,7 @@ class ItemService(
         return UpdateItemResponse.fromDomain(itemRepository.save(item)).also { logger.info("[SUCCESS_UPDATE] item-service | id: ${it.id}") }
     }
 
+    @Transactional
     override fun deleteItem(id: Long) {
         try {
             if (!itemRepository.deleteById(id)) {
@@ -74,6 +81,7 @@ class ItemService(
         }
     }
 
+    @Transactional
     fun decreaseItemCount(id: Long) {
         val foundItem = itemRepository.findById(id) ?: throw ItemException(ItemErrorCode.NOT_FOUND)
         foundItem.decreaseItemCount()
