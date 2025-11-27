@@ -10,10 +10,12 @@ import org.slf4j.LoggerFactory
 import org.springframework.orm.ObjectOptimisticLockingFailureException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.transaction.support.TransactionTemplate
 
 @Service
 class ItemService(
     private val itemRepository: ItemRepository,
+    private val transactionTemplate: TransactionTemplate,
 ): ItemQueryUseCase, ItemCommandUseCase {
 
     private val logger = LoggerFactory.getLogger(ItemService::class.java)
@@ -25,14 +27,17 @@ class ItemService(
         return CreateItemResponse.fromDomain(item)
     }
 
-    @Transactional
     override fun decreaseItemCount(id: Long, retryCount: Int) {
         for (i in 0 until retryCount) {
             try {
-                decreaseItemCount(id)
+                transactionTemplate.execute {
+                    val foundItem = itemRepository.findById(id) ?: throw ItemException(ItemErrorCode.NOT_FOUND)
+                    foundItem.decreaseItemCount()
+                    itemRepository.save(foundItem)
+                }
                 return
             } catch (e: ObjectOptimisticLockingFailureException) {
-                logger.warn("[FAIL_DECREASE_ITEM] item-service | retry: $i / $retryCount")
+                logger.warn("[FAIL_DECREASE_ITEM] item-service | retry: ${i + 1} / $retryCount")
                 Thread.sleep(100)
             } catch (e: Exception) {
                 logger.error("[FAIL_DECREASE_ITEM] item-service | ${e.javaClass}: ${e.message}")
@@ -81,10 +86,4 @@ class ItemService(
         }
     }
 
-    @Transactional
-    fun decreaseItemCount(id: Long) {
-        val foundItem = itemRepository.findById(id) ?: throw ItemException(ItemErrorCode.NOT_FOUND)
-        foundItem.decreaseItemCount()
-        itemRepository.save(foundItem)
-    }
 }
