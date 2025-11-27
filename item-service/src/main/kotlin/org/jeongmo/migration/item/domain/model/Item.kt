@@ -45,6 +45,7 @@ class Item(
     }
 
     fun decreaseItemCount() {
+        if (itemCount <= 0) throw ItemException(ItemErrorCode.NO_ITEM_STOCK)
         this.itemCount--
     }
 }

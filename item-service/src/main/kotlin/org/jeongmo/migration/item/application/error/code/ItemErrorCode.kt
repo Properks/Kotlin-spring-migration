@@ -16,6 +16,7 @@ enum class ItemErrorCode(
     FAIL_ITEM_DELETE(HttpStatus.INTERNAL_SERVER_ERROR, "ITEM_500_1", "상품 삭제에 실패했습니다."),
     INVALID_DOMAIN_DATA(HttpStatus.BAD_REQUEST, "ITEM_400_2", "상품 정보가 유효하지 않습니다."),
     OPTIMISTIC_LOCKING_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "ITEM_500_2", "낙관적 락 충돌이 발생하였습니다."),
+    NO_ITEM_STOCK(HttpStatus.BAD_REQUEST, "ITEM_400_3", "상품 재고가 없습니다."),
     ;
 
     override fun getReason(): ErrorReasonDTO =
