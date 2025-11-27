@@ -17,6 +17,10 @@ class ItemInternalController(
     fun getItem(@PathVariable itemId: Long): DefaultResponse<ItemInfoResponse> =
         DefaultResponse.ok(itemQueryUseCase.findById(itemId))
 
+    /**
+     * 상품 개수 1 감소
+     * 낙관적 락으로 실패 시 재시도, 재시도 횟수 내에 실패 시 500에러
+     */
     @PatchMapping("/{itemId}")
     fun decreaseCount(@PathVariable itemId: Long): DefaultResponse<Unit> {
         itemCommandUseCase.decreaseItemCount(itemId);
