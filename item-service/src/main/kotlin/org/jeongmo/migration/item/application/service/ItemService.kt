@@ -44,6 +44,7 @@ class ItemService(
                 throw e
             }
         }
+        logger.info("[SUCCESS_DECREASE_ITEM] item-service | id: $id")
         throw ItemException(ItemErrorCode.OPTIMISTIC_LOCKING_ERROR)
     }
 
