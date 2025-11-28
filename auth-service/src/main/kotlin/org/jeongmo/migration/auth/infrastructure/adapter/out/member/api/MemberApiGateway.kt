@@ -19,7 +19,7 @@ class MemberApiGateway(
 
     override fun createMember(request: CreateMemberRequest): CreateMemberResponse {
         val type = object: ParameterizedTypeReference<DefaultResponse<CreateMemberResponse?>>() {}
-        val response = sendRequest("/internal/api/member", request, type)
+        val response = sendRequest("/internal/api/members", request, type)
 
         return response?.result ?: run {
             logger.warn("[FAIL_API] auth-service | Fail api call to member service (sign-up request)")
@@ -29,7 +29,7 @@ class MemberApiGateway(
 
     override fun verifyMember(request: VerifyMemberRequest): VerifyMemberResponse {
         val type = object: ParameterizedTypeReference<DefaultResponse<VerifyMemberResponse?>>() {}
-        val response = sendRequest("/internal/api/member/verify", request, type)
+        val response = sendRequest("/internal/api/members/verify", request, type)
 
         return response?.result ?: run {
             logger.warn("[FAIL_API] auth-service | Fail api call to member service (login request)")

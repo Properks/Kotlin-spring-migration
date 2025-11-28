@@ -5,6 +5,9 @@ dependencies {
     // Spring cloud
     implementation 'org.springframework.cloud:spring-cloud-config-client'
 
+    // Eureka
+    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+
     testImplementation 'org.jetbrains.kotlin:kotlin-test'
 
     // DB

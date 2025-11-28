@@ -11,9 +11,11 @@ class Item(
     var name: String,
     var price: Long,
     var discount: Double = 0.0,
+    var itemCount: Long,
     var itemStatus: ItemStatus,
     var deletedAt: LocalDateTime? = null,
     var score: Double? = null,
+    var version: Long = 0L,
     createdAt: LocalDateTime? = null,
     updatedAt: LocalDateTime? = null,
 ): BaseDomain(createdAt, updatedAt) {
@@ -36,5 +38,14 @@ class Item(
 
     fun changeItemStatus(itemStatus: ItemStatus) {
         this.itemStatus = itemStatus
+    }
+
+    fun changeItemCount(itemCount: Long) {
+        this.itemCount = itemCount
+    }
+
+    fun decreaseItemCount() {
+        if (itemCount <= 0) throw ItemException(ItemErrorCode.NO_ITEM_STOCK)
+        this.itemCount--
     }
 }
