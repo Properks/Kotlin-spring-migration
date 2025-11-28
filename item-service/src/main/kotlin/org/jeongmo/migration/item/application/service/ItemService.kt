@@ -35,6 +35,7 @@ class ItemService(
                     foundItem.decreaseItemCount()
                     itemRepository.save(foundItem)
                 }
+                logger.info("[SUCCESS_DECREASE_ITEM] item-service | id: $id")
                 return
             } catch (e: ObjectOptimisticLockingFailureException) {
                 logger.warn("[FAIL_DECREASE_ITEM] item-service | retry: ${i + 1} / $retryCount")
@@ -44,7 +45,7 @@ class ItemService(
                 throw e
             }
         }
-        logger.info("[SUCCESS_DECREASE_ITEM] item-service | id: $id")
+        logger.error("[FAIL_DECREASE_ITEM] item-service | id: $id, retry: $retryCount")
         throw ItemException(ItemErrorCode.OPTIMISTIC_LOCKING_ERROR)
     }
 
