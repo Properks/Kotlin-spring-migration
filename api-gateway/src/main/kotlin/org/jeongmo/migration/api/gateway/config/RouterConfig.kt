@@ -21,6 +21,11 @@ class RouterConfig {
                     .path("/members/**")
                     .uri("lb://MEMBER-SERVICE")
             }
+            .route("item-service") {
+                it
+                    .path("/items/**")
+                    .uri("lb://ITEM-SERVICE")
+            }
             .build()
     }
 
