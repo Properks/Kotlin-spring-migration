@@ -11,11 +11,6 @@ class RouterConfig {
     @Bean
     fun router(routeLocatorBuilder: RouteLocatorBuilder): RouteLocator {
         return routeLocatorBuilder.routes()
-            .route("health-check") {
-                it
-                    .path("/health-check/**")
-                    .uri("lb://health-check")
-            }
             .route("auth-service") {
                 it
                     .path("/auth/**")
@@ -25,6 +20,11 @@ class RouterConfig {
                 it
                     .path("/members/**")
                     .uri("lb://MEMBER-SERVICE")
+            }
+            .route("item-service") {
+                it
+                    .path("/items/**")
+                    .uri("lb://ITEM-SERVICE")
             }
             .build()
     }
