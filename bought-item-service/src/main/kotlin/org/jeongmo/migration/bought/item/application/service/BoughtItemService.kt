@@ -34,7 +34,7 @@ class BoughtItemService(
     }
 
     override fun updateItemStatus(itemId: Long, request: UpdateItemRequest): UpdateItemResponse {
-        val foundItem = boughtItemRepository.findById(id) ?: throw BoughtItemException(BoughtItemErrorCode.NOT_FOUND)
+        val foundItem = boughtItemRepository.findById(itemId) ?: throw BoughtItemException(BoughtItemErrorCode.NOT_FOUND)
         foundItem.updateBoughtStatus(boughtStatus = request.boughtItemStatus)
         val savedBoughtItem= boughtItemRepository.save(foundItem)
         return UpdateItemResponse.fromDomain(savedBoughtItem)

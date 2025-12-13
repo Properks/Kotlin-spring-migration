@@ -1,0 +1,33 @@
+package org.jeongmo.migration.bought.item.infrastructure.adapter.out.jpa.repository
+
+import org.jeongmo.migration.bought.item.domain.model.BoughtItem
+import org.jeongmo.migration.bought.item.domain.repository.BoughtItemRepository
+import org.jeongmo.migration.bought.item.infrastructure.adapter.out.jpa.mapper.BoughtItemJpaMapper
+import org.springframework.stereotype.Repository
+
+@Repository
+class BoughtItemJpaRepository(
+    private val boughtItemSpringDataJpaRepository: BoughtItemSpringDataJpaRepository,
+    private val boughtItemJpaMapper: BoughtItemJpaMapper,
+): BoughtItemRepository {
+
+    override fun save(boughtItem: BoughtItem): BoughtItem {
+        val savedBoughtItem = boughtItemSpringDataJpaRepository.save(boughtItemJpaMapper.fromDomain(boughtItem))
+        return boughtItemJpaMapper.toDomain(savedBoughtItem)
+    }
+
+    override fun findById(id: Long): BoughtItem? {
+        val foundBoughtItem = boughtItemSpringDataJpaRepository.findById(id).orElse(null)
+        return foundBoughtItem?.let {
+            boughtItemJpaMapper.toDomain(foundBoughtItem)
+        }
+    }
+
+    override fun findAll(): List<BoughtItem> {
+        return boughtItemSpringDataJpaRepository.findAll().map { boughtItemJpaMapper.toDomain(it) }
+    }
+
+    override fun delete(id: Long): Boolean {
+        return boughtItemSpringDataJpaRepository.softDeleteBoughtItem(id) > 0
+    }
+}
