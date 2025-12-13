@@ -3,7 +3,11 @@ package org.jeongmo.migration.bought.item
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = [
+    "org.jeongmo.migration.bought.item",
+    "org.jeongmo.migration.common.config",
+    "org.jeongmo.migration.common.domain.jpa"
+])
 class BoughtItemApplication
 
 fun main(args: Array<String>) {
