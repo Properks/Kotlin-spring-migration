@@ -142,6 +142,28 @@ services:
       mysql:
         condition: service_healthy
 
+  bought-item-service:
+    build: ./bought-item-service
+    image: properks/bought-item-service
+    container_name: bought-item-service
+    env_file:
+      - ./.env
+    networks:
+      - my-network
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -f http://localhost:8081/actuator/health || exit 1" ]
+      retries: 5
+      interval: 5s
+      timeout: 3s
+      start_period: 30s
+    depends_on:
+      config-server:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+      mysql:
+        condition: service_healthy
+
 networks:
   my-network:
     driver: bridge

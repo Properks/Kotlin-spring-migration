@@ -1,0 +1,29 @@
+spring:
+  profiles:
+    active: dev
+  application:
+    name: bought-item-service
+  cloud:
+    config:
+      username: ${CLOUD_CONFIG_USERNAME}
+      password: ${CLOUD_CONFIG_PASSWORD}
+  config:
+    import: optional:configserver:http://${CLOUD_CONFIG_IP}:${CLOUD_CONFIG_PORT}
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://${EUREKA_SERVER_USERNAME}:${EUREKA_SERVER_PASSWORD}@${EUREKA_SERVER_IP}:${EUREKA_SERVER_PORT}/eureka
+    fetch-registry: true
+    register-with-eureka: true
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  server:
+    port: 8081
+
+web-client:
+  base-url:
+    item: ${ITEM_DOMAIN_URL}
