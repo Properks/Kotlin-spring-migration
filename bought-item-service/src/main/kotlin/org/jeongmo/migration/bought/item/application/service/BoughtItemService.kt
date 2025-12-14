@@ -36,16 +36,16 @@ class BoughtItemService(
     }
 
     @Transactional
-    override fun updateItemStatus(itemId: Long, request: UpdateItemRequest): UpdateItemResponse {
-        val foundItem = boughtItemRepository.findById(itemId) ?: throw BoughtItemException(BoughtItemErrorCode.NOT_FOUND)
+    override fun updateItemStatus(boughtItemId: Long, request: UpdateItemRequest): UpdateItemResponse {
+        val foundItem = boughtItemRepository.findById(boughtItemId) ?: throw BoughtItemException(BoughtItemErrorCode.NOT_FOUND)
         foundItem.updateBoughtStatus(boughtStatus = request.boughtItemStatus)
         val savedBoughtItem= boughtItemRepository.save(foundItem)
         return UpdateItemResponse.fromDomain(savedBoughtItem)
     }
 
     @Transactional
-    override fun cancelBoughtItem(itemId: Long) {
-        if (!boughtItemRepository.delete(itemId)) {
+    override fun cancelBoughtItem(boughtItemId: Long) {
+        if (!boughtItemRepository.delete(boughtItemId)) {
             throw BoughtItemException(BoughtItemErrorCode.ALREADY_DELETE)
         }
     }
