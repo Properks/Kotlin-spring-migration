@@ -7,6 +7,6 @@ import org.jeongmo.migration.bought.item.application.dto.UpdateItemResponse
 
 interface BoughtItemCommandUseCase {
     fun buyItem(memberId: Long, request: BuyItemRequest): BuyItemResponse
-    fun updateItemStatus(boughtItemId: Long, request: UpdateItemRequest): UpdateItemResponse
-    fun cancelBoughtItem(boughtItemId: Long)
+    fun updateItemStatus(ownerId: Long, boughtItemId: Long, request: UpdateItemRequest): UpdateItemResponse
+    fun cancelBoughtItem(ownerId: Long, boughtItemId: Long)
 }

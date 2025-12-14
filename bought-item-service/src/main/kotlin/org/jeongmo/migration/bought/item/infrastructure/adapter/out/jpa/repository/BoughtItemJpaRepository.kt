@@ -19,20 +19,20 @@ class BoughtItemJpaRepository(
     }
 
     @Transactional(readOnly = true)
-    override fun findById(id: Long): BoughtItem? {
-        val foundBoughtItem = boughtItemSpringDataJpaRepository.findById(id).orElse(null)
+    override fun findById(ownerId: Long, id: Long): BoughtItem? {
+        val foundBoughtItem = boughtItemSpringDataJpaRepository.findByIdAndMemberId(id, ownerId)
         return foundBoughtItem?.let {
-            boughtItemJpaMapper.toDomain(foundBoughtItem)
+            boughtItemJpaMapper.toDomain(it)
         }
     }
 
     @Transactional(readOnly = true)
-    override fun findAll(): List<BoughtItem> {
-        return boughtItemSpringDataJpaRepository.findAll().map { boughtItemJpaMapper.toDomain(it) }
+    override fun findAll(ownerId: Long): List<BoughtItem> {
+        return boughtItemSpringDataJpaRepository.findAllByMemberId(ownerId).map { boughtItemJpaMapper.toDomain(it) }
     }
 
     @Transactional
-    override fun delete(id: Long): Boolean {
-        return boughtItemSpringDataJpaRepository.softDeleteBoughtItem(id) > 0
+    override fun delete(ownerId: Long, id: Long): Boolean {
+        return boughtItemSpringDataJpaRepository.softDeleteBoughtItem(id, ownerId) > 0
     }
 }
