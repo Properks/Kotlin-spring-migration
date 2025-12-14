@@ -9,7 +9,7 @@ data class BuyItemResponse(
     val quantity: Long,
     val itemId: Long,
     val boughtItemStatus: BoughtStatus,
-    val boughtAt: LocalDateTime,
+    val boughtAt: LocalDateTime?,
 ) {
     companion object {
         fun fromDomain(domain: BoughtItem): BuyItemResponse =
@@ -18,7 +18,7 @@ data class BuyItemResponse(
                 quantity = domain.quantity,
                 itemId = domain.itemId,
                 boughtItemStatus = domain.boughtStatus,
-                boughtAt = domain.createdAt ?: LocalDateTime.now(),
+                boughtAt = domain.createdAt,
             )
     }
 }
@@ -27,7 +27,7 @@ data class UpdateItemResponse(
     val boughtItemId: Long,
     val itemId: Long,
     val boughtItemStatus: BoughtStatus,
-    val updatedAt: LocalDateTime,
+    val updatedAt: LocalDateTime?,
 ) {
     companion object {
         fun fromDomain(domain: BoughtItem): UpdateItemResponse =
@@ -35,7 +35,7 @@ data class UpdateItemResponse(
                 boughtItemId = domain.id,
                 itemId = domain.itemId,
                 boughtItemStatus = domain.boughtStatus,
-                updatedAt = domain.updatedAt ?: LocalDateTime.now(),
+                updatedAt = domain.updatedAt,
             )
     }
 }
