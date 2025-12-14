@@ -9,7 +9,7 @@ import java.time.LocalDateTime
 
 @Entity
 @Table(name = "bought_item")
-@SQLDelete(sql = "UPDATE bought_item SET bought_item.deleted_at = now() WHERE bought_item.bought_item_id = ?")
+@SQLDelete(sql = "UPDATE bought_item SET deleted_at = CURRENT_TIMESTAMP WHERE bought_item_id = ?")
 @SQLRestriction("deleted_at IS NULL")
 class BoughtItemJpaEntity(
     @Id
