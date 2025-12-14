@@ -1,7 +1,7 @@
 package org.jeongmo.migration.bought.item.application.dto
 
+import org.jeongmo.migration.bought.item.domain.enums.BoughtStatus
 import org.jeongmo.migration.bought.item.domain.model.BoughtItem
-import org.jeongmo.practice.domain.item.bought.entity.enums.BoughtStatus
 import java.time.LocalDateTime
 
 data class BuyItemResponse(

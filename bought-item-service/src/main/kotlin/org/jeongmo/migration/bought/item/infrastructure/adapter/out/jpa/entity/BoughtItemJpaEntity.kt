@@ -3,8 +3,8 @@ package org.jeongmo.migration.bought.item.infrastructure.adapter.out.jpa.entity
 import jakarta.persistence.*
 import org.hibernate.annotations.SQLDelete
 import org.hibernate.annotations.SQLRestriction
+import org.jeongmo.migration.bought.item.domain.enums.BoughtStatus
 import org.jeongmo.migration.common.domain.jpa.JpaBaseEntity
-import org.jeongmo.practice.domain.item.bought.entity.enums.BoughtStatus
 import java.time.LocalDateTime
 
 @Entity
@@ -33,5 +33,5 @@ class BoughtItemJpaEntity(
     @Column(name = "deleted_at")
     var deletedAt: LocalDateTime? = null,
 
-): JpaBaseEntity() {
+    ): JpaBaseEntity() {
 }
