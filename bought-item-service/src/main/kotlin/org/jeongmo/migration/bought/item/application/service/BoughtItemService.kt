@@ -17,8 +17,8 @@ class BoughtItemService(
 ): BoughtItemCommandUseCase, BoughtItemQueryUseCase {
 
     @Transactional
-    override fun buyItem(memberId: Long, request: BuyItemRequest): BuyItemResponse {
-        val boughtItem = boughtItemRepository.save(request.toDomain(memberId))
+    override fun buyItem(ownerId: Long, request: BuyItemRequest): BuyItemResponse {
+        val boughtItem = boughtItemRepository.save(request.toDomain(ownerId))
         itemServiceClient.decreaseItemCount(request.itemId)
         return BuyItemResponse.fromDomain(boughtItem)
     }

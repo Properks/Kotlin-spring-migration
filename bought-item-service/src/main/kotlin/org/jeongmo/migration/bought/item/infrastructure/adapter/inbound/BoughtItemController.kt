@@ -24,25 +24,37 @@ class BoughtItemController(
     @PostMapping
     fun buyItem(@LoginUserId memberId: Long, @Valid @RequestBody request: BuyItemRequest): DefaultResponse<BuyItemResponse> =
         DefaultResponse.ok(boughtItemCommandUseCase.buyItem(
-            memberId = memberId,
-            request = request)
-        )
+            ownerId = memberId,
+            request = request
+        ))
 
     @GetMapping
     fun getBoughtItems(@LoginUserId memberId: Long): DefaultResponse<List<FindBoughtItemResponse>> =
-        DefaultResponse.ok(boughtItemQueryUseCase.findAll(memberId))
+        DefaultResponse.ok(boughtItemQueryUseCase.findAll(
+            ownerId = memberId
+        ))
 
     @GetMapping("/{boughtItemId}")
     fun getBoughtItem(@LoginUserId memberId: Long, @PathVariable("boughtItemId") id: Long): DefaultResponse<FindBoughtItemResponse> =
-        DefaultResponse.ok(boughtItemQueryUseCase.findById(memberId, id))
+        DefaultResponse.ok(boughtItemQueryUseCase.findById(
+            ownerId = memberId,
+            boughtItemId = id
+        ))
 
     @PatchMapping("/{boughtItemId}")
     fun updateBoughtItem(@LoginUserId memberId: Long, @PathVariable("boughtItemId") id: Long, @RequestBody request: UpdateItemRequest): DefaultResponse<UpdateItemResponse> =
-        DefaultResponse.ok(boughtItemCommandUseCase.updateItemStatus(memberId, id, request))
+        DefaultResponse.ok(boughtItemCommandUseCase.updateItemStatus(
+            ownerId = memberId,
+            boughtItemId = id,
+            request = request
+        ))
 
     @DeleteMapping("/{boughtItemId}")
     fun deleteBoughtItem(@LoginUserId memberId: Long, @PathVariable("boughtItemId") id: Long): DefaultResponse<Unit> {
-        boughtItemCommandUseCase.cancelBoughtItem(memberId, id)
+        boughtItemCommandUseCase.cancelBoughtItem(
+            ownerId = memberId,
+            boughtItemId = id
+        )
         return DefaultResponse.noContent()
     }
 }
