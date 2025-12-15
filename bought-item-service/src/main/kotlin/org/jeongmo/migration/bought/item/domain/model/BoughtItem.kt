@@ -17,6 +17,12 @@ class BoughtItem(
     updatedAt: LocalDateTime? = null,
 ): BaseDomain(createdAt, updatedAt) {
 
+    init {
+        if (quantity <= 0 || memberId <= 0 || itemId <= 0) {
+            throw BoughtItemException(BoughtItemErrorCode.INVALID_DATA)
+        }
+    }
+
     fun updateBoughtStatus(boughtStatus: BoughtStatus) {
         if (this.boughtStatus == boughtStatus) {
             throw BoughtItemException(BoughtItemErrorCode.ALREADY_SET)
