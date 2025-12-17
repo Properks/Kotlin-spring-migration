@@ -1,5 +1,6 @@
 package org.jeongmo.migration.bought.item.infrastructure.adapter.out.item.api
 
+import io.netty.handler.timeout.TimeoutException
 import org.jeongmo.migration.bought.item.application.error.code.BoughtItemErrorCode
 import org.jeongmo.migration.bought.item.application.error.exception.BoughtItemException
 import org.jeongmo.migration.bought.item.application.port.out.item.ItemServiceClient
@@ -9,6 +10,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.reactive.function.client.WebClientException
 import reactor.util.retry.Retry
 import java.time.Duration
 
@@ -57,8 +59,9 @@ class ItemApiGateway(
                 .retrieve()
                 .bodyToMono(responseType)
                 .retryWhen(
-                    Retry.fixedDelay(3, Duration.ofSeconds(1))
-                        .filter { it is Exception }
+                    Retry.backoff(3, Duration.ofSeconds(1))
+                        .filter { it is WebClientException || it is TimeoutException }
+                        .doBeforeRetry { log.warn("[API_RETRY] bought-item-service | Retrying to decrease item count {}", it.totalRetries() + 1) }
                 )
                 .block(Duration.ofSeconds(5))
         } catch (e: Exception) {
