@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
-import org.springframework.web.reactive.function.client.WebClientException
 import reactor.util.retry.Retry
 import java.time.Duration
 
@@ -59,7 +58,7 @@ class ItemApiGateway(
                 .bodyToMono(responseType)
                 .retryWhen(
                     Retry.fixedDelay(3, Duration.ofSeconds(1))
-                        .filter { it is WebClientException }
+                        .filter { it is Exception }
                 )
                 .block(Duration.ofSeconds(5))
         } catch (e: Exception) {
