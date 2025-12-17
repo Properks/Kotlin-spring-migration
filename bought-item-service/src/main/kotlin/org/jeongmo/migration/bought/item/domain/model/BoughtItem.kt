@@ -13,6 +13,7 @@ class BoughtItem(
     val itemId: Long,
     var boughtStatus: BoughtStatus,
     var deletedAt: LocalDateTime? = null,
+    var version: Long = 0L,
     createdAt: LocalDateTime? = null,
     updatedAt: LocalDateTime? = null,
 ): BaseDomain(createdAt, updatedAt) {
@@ -28,5 +29,12 @@ class BoughtItem(
             throw BoughtItemException(BoughtItemErrorCode.ALREADY_SET)
         }
         this.boughtStatus = boughtStatus
+    }
+
+    fun markAsDeleted() {
+        if (deletedAt != null) {
+            throw BoughtItemException(BoughtItemErrorCode.ALREADY_DELETE)
+        }
+        this.deletedAt = LocalDateTime.now()
     }
 }

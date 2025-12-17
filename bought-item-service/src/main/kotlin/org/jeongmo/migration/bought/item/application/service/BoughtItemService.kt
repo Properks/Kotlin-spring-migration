@@ -7,6 +7,7 @@ import org.jeongmo.migration.bought.item.application.port.inbound.BoughtItemComm
 import org.jeongmo.migration.bought.item.application.port.inbound.BoughtItemQueryUseCase
 import org.jeongmo.migration.bought.item.application.port.out.item.ItemServiceClient
 import org.jeongmo.migration.bought.item.domain.repository.BoughtItemRepository
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -15,6 +16,8 @@ class BoughtItemService(
     private val boughtItemRepository: BoughtItemRepository,
     private val itemServiceClient: ItemServiceClient
 ): BoughtItemCommandUseCase, BoughtItemQueryUseCase {
+
+    private val log = LoggerFactory.getLogger(BoughtItemService::class.java)
 
     @Transactional
     override fun buyItem(ownerId: Long, request: BuyItemRequest): BuyItemResponse {
@@ -45,8 +48,18 @@ class BoughtItemService(
 
     @Transactional
     override fun cancelBoughtItem(ownerId: Long, boughtItemId: Long) {
-        if (!boughtItemRepository.delete(ownerId, boughtItemId)) {
-            throw BoughtItemException(BoughtItemErrorCode.ALREADY_DELETE)
+        for (i in 1..10) {
+            try {
+                val domain = boughtItemRepository.findById(ownerId = ownerId, id = boughtItemId) ?: throw BoughtItemException(BoughtItemErrorCode.NOT_FOUND)
+                domain.markAsDeleted()
+                boughtItemRepository.save(domain)
+            } catch (e: BoughtItemException) {
+                log.warn("[FAIL_TO_DELETE] bought-item-service | Cannot find or delete entity")
+                throw e
+            } catch (e: Exception) {
+                log.warn("[RETRY_DELETE] bought-item-service | retry to delete entity {} / 10", i)
+            }
         }
+        throw BoughtItemException(BoughtItemErrorCode.OPTIMISTIC_LOCK_ERROR)
     }
 }

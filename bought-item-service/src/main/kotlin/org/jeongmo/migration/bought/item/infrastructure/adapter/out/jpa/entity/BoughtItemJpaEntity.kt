@@ -33,5 +33,9 @@ class BoughtItemJpaEntity(
     @Column(name = "deleted_at")
     var deletedAt: LocalDateTime? = null,
 
+    @Version
+    @Column(name = "version")
+    var version: Long = 0L,
+
     ): JpaBaseEntity() {
 }

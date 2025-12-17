@@ -13,6 +13,7 @@ class BoughtItemJpaMapper {
             memberId = domain.memberId,
             itemId = domain.itemId,
             boughtStatus = domain.boughtStatus,
+            version = domain.version,
             deletedAt = domain.deletedAt,
         )
     }
@@ -25,6 +26,7 @@ class BoughtItemJpaMapper {
             itemId = entity.itemId,
             boughtStatus = entity.boughtStatus,
             deletedAt = entity.deletedAt,
+            version = entity.version,
             createdAt = entity.createdAt,
             updatedAt = entity.updatedAt,
         )

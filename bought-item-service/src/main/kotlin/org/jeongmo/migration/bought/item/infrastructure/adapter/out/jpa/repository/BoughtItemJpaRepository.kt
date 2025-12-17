@@ -30,9 +30,4 @@ class BoughtItemJpaRepository(
     override fun findAll(ownerId: Long): List<BoughtItem> {
         return boughtItemSpringDataJpaRepository.findAllByMemberId(ownerId).map { boughtItemJpaMapper.toDomain(it) }
     }
-
-    @Transactional
-    override fun delete(ownerId: Long, id: Long): Boolean {
-        return boughtItemSpringDataJpaRepository.softDeleteBoughtItem(id, ownerId) > 0
-    }
 }
