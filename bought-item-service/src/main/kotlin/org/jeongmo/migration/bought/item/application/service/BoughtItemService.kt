@@ -53,6 +53,7 @@ class BoughtItemService(
                 val domain = boughtItemRepository.findById(ownerId = ownerId, id = boughtItemId) ?: throw BoughtItemException(BoughtItemErrorCode.NOT_FOUND)
                 domain.markAsDeleted()
                 boughtItemRepository.save(domain)
+                return
             } catch (e: BoughtItemException) {
                 log.warn("[FAIL_TO_DELETE] bought-item-service | Cannot find or delete entity")
                 throw e
