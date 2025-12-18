@@ -1,5 +1,7 @@
 package org.jeongmo.migration.bought.item.application.service
 
+import jakarta.persistence.OptimisticLockException
+import org.hibernate.StaleObjectStateException
 import org.jeongmo.migration.bought.item.application.dto.*
 import org.jeongmo.migration.bought.item.application.error.code.BoughtItemErrorCode
 import org.jeongmo.migration.bought.item.application.error.exception.BoughtItemException
@@ -57,8 +59,16 @@ class BoughtItemService(
             } catch (e: BoughtItemException) {
                 log.warn("[FAIL_TO_DELETE] bought-item-service | Cannot find or delete entity")
                 throw e
-            } catch (e: Exception) {
-                log.warn("[RETRY_DELETE] bought-item-service | retry to delete entity {} / 10", i)
+            } catch (e: OptimisticLockException) {
+                log.warn("[RETRY_DELETE] bought-item-service | OptimisticLockException occurred, retry {} / 10", i, e)
+                if (i < 10) {
+                    Thread.sleep(50L * i) // backoff
+                }
+            } catch (e: StaleObjectStateException) {
+                log.warn("[RETRY_DELETE] bought-item-service | StaleObjectStateException occurred, retry {} / 10", i, e)
+                if (i < 10) {
+                    Thread.sleep(50L * i)
+                }
             }
         }
         throw BoughtItemException(BoughtItemErrorCode.OPTIMISTIC_LOCK_ERROR)
