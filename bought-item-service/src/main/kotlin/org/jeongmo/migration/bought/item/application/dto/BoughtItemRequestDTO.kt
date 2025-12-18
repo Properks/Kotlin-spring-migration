@@ -1,0 +1,23 @@
+package org.jeongmo.migration.bought.item.application.dto
+
+import jakarta.validation.constraints.Positive
+import org.jeongmo.migration.bought.item.domain.enums.BoughtStatus
+import org.jeongmo.migration.bought.item.domain.model.BoughtItem
+
+data class BuyItemRequest(
+    val itemId: Long,
+    @field:Positive
+    val quantity: Long,
+) {
+    fun toDomain(memberId: Long) =
+        BoughtItem(
+            quantity = this.quantity,
+            itemId = itemId,
+            memberId = memberId,
+            boughtStatus = BoughtStatus.ACCEPTING
+        )
+}
+
+data class UpdateItemRequest(
+    val boughtItemStatus: BoughtStatus
+)
