@@ -12,11 +12,13 @@ import org.jeongmo.migration.bought.item.domain.repository.BoughtItemRepository
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.transaction.support.TransactionTemplate
 
 @Service
 class BoughtItemService(
     private val boughtItemRepository: BoughtItemRepository,
-    private val itemServiceClient: ItemServiceClient
+    private val itemServiceClient: ItemServiceClient,
+    private val transactionTemplate: TransactionTemplate,
 ): BoughtItemCommandUseCase, BoughtItemQueryUseCase {
 
     private val log = LoggerFactory.getLogger(BoughtItemService::class.java)
@@ -48,13 +50,14 @@ class BoughtItemService(
         return UpdateItemResponse.fromDomain(savedBoughtItem)
     }
 
-    @Transactional
     override fun cancelBoughtItem(ownerId: Long, boughtItemId: Long) {
         for (i in 1..10) {
             try {
-                val domain = boughtItemRepository.findById(ownerId = ownerId, id = boughtItemId) ?: throw BoughtItemException(BoughtItemErrorCode.NOT_FOUND)
-                domain.markAsDeleted()
-                boughtItemRepository.save(domain)
+                transactionTemplate.execute {
+                    val domain = boughtItemRepository.findById(ownerId = ownerId, id = boughtItemId) ?: throw BoughtItemException(BoughtItemErrorCode.NOT_FOUND)
+                    domain.markAsDeleted()
+                    boughtItemRepository.save(domain)
+                }
                 return
             } catch (e: BoughtItemException) {
                 log.warn("[FAIL_TO_DELETE] bought-item-service | Cannot find or delete entity")
