@@ -45,7 +45,13 @@ class Item(
     }
 
     fun decreaseItemCount() {
-        if (itemCount <= 0) throw ItemException(ItemErrorCode.NO_ITEM_STOCK)
+        if (this.itemCount <= 0 || this.itemStatus == ItemStatus.SOLD) throw ItemException(ItemErrorCode.NO_ITEM_STOCK)
         this.itemCount--
+        if (this.itemCount <= 0) changeItemStatus(ItemStatus.SOLD)
+    }
+
+    fun increaseItemCount() {
+        this.itemCount++
+        if (this.itemCount >= 0 && this.itemStatus == ItemStatus.SOLD) changeItemStatus(ItemStatus.IN_STOCK)
     }
 }
