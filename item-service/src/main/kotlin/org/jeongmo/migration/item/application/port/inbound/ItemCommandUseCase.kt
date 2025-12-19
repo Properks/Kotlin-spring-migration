@@ -8,6 +8,7 @@ import org.jeongmo.migration.item.application.dto.UpdateItemResponse
 interface ItemCommandUseCase {
     fun createItem(request: CreateItemRequest): CreateItemResponse
     fun decreaseItemCount(id: Long)
+    fun increaseItemCount(id: Long)
     fun updateItem(id: Long, request: UpdateItemRequest): UpdateItemResponse
     fun deleteItem(id: Long)
 }

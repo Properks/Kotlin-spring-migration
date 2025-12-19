@@ -35,17 +35,39 @@ class ItemService(
                     foundItem.decreaseItemCount()
                     itemRepository.save(foundItem)
                 }
-                logger.info("[SUCCESS_DECREASE_ITEM] item-service | id: $id")
+                logger.info("[SUCCESS_DECREASE_ITEM_STOCK] item-service | id: $id")
                 return
             } catch (e: ObjectOptimisticLockingFailureException) {
-                logger.warn("[FAIL_DECREASE_ITEM] item-service | retry: $i / 10")
+                logger.warn("[FAIL_DECREASE_ITEM_STOCK] item-service | retry: $i / 10")
                 Thread.sleep(100)
             } catch (e: Exception) {
-                logger.error("[FAIL_DECREASE_ITEM] item-service | ${e.javaClass}: ${e.message}")
+                logger.error("[FAIL_DECREASE_ITEM_STOCK] item-service | ${e.javaClass}: ${e.message}")
                 throw e
             }
         }
-        logger.error("[FAIL_DECREASE_ITEM] item-service | id: $id, retry: 10")
+        logger.error("[FAIL_DECREASE_ITEM_STOCK] item-service | id: $id, retry: 10")
+        throw ItemException(ItemErrorCode.OPTIMISTIC_LOCKING_ERROR)
+    }
+
+    override fun increaseItemCount(id: Long) {
+        for (i in 1..10) {
+            try {
+                transactionTemplate.execute {
+                    val foundItem = itemRepository.findById(id) ?: throw ItemException(ItemErrorCode.NOT_FOUND)
+                    foundItem.increaseItemCount()
+                    itemRepository.save(foundItem)
+                }
+                logger.info("[SUCCESS_INCREASE_ITEM_STOCK] item-service | id: $id")
+                return
+            } catch (e: ObjectOptimisticLockingFailureException) {
+                logger.warn("[FAIL_INCREASE_ITEM_STOCK] item-service | retry: $i / 10")
+                Thread.sleep(100)
+            } catch (e: Exception) {
+                logger.error("[FAIL_INCREASE_ITEM_STOCK] item-service | ${e.javaClass}: ${e.message}")
+                throw e
+            }
+        }
+        logger.error("[FAIL_INCREASE_ITEM_STOCK] item-service | id: $id, retry: 10")
         throw ItemException(ItemErrorCode.OPTIMISTIC_LOCKING_ERROR)
     }
 
