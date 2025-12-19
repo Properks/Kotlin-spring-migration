@@ -33,7 +33,7 @@ class ItemApiGateway(
 
     override fun decreaseItemCount(item: Long) {
         val type = object: ParameterizedTypeReference<DefaultResponse<Any?>?>() {}
-        sendDecreaseCountRequest("$endpointPrefix/$item", type) ?: run {
+        sendDecreaseCountRequest("$endpointPrefix/$item/decrease-stock", type) ?: run {
             log.warn("[FAIL_API] bought-item-service | Fail item-service api (decreaseItemCount)")
             throw BoughtItemException(BoughtItemErrorCode.FAIL_TO_DECREASE_ITEM_COUNT)
         }
