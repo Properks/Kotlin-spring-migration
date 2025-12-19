@@ -27,8 +27,8 @@ class ItemService(
         return CreateItemResponse.fromDomain(item)
     }
 
-    override fun decreaseItemCount(id: Long, retryCount: Int) {
-        for (i in 0 until retryCount) {
+    override fun decreaseItemCount(id: Long) {
+        for (i in 1..10) {
             try {
                 transactionTemplate.execute {
                     val foundItem = itemRepository.findById(id) ?: throw ItemException(ItemErrorCode.NOT_FOUND)
@@ -38,14 +38,14 @@ class ItemService(
                 logger.info("[SUCCESS_DECREASE_ITEM] item-service | id: $id")
                 return
             } catch (e: ObjectOptimisticLockingFailureException) {
-                logger.warn("[FAIL_DECREASE_ITEM] item-service | retry: ${i + 1} / $retryCount")
+                logger.warn("[FAIL_DECREASE_ITEM] item-service | retry: $i / 10")
                 Thread.sleep(100)
             } catch (e: Exception) {
                 logger.error("[FAIL_DECREASE_ITEM] item-service | ${e.javaClass}: ${e.message}")
                 throw e
             }
         }
-        logger.error("[FAIL_DECREASE_ITEM] item-service | id: $id, retry: $retryCount")
+        logger.error("[FAIL_DECREASE_ITEM] item-service | id: $id, retry: 10")
         throw ItemException(ItemErrorCode.OPTIMISTIC_LOCKING_ERROR)
     }
 
