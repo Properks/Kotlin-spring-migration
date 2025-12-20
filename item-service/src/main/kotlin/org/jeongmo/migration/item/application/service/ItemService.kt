@@ -1,5 +1,6 @@
 package org.jeongmo.migration.item.application.service
 
+import org.jeongmo.migration.common.utils.retry.RetryUtils
 import org.jeongmo.migration.item.application.dto.*
 import org.jeongmo.migration.item.application.error.code.ItemErrorCode
 import org.jeongmo.migration.item.application.error.exception.ItemException
@@ -7,7 +8,6 @@ import org.jeongmo.migration.item.application.port.inbound.ItemCommandUseCase
 import org.jeongmo.migration.item.application.port.inbound.ItemQueryUseCase
 import org.jeongmo.migration.item.domain.repository.ItemRepository
 import org.slf4j.LoggerFactory
-import org.springframework.orm.ObjectOptimisticLockingFailureException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.transaction.support.TransactionTemplate
@@ -16,6 +16,7 @@ import org.springframework.transaction.support.TransactionTemplate
 class ItemService(
     private val itemRepository: ItemRepository,
     private val transactionTemplate: TransactionTemplate,
+    private val retryUtils: RetryUtils,
 ): ItemQueryUseCase, ItemCommandUseCase {
 
     private val logger = LoggerFactory.getLogger(ItemService::class.java)
@@ -27,26 +28,40 @@ class ItemService(
         return CreateItemResponse.fromDomain(item)
     }
 
-    override fun decreaseItemCount(id: Long, retryCount: Int) {
-        for (i in 0 until retryCount) {
-            try {
+    override fun decreaseItemCount(id: Long) {
+        val logTitle = "FAIL_DECREASE_ITEM_COUNT"
+        try {
+            retryUtils.execute(
+                failLogTitle = logTitle
+            ) {
                 transactionTemplate.execute {
                     val foundItem = itemRepository.findById(id) ?: throw ItemException(ItemErrorCode.NOT_FOUND)
                     foundItem.decreaseItemCount()
                     itemRepository.save(foundItem)
                 }
-                logger.info("[SUCCESS_DECREASE_ITEM] item-service | id: $id")
-                return
-            } catch (e: ObjectOptimisticLockingFailureException) {
-                logger.warn("[FAIL_DECREASE_ITEM] item-service | retry: ${i + 1} / $retryCount")
-                Thread.sleep(100)
-            } catch (e: Exception) {
-                logger.error("[FAIL_DECREASE_ITEM] item-service | ${e.javaClass}: ${e.message}")
-                throw e
             }
+        } catch (e: Exception) {
+            logger.warn("[$logTitle] item-service | id: $id")
+            throw ItemException(ItemErrorCode.OPTIMISTIC_LOCKING_ERROR)
         }
-        logger.error("[FAIL_DECREASE_ITEM] item-service | id: $id, retry: $retryCount")
-        throw ItemException(ItemErrorCode.OPTIMISTIC_LOCKING_ERROR)
+    }
+
+    override fun increaseItemCount(id: Long) {
+        val logTitle = "FAIL_INCREASE_STOCK"
+        try {
+            retryUtils.execute(
+                failLogTitle = logTitle
+            ) {
+                transactionTemplate.execute {
+                    val foundItem = itemRepository.findById(id) ?: throw ItemException(ItemErrorCode.NOT_FOUND)
+                    foundItem.increaseItemCount()
+                    itemRepository.save(foundItem)
+                }
+            }
+        } catch (e: Exception) {
+            logger.warn("[$logTitle] item-service | id: $id")
+            throw ItemException(ItemErrorCode.OPTIMISTIC_LOCKING_ERROR)
+        }
     }
 
     @Transactional(readOnly = true)
