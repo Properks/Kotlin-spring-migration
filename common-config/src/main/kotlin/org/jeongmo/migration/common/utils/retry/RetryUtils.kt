@@ -18,18 +18,18 @@ class RetryUtils {
         for (i in 1..maxAttempts) {
             try {
                 val result = block()
-                log.info("[$failLogTitle] Success")
+                log.info("[$failLogTitle] RetryUtils | Success")
                 return result
             } catch (e: ObjectOptimisticLockingFailureException) {
                 if (i == maxAttempts) {
-                    log.error("[$failLogTitle] Max retries exceeded")
+                    log.error("[$failLogTitle] RetryUtils | Max retries exceeded")
                     throw e
                 }
-                log.debug("[$failLogTitle] Retry $i/$maxAttempts")
+                log.debug("[$failLogTitle] RetryUtils | Retry $i/$maxAttempts")
                 Thread.sleep(backoffMillis)
             }
             catch (e: Exception) {
-                log.error("[$failLogTitle] item-service | ${e.javaClass}: ${e.message}")
+                log.error("[$failLogTitle] RetryUtils | ${e.javaClass}: ${e.message}")
                 throw e
             }
         }
