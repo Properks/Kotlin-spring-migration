@@ -63,7 +63,7 @@ class BoughtItemService(
                 }
             }
         } catch (e: BoughtItemException) {
-            log.warn("[$logTitle] bought-item-service | Cannot find item")
+            log.warn("[$logTitle] bought-item-service | id: $boughtItemId")
             throw e
         } catch (e: Exception) {
             log.error("[$logTitle] bought-item-service | ${e.javaClass}: ${e.message}")
