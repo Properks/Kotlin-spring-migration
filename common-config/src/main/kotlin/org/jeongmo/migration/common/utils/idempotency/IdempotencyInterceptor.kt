@@ -5,12 +5,15 @@ import jakarta.servlet.http.HttpServletResponse
 import org.springframework.web.servlet.HandlerInterceptor
 import java.lang.Exception
 
-class IdempotencyInterceptor(
+open class IdempotencyInterceptor(
     private val idempotencyKeyRepository: IdempotencyKeyRepository,
-):HandlerInterceptor {
+): HandlerInterceptor {
 
     override fun preHandle(request: HttpServletRequest, response: HttpServletResponse, handler: Any): Boolean {
-        val key = getIdempotencyKey(request)
+        if (!supports(request)) {
+            return true
+        }
+        val key = getIdempotencyKey(request) ?: throw IdempotencyException(IdempotencyErrorCode.NOT_FOUND_KEY_IN_HEADER)
         val foundStatus = idempotencyKeyRepository.getStatus(key)
         when (foundStatus) {
             null, IdempotencyKeyStatus.FAIL -> {
@@ -32,13 +35,20 @@ class IdempotencyInterceptor(
         handler: Any,
         ex: Exception?
     ) {
-        val key = getIdempotencyKey(request)
+        if (!supports(request)) {
+            return
+        }
+        val key = getIdempotencyKey(request) ?: throw IdempotencyException(IdempotencyErrorCode.NOT_FOUND_KEY_IN_HEADER)
         ex?.let {
             idempotencyKeyRepository.setStatus(key = key, status = IdempotencyKeyStatus.FAIL)
         } ?: idempotencyKeyRepository.setStatus(key = key, status = IdempotencyKeyStatus.COMPLETE)
     }
 
-    private fun getIdempotencyKey(request: HttpServletRequest): String {
+    open fun supports(request: HttpServletRequest): Boolean {
+        return true
+    }
+
+    private fun getIdempotencyKey(request: HttpServletRequest): String? {
         return request.getHeader(IDEMPOTENCY_KEY_NAME)
     }
 }
