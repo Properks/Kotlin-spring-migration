@@ -35,3 +35,11 @@ data class UpdateItemRequest(
     val itemStatus: ItemStatus?,
 ) {
 }
+
+data class DecreaseItemStockRequest(
+    val quantity: Long,
+)
+
+data class IncreaseItemStockRequest(
+    val quantity: Long,
+)
