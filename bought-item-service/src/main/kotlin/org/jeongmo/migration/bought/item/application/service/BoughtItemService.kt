@@ -25,7 +25,7 @@ class BoughtItemService(
 
     @Transactional
     override fun buyItem(ownerId: Long, request: BuyItemRequest): BuyItemResponse {
-        itemServiceClient.decreaseItemCount(request.itemId) // TODO: Save 와의 원자성 보장 필요
+        itemServiceClient.decreaseItemCount(ownerId, request) // TODO: Save 와의 원자성 보장 필요
         val boughtItem = boughtItemRepository.save(request.toDomain(ownerId))
         return BuyItemResponse.fromDomain(boughtItem)
     }

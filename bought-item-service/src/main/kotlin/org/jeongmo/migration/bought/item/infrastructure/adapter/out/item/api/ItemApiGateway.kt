@@ -1,13 +1,18 @@
 package org.jeongmo.migration.bought.item.infrastructure.adapter.out.item.api
 
 import io.netty.handler.timeout.TimeoutException
+import org.jeongmo.migration.bought.item.application.dto.BuyItemRequest
 import org.jeongmo.migration.bought.item.application.error.code.BoughtItemErrorCode
 import org.jeongmo.migration.bought.item.application.error.exception.BoughtItemException
 import org.jeongmo.migration.bought.item.application.port.out.item.ItemServiceClient
 import org.jeongmo.migration.bought.item.application.port.out.item.dto.ItemInfoResponse
+import org.jeongmo.migration.bought.item.infrastructure.adapter.out.item.api.dto.DecreaseItemStockRequest
+import org.jeongmo.migration.common.utils.idempotency.IDEMPOTENCY_KEY_NAME
+import org.jeongmo.migration.common.utils.idempotency.IdempotencyKeyGenerator
 import org.namul.api.payload.response.DefaultResponse
 import org.slf4j.LoggerFactory
 import org.springframework.core.ParameterizedTypeReference
+import org.springframework.http.HttpMethod
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.WebClientException
@@ -17,6 +22,7 @@ import java.time.Duration
 @Component
 class ItemApiGateway(
     private val webClient: WebClient,
+    private val idempotencyKeyGenerator: IdempotencyKeyGenerator,
 ): ItemServiceClient {
 
     private val log = LoggerFactory.getLogger(ItemApiGateway::class.java)
@@ -31,9 +37,10 @@ class ItemApiGateway(
         }
     }
 
-    override fun decreaseItemCount(item: Long) {
+    override fun decreaseItemCount(ownerId: Long, request: BuyItemRequest) {
         val type = object: ParameterizedTypeReference<DefaultResponse<Any?>?>() {}
-        sendDecreaseCountRequest("$endpointPrefix/$item/decrease-stock", type) ?: run {
+        val decreaseItemStockRequest = DecreaseItemStockRequest(request.quantity)
+        sendDecreaseCountRequest("$endpointPrefix/${request.itemId}/decrease-stock", ownerId, decreaseItemStockRequest, type) ?: run {
             log.warn("[FAIL_API] bought-item-service | Fail item-service api (decreaseItemCount)")
             throw BoughtItemException(BoughtItemErrorCode.FAIL_TO_DECREASE_ITEM_COUNT)
         }
@@ -52,10 +59,13 @@ class ItemApiGateway(
         }
     }
 
-    private fun <T> sendDecreaseCountRequest(endpoint: String, responseType: ParameterizedTypeReference<DefaultResponse<T?>?>): DefaultResponse<T?>? {
+    private fun <T> sendDecreaseCountRequest(endpoint: String, ownerId: Long, request: DecreaseItemStockRequest, responseType: ParameterizedTypeReference<DefaultResponse<T?>?>): DefaultResponse<T?>? {
+        val idempotencyKey = idempotencyKeyGenerator.generateKey("decrease-stock", HttpMethod.PATCH, endpoint, "ownerId$ownerId", "quantity${request.quantity}")
         try {
             return webClient.patch()
                 .uri(endpoint)
+                .header(IDEMPOTENCY_KEY_NAME, idempotencyKey)
+                .bodyValue(request)
                 .retrieve()
                 .bodyToMono(responseType)
                 .retryWhen(
