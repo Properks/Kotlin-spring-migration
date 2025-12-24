@@ -48,7 +48,7 @@ class Item(
         validate(quantity) {it > 0}
         if (this.itemCount < quantity || this.itemStatus == ItemStatus.SOLD) throw ItemException(ItemErrorCode.NO_ITEM_STOCK)
         this.itemCount -= quantity
-        if (this.itemCount - quantity == 0L) changeItemStatus(ItemStatus.SOLD)
+        if (this.itemCount == 0L) changeItemStatus(ItemStatus.SOLD)
     }
 
     fun increaseItemCount(quantity: Long) {
