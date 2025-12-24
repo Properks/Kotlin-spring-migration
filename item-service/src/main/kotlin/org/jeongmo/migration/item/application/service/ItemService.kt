@@ -40,8 +40,10 @@ class ItemService(
                     itemRepository.save(foundItem)
                 }
             }
+        } catch (e: ItemException) {
+            throw e
         } catch (e: Exception) {
-            logger.warn("[$logTitle] item-service | id: $id")
+            logger.warn("[$logTitle] item-service | id: $id, ${e.javaClass}: ${e.message}")
             throw ItemException(ItemErrorCode.OPTIMISTIC_LOCKING_ERROR)
         }
     }
@@ -58,6 +60,8 @@ class ItemService(
                     itemRepository.save(foundItem)
                 }
             }
+        } catch (e: ItemException) {
+            throw e
         } catch (e: Exception) {
             logger.warn("[$logTitle] item-service | id: $id")
             throw ItemException(ItemErrorCode.OPTIMISTIC_LOCKING_ERROR)
