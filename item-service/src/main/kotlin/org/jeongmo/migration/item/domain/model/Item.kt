@@ -44,14 +44,20 @@ class Item(
         this.itemCount = itemCount
     }
 
-    fun decreaseItemCount() {
-        if (this.itemCount <= 0 || this.itemStatus == ItemStatus.SOLD) throw ItemException(ItemErrorCode.NO_ITEM_STOCK)
-        this.itemCount--
-        if (this.itemCount <= 0) changeItemStatus(ItemStatus.SOLD)
+    fun decreaseItemCount(quantity: Long) {
+        validate(quantity) {it > 0}
+        if (this.itemCount < quantity || this.itemStatus == ItemStatus.SOLD) throw ItemException(ItemErrorCode.NO_ITEM_STOCK)
+        this.itemCount -= quantity
+        if (this.itemCount == 0L) changeItemStatus(ItemStatus.SOLD)
     }
 
-    fun increaseItemCount() {
-        this.itemCount++
-        if (this.itemCount >= 0 && this.itemStatus == ItemStatus.SOLD) changeItemStatus(ItemStatus.IN_STOCK)
+    fun increaseItemCount(quantity: Long) {
+        validate(quantity) {it > 0}
+        this.itemCount += quantity
+        if (this.itemCount > 0 && this.itemStatus == ItemStatus.SOLD) changeItemStatus(ItemStatus.IN_STOCK)
+    }
+
+    private fun validate(value: Long, block: (Long)->Boolean) {
+        if (!block.invoke(value)) throw ItemException(ItemErrorCode.INVALID_DOMAIN_DATA)
     }
 }

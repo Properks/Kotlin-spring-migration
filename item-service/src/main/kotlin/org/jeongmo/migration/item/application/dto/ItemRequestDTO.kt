@@ -3,6 +3,7 @@ package org.jeongmo.migration.item.application.dto
 import jakarta.validation.constraints.DecimalMax
 import jakarta.validation.constraints.DecimalMin
 import jakarta.validation.constraints.NotBlank
+import jakarta.validation.constraints.Positive
 import jakarta.validation.constraints.PositiveOrZero
 import org.jeongmo.migration.item.domain.enums.ItemStatus
 import org.jeongmo.migration.item.domain.model.Item
@@ -35,3 +36,13 @@ data class UpdateItemRequest(
     val itemStatus: ItemStatus?,
 ) {
 }
+
+data class DecreaseItemStockRequest(
+    @field:Positive
+    val quantity: Long,
+)
+
+data class IncreaseItemStockRequest(
+    @field:Positive
+    val quantity: Long,
+)

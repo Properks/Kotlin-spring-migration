@@ -28,7 +28,7 @@ class ItemService(
         return CreateItemResponse.fromDomain(item)
     }
 
-    override fun decreaseItemCount(id: Long) {
+    override fun decreaseItemCount(id: Long, request: DecreaseItemStockRequest) {
         val logTitle = "FAIL_DECREASE_ITEM_COUNT"
         try {
             retryUtils.execute(
@@ -36,17 +36,19 @@ class ItemService(
             ) {
                 transactionTemplate.execute {
                     val foundItem = itemRepository.findById(id) ?: throw ItemException(ItemErrorCode.NOT_FOUND)
-                    foundItem.decreaseItemCount()
+                    foundItem.decreaseItemCount(quantity = request.quantity)
                     itemRepository.save(foundItem)
                 }
             }
+        } catch (e: ItemException) {
+            throw e
         } catch (e: Exception) {
-            logger.warn("[$logTitle] item-service | id: $id")
+            logger.warn("[$logTitle] item-service | id: $id, ${e.javaClass}: ${e.message}")
             throw ItemException(ItemErrorCode.OPTIMISTIC_LOCKING_ERROR)
         }
     }
 
-    override fun increaseItemCount(id: Long) {
+    override fun increaseItemCount(id: Long, request: IncreaseItemStockRequest) {
         val logTitle = "FAIL_INCREASE_STOCK"
         try {
             retryUtils.execute(
@@ -54,10 +56,12 @@ class ItemService(
             ) {
                 transactionTemplate.execute {
                     val foundItem = itemRepository.findById(id) ?: throw ItemException(ItemErrorCode.NOT_FOUND)
-                    foundItem.increaseItemCount()
+                    foundItem.increaseItemCount(quantity = request.quantity)
                     itemRepository.save(foundItem)
                 }
             }
+        } catch (e: ItemException) {
+            throw e
         } catch (e: Exception) {
             logger.warn("[$logTitle] item-service | id: $id")
             throw ItemException(ItemErrorCode.OPTIMISTIC_LOCKING_ERROR)
