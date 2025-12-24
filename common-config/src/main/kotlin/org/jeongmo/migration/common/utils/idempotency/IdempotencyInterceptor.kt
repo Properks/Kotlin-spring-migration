@@ -14,10 +14,9 @@ open class IdempotencyInterceptor(
             return true
         }
         val key = getIdempotencyKey(request) ?: throw IdempotencyException(IdempotencyErrorCode.NOT_FOUND_KEY_IN_HEADER)
-        val foundStatus = idempotencyKeyRepository.getStatus(key)
-        when (foundStatus) {
-            null, IdempotencyKeyStatus.FAIL -> {
-                idempotencyKeyRepository.setStatus(key, IdempotencyKeyStatus.PROCESSING)
+        when (idempotencyKeyRepository.setStatusIfAbsent(key, IdempotencyKeyStatus.PROCESSING)) {
+            null -> {
+                return true
             }
             IdempotencyKeyStatus.COMPLETE -> {
                 throw IdempotencyException(IdempotencyErrorCode.ALREADY_COMPLETE)
@@ -26,7 +25,6 @@ open class IdempotencyInterceptor(
                 throw IdempotencyException(IdempotencyErrorCode.ALREADY_PROCESSING)
             }
         }
-        return true
     }
 
     override fun afterCompletion(
@@ -40,7 +38,7 @@ open class IdempotencyInterceptor(
         }
         val key = getIdempotencyKey(request) ?: throw IdempotencyException(IdempotencyErrorCode.NOT_FOUND_KEY_IN_HEADER)
         ex?.let {
-            idempotencyKeyRepository.setStatus(key = key, status = IdempotencyKeyStatus.FAIL)
+            idempotencyKeyRepository.deleteKey(key = key)
         } ?: idempotencyKeyRepository.setStatus(key = key, status = IdempotencyKeyStatus.COMPLETE)
     }
 

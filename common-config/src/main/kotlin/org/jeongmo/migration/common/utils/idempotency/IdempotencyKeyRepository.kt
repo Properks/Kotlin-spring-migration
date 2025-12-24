@@ -3,15 +3,15 @@ package org.jeongmo.migration.common.utils.idempotency
 interface IdempotencyKeyRepository {
 
     /**
-     * Set or save status of key which is in repository
+     * Set status of key which is in repository.
      */
     fun setStatus(key: String, status: IdempotencyKeyStatus)
 
     /**
-     * Get status of key from repository
-     * @return null or IdempotencyStatus which found from repository
+     * Set status of key which is in repository. But, if key already exist, it will return the status of key. And then if key doesn't exist, it will return the status which is stored in repository
+     * @return null or IdempotencyStatus which is stored in repository
      */
-    fun getStatus(key: String): IdempotencyKeyStatus?
+    fun setStatusIfAbsent(key: String, status: IdempotencyKeyStatus): IdempotencyKeyStatus?
 
     /**
      * Delete key from repository
