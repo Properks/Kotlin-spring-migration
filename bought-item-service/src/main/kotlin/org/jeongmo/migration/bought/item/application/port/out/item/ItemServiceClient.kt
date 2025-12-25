@@ -6,4 +6,5 @@ import org.jeongmo.migration.bought.item.application.port.out.item.dto.ItemInfoR
 interface ItemServiceClient {
     fun getItem(itemId: Long): ItemInfoResponse
     fun decreaseItemCount(ownerId: Long, request: BuyItemRequest)
+    fun increaseItemCount(ownerId: Long, itemId: Long, quantity: Long)
 }

@@ -53,6 +53,8 @@ class BoughtItemService(
     override fun cancelBoughtItem(ownerId: Long, boughtItemId: Long) {
         val logTitle = "FAIL_TO_DELETE"
         try {
+            val foundBoughtItem = boughtItemRepository.findById(ownerId = ownerId, id = boughtItemId) ?: throw BoughtItemException(BoughtItemErrorCode.NOT_FOUND)
+            itemServiceClient.increaseItemCount(ownerId = ownerId, itemId = foundBoughtItem.itemId, quantity = foundBoughtItem.quantity)
             retryUtils.execute(
                 failLogTitle = logTitle
             ) {
