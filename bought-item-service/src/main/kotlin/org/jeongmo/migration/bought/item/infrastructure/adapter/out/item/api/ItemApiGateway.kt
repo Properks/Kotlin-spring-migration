@@ -1,7 +1,6 @@
 package org.jeongmo.migration.bought.item.infrastructure.adapter.out.item.api
 
 import io.netty.handler.timeout.TimeoutException
-import org.jeongmo.migration.bought.item.application.dto.BuyItemRequest
 import org.jeongmo.migration.bought.item.application.error.code.BoughtItemErrorCode
 import org.jeongmo.migration.bought.item.application.error.exception.BoughtItemException
 import org.jeongmo.migration.bought.item.application.port.out.item.ItemServiceClient
@@ -38,10 +37,10 @@ class ItemApiGateway(
         }
     }
 
-    override fun decreaseItemCount(ownerId: Long, request: BuyItemRequest) {
+    override fun decreaseItemCount(ownerId: Long, itemId: Long, quantity: Long) {
         val type = object: ParameterizedTypeReference<DefaultResponse<Any?>?>() {}
-        val decreaseItemStockRequest = DecreaseItemStockRequest(request.quantity)
-        sendDecreaseCountRequest("$endpointPrefix/${request.itemId}/decrease-stock", ownerId, decreaseItemStockRequest, type) ?: run {
+        val decreaseItemStockRequest = DecreaseItemStockRequest(quantity)
+        sendDecreaseCountRequest("$endpointPrefix/${itemId}/decrease-stock", ownerId, decreaseItemStockRequest, type) ?: run {
             log.warn("[FAIL_API] bought-item-service | Fail item-service api (decreaseItemCount)")
             throw BoughtItemException(BoughtItemErrorCode.FAIL_TO_DECREASE_ITEM_COUNT)
         }
