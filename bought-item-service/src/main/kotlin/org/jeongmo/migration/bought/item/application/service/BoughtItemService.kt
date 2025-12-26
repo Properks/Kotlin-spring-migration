@@ -25,7 +25,7 @@ class BoughtItemService(
 
     @Transactional
     override fun buyItem(ownerId: Long, request: BuyItemRequest): BuyItemResponse {
-        itemServiceClient.decreaseItemCount(ownerId, request) // TODO: Save 와의 원자성 보장 필요
+        itemServiceClient.decreaseItemCount(ownerId, request.itemId, request.quantity) // TODO: Save 와의 원자성 보장 필요
         val boughtItem = boughtItemRepository.save(request.toDomain(ownerId))
         return BuyItemResponse.fromDomain(boughtItem)
     }
@@ -52,7 +52,11 @@ class BoughtItemService(
 
     override fun cancelBoughtItem(ownerId: Long, boughtItemId: Long) {
         val logTitle = "FAIL_TO_DELETE"
+        var stockIncrease = false
+        val foundBoughtItem = boughtItemRepository.findById(ownerId = ownerId, id = boughtItemId) ?: throw BoughtItemException(BoughtItemErrorCode.NOT_FOUND)
         try {
+            itemServiceClient.increaseItemCount(ownerId = ownerId, itemId = foundBoughtItem.itemId, quantity = foundBoughtItem.quantity)
+            stockIncrease = true
             retryUtils.execute(
                 failLogTitle = logTitle
             ) {
@@ -63,9 +67,15 @@ class BoughtItemService(
                 }
             }
         } catch (e: BoughtItemException) {
+            if (stockIncrease) {
+                itemServiceClient.decreaseItemCount(ownerId, foundBoughtItem.itemId, foundBoughtItem.quantity)
+            }
             log.warn("[$logTitle] bought-item-service | id: $boughtItemId")
             throw e
         } catch (e: Exception) {
+            if (stockIncrease) {
+                itemServiceClient.decreaseItemCount(ownerId, foundBoughtItem.itemId, foundBoughtItem.quantity)
+            }
             log.error("[$logTitle] bought-item-service | ${e.javaClass}: ${e.message}")
             throw BoughtItemException(BoughtItemErrorCode.OPTIMISTIC_LOCK_ERROR)
         }

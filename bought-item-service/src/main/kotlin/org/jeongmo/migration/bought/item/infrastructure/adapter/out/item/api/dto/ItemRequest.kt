@@ -3,3 +3,7 @@ package org.jeongmo.migration.bought.item.infrastructure.adapter.out.item.api.dt
 data class DecreaseItemStockRequest(
     val quantity: Long,
 )
+
+data class IncreaseItemStockRequest(
+    val quantity: Long,
+)
