@@ -25,9 +25,27 @@ class BoughtItemService(
 
     @Transactional
     override fun buyItem(ownerId: Long, request: BuyItemRequest): BuyItemResponse {
-        itemServiceClient.decreaseItemCount(ownerId, request.itemId, request.quantity) // TODO: Save 와의 원자성 보장 필요
-        val boughtItem = boughtItemRepository.save(request.toDomain(ownerId))
-        return BuyItemResponse.fromDomain(boughtItem)
+        val logTitle = "FAIL_TO_BUY_ITEM"
+        var decreaseStock = false
+        try {
+            itemServiceClient.decreaseItemCount(ownerId, request.itemId, request.quantity)
+            decreaseStock = true
+            val boughtItem = boughtItemRepository.save(request.toDomain(ownerId))
+            return BuyItemResponse.fromDomain(boughtItem)
+        } catch (e: BoughtItemException) {
+            log.warn("[$logTitle] bought-item-service | itemId: ${request.itemId}")
+            if (decreaseStock) {
+                itemServiceClient.increaseItemCount(ownerId, request.itemId, request.quantity)
+            }
+            throw e
+        } catch (e: Exception) {
+            log.error("[$logTitle] bought-item-service | itemId: ${request.itemId}")
+            if (decreaseStock) {
+                itemServiceClient.increaseItemCount(ownerId, request.itemId, request.quantity)
+                throw BoughtItemException(BoughtItemErrorCode.FAIL_TO_BUY_ITEM)
+            }
+            throw BoughtItemException(BoughtItemErrorCode.FAIL_TO_DECREASE_ITEM_COUNT)
+        }
     }
 
     @Transactional(readOnly = true)
@@ -75,9 +93,10 @@ class BoughtItemService(
         } catch (e: Exception) {
             if (stockIncrease) {
                 itemServiceClient.decreaseItemCount(ownerId, foundBoughtItem.itemId, foundBoughtItem.quantity)
+                throw BoughtItemException(BoughtItemErrorCode.FAIL_TO_CANCEL_ITEM)
             }
             log.error("[$logTitle] bought-item-service | ${e.javaClass}: ${e.message}")
-            throw BoughtItemException(BoughtItemErrorCode.OPTIMISTIC_LOCK_ERROR)
+            throw BoughtItemException(BoughtItemErrorCode.FAIL_TO_INCREASE_ITEM_COUNT)
         }
     }
 }

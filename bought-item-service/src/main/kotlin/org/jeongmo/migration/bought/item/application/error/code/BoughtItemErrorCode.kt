@@ -18,7 +18,9 @@ enum class BoughtItemErrorCode(
     FAIL_TO_DECREASE_ITEM_COUNT(HttpStatus.INTERNAL_SERVER_ERROR, "BOUGHT_ITEM_500_1", "아이템 수량 감소에 실패했습니다."),
     FAIL_TO_INCREASE_ITEM_COUNT(HttpStatus.INTERNAL_SERVER_ERROR, "BOUGHT_ITEM_500_2", "아이템 수량 복구에 실패했습니다."),
     INVALID_DATA(HttpStatus.BAD_REQUEST, "BOUGHT_ITEM_400_3", "구매한 상품의 데이터 형식이 유효하지 않습니다."),
-    OPTIMISTIC_LOCK_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "BOUGHT_ITEM_500_2", "낙관적 락 충돌로 인한 재시도 횟수를 초과하였습니다.")
+    OPTIMISTIC_LOCK_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "BOUGHT_ITEM_500_2", "낙관적 락 충돌로 인한 재시도 횟수를 초과하였습니다."),
+    FAIL_TO_BUY_ITEM(HttpStatus.INTERNAL_SERVER_ERROR, "BOUGHT_ITEM_500_3", "상품 구매에 실패했습니다."),
+    FAIL_TO_CANCEL_ITEM(HttpStatus.INTERNAL_SERVER_ERROR, "BOUGHT_ITEM_500_4", "구매 상품 취소에 실패했습니다."),
     ;
 
     override fun getReason(): ErrorReasonDTO =
