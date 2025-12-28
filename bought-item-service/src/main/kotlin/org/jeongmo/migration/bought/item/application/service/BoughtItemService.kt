@@ -7,6 +7,8 @@ import org.jeongmo.migration.bought.item.application.port.inbound.BoughtItemComm
 import org.jeongmo.migration.bought.item.application.port.inbound.BoughtItemQueryUseCase
 import org.jeongmo.migration.bought.item.application.port.out.item.ItemServiceClient
 import org.jeongmo.migration.bought.item.domain.repository.BoughtItemRepository
+import org.jeongmo.migration.common.utils.compensation.transaction.CompensationExecutor
+import org.jeongmo.migration.common.utils.compensation.transaction.CompensationOperator
 import org.jeongmo.migration.common.utils.retry.RetryUtils
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -17,6 +19,7 @@ import org.springframework.transaction.support.TransactionTemplate
 class BoughtItemService(
     private val boughtItemRepository: BoughtItemRepository,
     private val itemServiceClient: ItemServiceClient,
+    private val compensationExecutor: CompensationExecutor,
     private val transactionTemplate: TransactionTemplate,
     private val retryUtils: RetryUtils,
 ): BoughtItemCommandUseCase, BoughtItemQueryUseCase {
@@ -25,9 +28,30 @@ class BoughtItemService(
 
     @Transactional
     override fun buyItem(ownerId: Long, request: BuyItemRequest): BuyItemResponse {
-        itemServiceClient.decreaseItemCount(ownerId, request.itemId, request.quantity) // TODO: Save 와의 원자성 보장 필요
-        val boughtItem = boughtItemRepository.save(request.toDomain(ownerId))
-        return BuyItemResponse.fromDomain(boughtItem)
+        var decreaseStock = false
+        try {
+            itemServiceClient.decreaseItemCount(ownerId, request.itemId, request.quantity)
+            decreaseStock = true
+            val boughtItem = boughtItemRepository.save(request.toDomain(ownerId))
+            return BuyItemResponse.fromDomain(boughtItem)
+        } catch (e: Exception) {
+            compensationExecutor.compensateTransaction(
+                CompensationOperator(
+                    title = "BUY_ITEM",
+                    exception = e,
+                    compensations = listOf {
+                        if (decreaseStock) {
+                            itemServiceClient.increaseItemCount(
+                                ownerId = ownerId,
+                                itemId = request.itemId,
+                                quantity = request.quantity
+                            )
+                        }
+                    }
+                )
+            )
+            throw BoughtItemException(BoughtItemErrorCode.FAIL_TO_BUY_ITEM)
+        }
     }
 
     @Transactional(readOnly = true)
@@ -51,14 +75,13 @@ class BoughtItemService(
     }
 
     override fun cancelBoughtItem(ownerId: Long, boughtItemId: Long) {
-        val logTitle = "FAIL_TO_DELETE"
         var stockIncrease = false
         val foundBoughtItem = boughtItemRepository.findById(ownerId = ownerId, id = boughtItemId) ?: throw BoughtItemException(BoughtItemErrorCode.NOT_FOUND)
         try {
             itemServiceClient.increaseItemCount(ownerId = ownerId, itemId = foundBoughtItem.itemId, quantity = foundBoughtItem.quantity)
             stockIncrease = true
             retryUtils.execute(
-                failLogTitle = logTitle
+                failLogTitle = "FAIL_TO_DELETE"
             ) {
                 transactionTemplate.execute {
                     val domain = boughtItemRepository.findById(ownerId = ownerId, id = boughtItemId) ?: throw BoughtItemException(BoughtItemErrorCode.NOT_FOUND)
@@ -66,18 +89,23 @@ class BoughtItemService(
                     boughtItemRepository.save(domain)
                 }
             }
-        } catch (e: BoughtItemException) {
-            if (stockIncrease) {
-                itemServiceClient.decreaseItemCount(ownerId, foundBoughtItem.itemId, foundBoughtItem.quantity)
-            }
-            log.warn("[$logTitle] bought-item-service | id: $boughtItemId")
-            throw e
         } catch (e: Exception) {
-            if (stockIncrease) {
-                itemServiceClient.decreaseItemCount(ownerId, foundBoughtItem.itemId, foundBoughtItem.quantity)
-            }
-            log.error("[$logTitle] bought-item-service | ${e.javaClass}: ${e.message}")
-            throw BoughtItemException(BoughtItemErrorCode.OPTIMISTIC_LOCK_ERROR)
+            compensationExecutor.compensateTransaction(
+                CompensationOperator(
+                    title = "CANCEL_ITEM",
+                    exception = e,
+                    compensations = listOf {
+                        if (stockIncrease) {
+                            itemServiceClient.decreaseItemCount(
+                                ownerId = ownerId,
+                                itemId = foundBoughtItem.itemId,
+                                quantity = foundBoughtItem.quantity
+                            )
+                        }
+                    }
+                )
+            )
+            throw BoughtItemException(BoughtItemErrorCode.FAIL_TO_CANCEL_ITEM)
         }
     }
 }
