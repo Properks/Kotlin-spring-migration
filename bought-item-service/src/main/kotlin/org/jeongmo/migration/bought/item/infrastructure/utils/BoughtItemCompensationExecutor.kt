@@ -13,9 +13,9 @@ class BoughtItemCompensationExecutor: CompensationExecutor {
     override fun <T> compensateTransaction(compensationOperator: CompensationOperator<T>) {
         compensationOperator.compensations.forEach {
             try {
-                log.warn("$[${compensationOperator.title}] bought-item-service | Start compensation transaction. exception-message: ${compensationOperator.exception.message}")
+                log.warn("[${compensationOperator.title}] bought-item-service | Start compensation transaction. exception-message: ${compensationOperator.exception.message}")
                 it.invoke()
-                log.warn("$[${compensationOperator.title}] bought-item-service | Success compensation transaction. exception-message: ${compensationOperator.exception.message}")
+                log.warn("[${compensationOperator.title}] bought-item-service | Success compensation transaction. exception-message: ${compensationOperator.exception.message}")
             } catch (e: Exception) {
                 log.error("[${compensationOperator.title}] bought-item-compensation-executor | Fail compensation job (cause ${compensationOperator.exception.javaClass.simpleName})", e)
             }
