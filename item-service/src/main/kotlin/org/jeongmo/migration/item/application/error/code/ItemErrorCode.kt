@@ -1,15 +1,13 @@
 package org.jeongmo.migration.item.application.error.code
 
-import org.namul.api.payload.code.BaseErrorCode
-import org.namul.api.payload.code.dto.ErrorReasonDTO
-import org.namul.api.payload.code.dto.supports.DefaultResponseErrorReasonDTO
+import org.namul.api.payload.code.supports.DefaultBaseErrorCode
 import org.springframework.http.HttpStatus
 
 enum class ItemErrorCode(
     private val httpStatus: HttpStatus,
     private val code: String,
     private val message: String,
-): BaseErrorCode {
+): DefaultBaseErrorCode {
 
     NOT_FOUND(HttpStatus.NOT_FOUND, "ITEM_404_1", "상품을 찾지 못했습니다."),
     ALREADY_DELETE(HttpStatus.BAD_REQUEST, "ITEM_400_1", "이미 삭제되었거나 존재하지 않는 상품입니다."),
@@ -19,10 +17,7 @@ enum class ItemErrorCode(
     NO_ITEM_STOCK(HttpStatus.BAD_REQUEST, "ITEM_400_3", "상품 재고가 없습니다."),
     ;
 
-    override fun getReason(): ErrorReasonDTO =
-        DefaultResponseErrorReasonDTO.builder()
-            .httpStatus(this.httpStatus)
-            .code(this.code)
-            .message(this.message)
-            .build()
+    override fun getHttpStatus(): HttpStatus = this.httpStatus
+    override fun getCode(): String = this.code
+    override fun getMessage(): String = this.message
 }

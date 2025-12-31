@@ -4,7 +4,7 @@ import jakarta.validation.Valid
 import org.jeongmo.migration.item.application.dto.*
 import org.jeongmo.migration.item.application.port.inbound.ItemCommandUseCase
 import org.jeongmo.migration.item.application.port.inbound.ItemQueryUseCase
-import org.namul.api.payload.response.DefaultResponse
+import org.namul.api.payload.response.supports.DefaultResponse
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping

@@ -5,7 +5,7 @@ import org.jeongmo.migration.bought.item.application.dto.*
 import org.jeongmo.migration.bought.item.application.port.inbound.BoughtItemCommandUseCase
 import org.jeongmo.migration.bought.item.application.port.inbound.BoughtItemQueryUseCase
 import org.jeongmo.migration.common.auth.annotation.LoginUserId
-import org.namul.api.payload.response.DefaultResponse
+import org.namul.api.payload.response.supports.DefaultResponse
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping

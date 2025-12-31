@@ -9,7 +9,7 @@ import org.jeongmo.migration.bought.item.infrastructure.adapter.out.item.api.dto
 import org.jeongmo.migration.bought.item.infrastructure.adapter.out.item.api.dto.IncreaseItemStockRequest
 import org.jeongmo.migration.common.utils.idempotency.IDEMPOTENCY_KEY_NAME
 import org.jeongmo.migration.common.utils.idempotency.IdempotencyKeyGenerator
-import org.namul.api.payload.response.DefaultResponse
+import org.namul.api.payload.response.supports.DefaultResponse
 import org.slf4j.LoggerFactory
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpMethod

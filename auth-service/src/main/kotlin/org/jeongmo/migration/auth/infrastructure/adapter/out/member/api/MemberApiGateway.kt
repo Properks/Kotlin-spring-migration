@@ -4,7 +4,7 @@ import org.jeongmo.migration.auth.application.error.code.AuthErrorCode
 import org.jeongmo.migration.auth.application.error.exception.AuthException
 import org.jeongmo.migration.auth.application.port.out.member.MemberServiceClient
 import org.jeongmo.migration.auth.application.port.out.member.dto.*
-import org.namul.api.payload.response.DefaultResponse
+import org.namul.api.payload.response.supports.DefaultResponse
 import org.slf4j.LoggerFactory
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.stereotype.Component

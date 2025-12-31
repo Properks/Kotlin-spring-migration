@@ -1,5 +1,6 @@
 package org.jeongmo.migration.common.config
 
+import org.namul.api.payload.code.supports.DefaultBaseErrorCode
 import org.namul.api.payload.error.AdditionalExceptionHandler
 import org.namul.api.payload.error.DefaultExceptionAdviceConfigurer
 import org.namul.api.payload.error.ExceptionAdvice
@@ -12,9 +13,9 @@ class ApiPayloadConfig {
 
     @Bean
     fun exceptionAdvice(
-        failureResponseWriter: FailureResponseWriter,
-        additionalExceptionHandlers: List<AdditionalExceptionHandler>,
-    ): ExceptionAdvice {
+        failureResponseWriter: FailureResponseWriter<DefaultBaseErrorCode>,
+        additionalExceptionHandlers: List<AdditionalExceptionHandler<DefaultBaseErrorCode>>,
+    ): ExceptionAdvice<DefaultBaseErrorCode> {
         return DefaultExceptionAdviceConfigurer(failureResponseWriter)
             .addAdditionalExceptionHandlers(additionalExceptionHandlers)
             .build()

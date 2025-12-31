@@ -1,7 +1,7 @@
 package org.jeongmo.migration.api.gateway.security.util
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import org.namul.api.payload.code.BaseErrorCode
+import org.namul.api.payload.code.supports.DefaultBaseErrorCode
 import org.namul.api.payload.writer.FailureResponseWriter
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
@@ -10,16 +10,16 @@ import reactor.core.publisher.Mono
 
 @Component
 class HttpResponseUtil(
-    private val failureResponseWriter: FailureResponseWriter,
+    private val failureResponseWriter: FailureResponseWriter<DefaultBaseErrorCode>,
     private val objectMapper: ObjectMapper, // 자동으로 생성된 ObjectMapper의 설정을 그대로 사용하기 위해 의존성 주입
 ) {
 
-    fun <T> writeResponse(exchange: ServerWebExchange, code: BaseErrorCode, result: T): Mono<Void> {
+    fun writeResponse(exchange: ServerWebExchange, code: DefaultBaseErrorCode, exception: Exception?): Mono<Void> {
         val response = exchange.response
-        response.setStatusCode(code.reason.httpStatus)
+        response.setStatusCode(code.httpStatus)
         response.headers.contentType = MediaType.APPLICATION_JSON
 
-        val data = failureResponseWriter.onFailure(code.reason, result)
+        val data = failureResponseWriter.onFailure(exception, code)
         val jsonData = objectMapper.writeValueAsString(data)
         return response.writeWith(Mono.just(response.bufferFactory().wrap(jsonData.toByteArray(Charsets.UTF_8))))
     }

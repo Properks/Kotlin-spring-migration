@@ -64,7 +64,7 @@ subprojects {
     }
 
     dependencies {
-        implementation("org.namul:api-payload:0.7.4")
+        implementation("org.namul:api-payload:0.8.2")
         implementation("org.jetbrains.kotlin:kotlin-reflect:1.9.25")
     }
 
@@ -102,7 +102,7 @@ tasks.register('buildDomain') {
         def project = findProject(":$moduleName")
         if (project != null) {
             def cleanTask = project.tasks.named("clean")
-            def buildImageTask = project.tasks.named("jib")
+            def buildImageTask = project.tasks.named("jibDockerBuild")
             if (cleanTask.isPresent() && buildImageTask.isPresent()) {
                 dependsOn cleanTask
                 dependsOn buildImageTask
