@@ -1,4 +1,4 @@
-package org.jeongmo.migration.common.config
+package org.jeongmo.migration.common.config.api.payload
 
 import org.namul.api.payload.code.supports.DefaultBaseErrorCode
 import org.namul.api.payload.error.AdditionalExceptionHandler
