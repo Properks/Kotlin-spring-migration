@@ -70,7 +70,7 @@ class MemberService(
         } catch (e: Exception) {
             logger.error("[FAIL_DELETE] member-service | Unknown Error:", e)
             logger.debug("Exception Details: ", e)
-            throw MemberException(MemberErrorCode.CANNOT_DELETE)
+            throw MemberException(MemberErrorCode.CANNOT_DELETE, e)
         }
     }
 }

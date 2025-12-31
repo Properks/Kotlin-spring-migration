@@ -44,7 +44,7 @@ class ItemService(
             throw e
         } catch (e: Exception) {
             logger.warn("[$logTitle] item-service | id: $id, ${e.javaClass}: ${e.message}")
-            throw ItemException(ItemErrorCode.OPTIMISTIC_LOCKING_ERROR)
+            throw ItemException(ItemErrorCode.OPTIMISTIC_LOCKING_ERROR, e)
         }
     }
 
@@ -64,7 +64,7 @@ class ItemService(
             throw e
         } catch (e: Exception) {
             logger.warn("[$logTitle] item-service | id: $id")
-            throw ItemException(ItemErrorCode.OPTIMISTIC_LOCKING_ERROR)
+            throw ItemException(ItemErrorCode.OPTIMISTIC_LOCKING_ERROR, e)
         }
     }
 
@@ -103,7 +103,7 @@ class ItemService(
             throw e
         } catch (e: Exception) {
             logger.error("[FAIL_DELETE] item-service | Unknown Error: ${e.message}", e)
-            throw ItemException(ItemErrorCode.FAIL_ITEM_DELETE)
+            throw ItemException(ItemErrorCode.FAIL_ITEM_DELETE, e)
         }
     }
 
