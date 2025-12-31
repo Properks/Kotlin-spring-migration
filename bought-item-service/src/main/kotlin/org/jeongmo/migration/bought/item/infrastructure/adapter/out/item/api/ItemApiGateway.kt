@@ -31,27 +31,42 @@ class ItemApiGateway(
     override fun getItem(itemId: Long): ItemInfoResponse {
         val type = object: ParameterizedTypeReference<DefaultResponse<ItemInfoResponse?>?>() {}
         val response = sendGetRequest("$endpointPrefix/$itemId", type)
-        return response?.result ?: run {
+        return try {
+            response?.result ?: run {
+                log.warn("[FAIL_API] bought-item-service | Cannot get response from item domain (getItem)")
+                throw BoughtItemException(BoughtItemErrorCode.ITEM_NOT_FOUND)
+            }
+        } catch (e: Exception) {
             log.warn("[FAIL_API] bought-item-service | Fail item-service api (getItem)")
-            throw BoughtItemException(BoughtItemErrorCode.ITEM_NOT_FOUND)
+            throw BoughtItemException(BoughtItemErrorCode.ITEM_NOT_FOUND, e)
         }
     }
 
     override fun decreaseItemCount(ownerId: Long, itemId: Long, quantity: Long) {
         val type = object: ParameterizedTypeReference<DefaultResponse<Any?>?>() {}
         val decreaseItemStockRequest = DecreaseItemStockRequest(quantity)
-        sendDecreaseCountRequest("$endpointPrefix/${itemId}/decrease-stock", ownerId, decreaseItemStockRequest, type) ?: run {
-            log.warn("[FAIL_API] bought-item-service | Fail item-service api (decreaseItemCount)")
-            throw BoughtItemException(BoughtItemErrorCode.FAIL_TO_DECREASE_ITEM_COUNT)
+        try {
+            sendDecreaseCountRequest("$endpointPrefix/${itemId}/decrease-stock", ownerId, decreaseItemStockRequest, type) ?: run {
+                log.warn("[FAIL_API] bought-item-service | Cannot get response from item domain (DecreaseItemCount)")
+                throw BoughtItemException(BoughtItemErrorCode.FAIL_TO_INCREASE_ITEM_COUNT)
+            }
+        } catch (e: Exception) {
+            log.warn("[FAIL_API] bought-item-service | Fail item-service api (DecreaseItemCount)")
+            throw BoughtItemException(BoughtItemErrorCode.FAIL_TO_DECREASE_ITEM_COUNT, e)
         }
     }
 
     override fun increaseItemCount(ownerId: Long, itemId: Long, quantity: Long) {
         val type = object: ParameterizedTypeReference<DefaultResponse<Any?>?>() {}
         val increaseRequest = IncreaseItemStockRequest(quantity)
-        sendIncreaseCountRequest("$endpointPrefix/${itemId}/increase-stock", ownerId, increaseRequest, type) ?: run {
+        try {
+            sendIncreaseCountRequest("$endpointPrefix/${itemId}/increase-stock", ownerId, increaseRequest, type) ?: run {
+                log.warn("[FAIL_API] bought-item-service | Cannot get response from item domain (IncreaseItemCount)")
+                throw BoughtItemException(BoughtItemErrorCode.FAIL_TO_INCREASE_ITEM_COUNT)
+            }
+        } catch (e: Exception) {
             log.warn("[FAIL_API] bought-item-service | Fail item-service api (IncreaseItemCount)")
-            throw BoughtItemException(BoughtItemErrorCode.FAIL_TO_INCREASE_ITEM_COUNT)
+            throw BoughtItemException(BoughtItemErrorCode.FAIL_TO_INCREASE_ITEM_COUNT, e)
         }
     }
 
@@ -64,7 +79,7 @@ class ItemApiGateway(
                 .block(Duration.ofSeconds(5))
         } catch (e: Exception) {
             handleException(e)
-            return null
+            throw e
         }
     }
 
@@ -85,7 +100,7 @@ class ItemApiGateway(
                 .block(Duration.ofSeconds(5))
         } catch (e: Exception) {
             handleException(e)
-            return null
+            throw e
         }
     }
 
@@ -106,7 +121,7 @@ class ItemApiGateway(
                 .block(Duration.ofSeconds(5))
         } catch (e: Exception) {
             handleException(e)
-            return null
+            throw e
         }
     }
 

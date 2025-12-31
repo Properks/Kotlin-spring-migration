@@ -21,9 +21,14 @@ class MemberApiGateway(
         val type = object: ParameterizedTypeReference<DefaultResponse<CreateMemberResponse?>>() {}
         val response = sendRequest("/internal/api/members", request, type)
 
-        return response?.result ?: run {
+        return try {
+            response?.result ?: run {
+                logger.warn("[FAIL_API] auth-service | Cannot get response from member domain (sign-up request)")
+                throw AuthException(AuthErrorCode.FAIL_SIGN_UP)
+            }
+        } catch (e: Exception) {
             logger.warn("[FAIL_API] auth-service | Fail api call to member service (sign-up request)")
-            throw AuthException(AuthErrorCode.FAIL_SIGN_UP)
+            throw AuthException(AuthErrorCode.FAIL_SIGN_UP, e)
         }
     }
 
@@ -31,9 +36,14 @@ class MemberApiGateway(
         val type = object: ParameterizedTypeReference<DefaultResponse<VerifyMemberResponse?>>() {}
         val response = sendRequest("/internal/api/members/verify", request, type)
 
-        return response?.result ?: run {
+        return try {
+            response?.result ?: run {
+                logger.warn("[FAIL_API] auth-service | Cannot get response from member domain (login request)")
+                throw AuthException(AuthErrorCode.FAIL_TO_VERIFY)
+            }
+        } catch (e: Exception) {
             logger.warn("[FAIL_API] auth-service | Fail api call to member service (login request)")
-            throw AuthException(AuthErrorCode.FAIL_TO_VERIFY)
+            throw AuthException(AuthErrorCode.FAIL_TO_VERIFY, e)
         }
     }
 
@@ -52,7 +62,7 @@ class MemberApiGateway(
         } catch (e: Exception) {
             logger.warn("[EXTERNAL_DOMAIN_ERROR] auth-service | Error in member domain service")
             logger.debug("Exception Details: ", e)
-            null
+            throw e
         }
 
 
