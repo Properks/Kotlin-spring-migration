@@ -46,7 +46,7 @@ class MemberApiGateway(
     }
 
     /**
-     * @return 성공 시 responseType 반환, 실패 시 null 반환
+     * @return 성공 시 responseType 반환, 응답이 없는 경우 Null, 실패 시 에러 발생
      */
     private fun <T> sendRequest(uri: String, request: Any, responseType: ParameterizedTypeReference<T>): T? =
         try {
