@@ -7,6 +7,7 @@ import org.jeongmo.migration.common.token.application.dto.TokenInfoDTO
 import org.jeongmo.migration.common.token.application.error.code.TokenErrorCode
 import org.jeongmo.migration.common.token.application.error.exception.TokenException
 import org.jeongmo.migration.common.token.application.util.TokenUtil
+import org.namul.api.payload.code.supports.DefaultBaseErrorCode
 import org.slf4j.LoggerFactory
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
@@ -31,10 +32,17 @@ abstract class TokenAuthenticationFilter(
             }
         } catch (e: TokenException) {
             // tokenUtil에서 에러 로깅
-            return httpResponseUtil.writeResponse(exchange, e.code, e.message)
+            return httpResponseUtil.writeResponse(
+                exchange,
+                code = when (e.code) {
+                    is DefaultBaseErrorCode -> e.code
+                    else -> TokenErrorCode.TOKEN_NOT_VALID
+                } as DefaultBaseErrorCode,
+                exception = e
+            )
         } catch (e: Exception) {
             logger.error("Token Unkown Error", e)
-            return httpResponseUtil.writeResponse(exchange, TokenErrorCode.TOKEN_NOT_VALID, e.message)
+            return httpResponseUtil.writeResponse(exchange, TokenErrorCode.TOKEN_NOT_VALID, e)
         }
 
         val modifiedExchange = addHeader(exchange, info)

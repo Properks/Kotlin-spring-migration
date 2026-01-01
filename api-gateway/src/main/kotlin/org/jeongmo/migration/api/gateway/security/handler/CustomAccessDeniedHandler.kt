@@ -1,7 +1,7 @@
 package org.jeongmo.migration.api.gateway.security.handler
 
 import org.jeongmo.migration.api.gateway.security.util.HttpResponseUtil
-import org.namul.api.payload.code.DefaultResponseErrorCode
+import org.namul.api.payload.code.supports.DefaultResponseErrorCode
 import org.slf4j.LoggerFactory
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.security.web.server.authorization.ServerAccessDeniedHandler
@@ -16,6 +16,6 @@ class CustomAccessDeniedHandler(
 
     override fun handle(exchange: ServerWebExchange, denied: AccessDeniedException?): Mono<Void> {
         logger.warn("인가 실패(권한 없음) ${denied?.message}", denied)
-        return httpResponseUtil.writeResponse(exchange, DefaultResponseErrorCode._FORBIDDEN, denied?.message)
+        return httpResponseUtil.writeResponse(exchange, DefaultResponseErrorCode.FORBIDDEN, denied)
     }
 }

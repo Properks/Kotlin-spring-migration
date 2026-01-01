@@ -50,7 +50,7 @@ class BoughtItemService(
                     }
                 )
             )
-            throw BoughtItemException(BoughtItemErrorCode.FAIL_TO_BUY_ITEM)
+            throw BoughtItemException(BoughtItemErrorCode.FAIL_TO_BUY_ITEM, e)
         }
     }
 
@@ -105,7 +105,7 @@ class BoughtItemService(
                     }
                 )
             )
-            throw BoughtItemException(BoughtItemErrorCode.FAIL_TO_CANCEL_ITEM)
+            throw BoughtItemException(BoughtItemErrorCode.FAIL_TO_CANCEL_ITEM, e)
         }
     }
 }

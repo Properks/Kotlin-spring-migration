@@ -1,7 +1,8 @@
 package org.jeongmo.migration.api.gateway.security.handler
 
 import org.jeongmo.migration.api.gateway.security.util.HttpResponseUtil
-import org.namul.api.payload.code.DefaultResponseErrorCode
+import org.namul.api.payload.code.supports.DefaultResponseErrorCode
+import org.namul.api.payload.error.exception.ServerApplicationException
 import org.slf4j.LoggerFactory
 import org.springframework.boot.web.reactive.error.ErrorWebExceptionHandler
 import org.springframework.core.annotation.Order
@@ -23,6 +24,6 @@ class CustomErrorWebExceptionHandler(
         if (exchange.response.isCommitted) {
             return Mono.error(ex)
         }
-        return httpResponseUtil.writeResponse(exchange, DefaultResponseErrorCode._INTERNAL_SERVER_ERROR, clientMessage)
+        return httpResponseUtil.writeResponse(exchange, DefaultResponseErrorCode.INTERNAL_SERVER_ERROR, ServerApplicationException(DefaultResponseErrorCode.INTERNAL_SERVER_ERROR, ex))
     }
 }

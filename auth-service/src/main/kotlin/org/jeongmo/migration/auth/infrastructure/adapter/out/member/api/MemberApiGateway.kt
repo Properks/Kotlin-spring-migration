@@ -4,7 +4,7 @@ import org.jeongmo.migration.auth.application.error.code.AuthErrorCode
 import org.jeongmo.migration.auth.application.error.exception.AuthException
 import org.jeongmo.migration.auth.application.port.out.member.MemberServiceClient
 import org.jeongmo.migration.auth.application.port.out.member.dto.*
-import org.namul.api.payload.response.DefaultResponse
+import org.namul.api.payload.response.supports.DefaultResponse
 import org.slf4j.LoggerFactory
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.stereotype.Component
@@ -19,26 +19,34 @@ class MemberApiGateway(
 
     override fun createMember(request: CreateMemberRequest): CreateMemberResponse {
         val type = object: ParameterizedTypeReference<DefaultResponse<CreateMemberResponse?>>() {}
-        val response = sendRequest("/internal/api/members", request, type)
 
-        return response?.result ?: run {
+        return try {
+            sendRequest("/internal/api/members", request, type)?.result ?: throw AuthException(AuthErrorCode.FAIL_SIGN_UP)
+        } catch (e: AuthException) {
+            logger.warn("[FAIL_API] auth-service | Cannot get response from member domain (sign-up request)")
+            throw e
+        } catch (e: Exception) {
             logger.warn("[FAIL_API] auth-service | Fail api call to member service (sign-up request)")
-            throw AuthException(AuthErrorCode.FAIL_SIGN_UP)
+            throw AuthException(AuthErrorCode.FAIL_SIGN_UP, e)
         }
     }
 
     override fun verifyMember(request: VerifyMemberRequest): VerifyMemberResponse {
         val type = object: ParameterizedTypeReference<DefaultResponse<VerifyMemberResponse?>>() {}
-        val response = sendRequest("/internal/api/members/verify", request, type)
 
-        return response?.result ?: run {
+        return try {
+            sendRequest("/internal/api/members/verify", request, type)?.result ?: throw AuthException(AuthErrorCode.FAIL_TO_VERIFY)
+        } catch (e: AuthException) {
+            logger.warn("[FAIL_API] auth-service | Cannot get response from member domain (login request)")
+            throw e
+        } catch (e: Exception) {
             logger.warn("[FAIL_API] auth-service | Fail api call to member service (login request)")
-            throw AuthException(AuthErrorCode.FAIL_TO_VERIFY)
+            throw AuthException(AuthErrorCode.FAIL_TO_VERIFY, e)
         }
     }
 
     /**
-     * @return 성공 시 responseType 반환, 실패 시 null 반환
+     * @return 성공 시 responseType 반환, 응답이 없는 경우 Null, 실패 시 에러 발생
      */
     private fun <T> sendRequest(uri: String, request: Any, responseType: ParameterizedTypeReference<T>): T? =
         try {
@@ -52,7 +60,7 @@ class MemberApiGateway(
         } catch (e: Exception) {
             logger.warn("[EXTERNAL_DOMAIN_ERROR] auth-service | Error in member domain service")
             logger.debug("Exception Details: ", e)
-            null
+            throw e
         }
 
 

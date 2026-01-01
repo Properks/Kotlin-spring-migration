@@ -7,7 +7,7 @@ import org.springframework.boot.runApplication
     scanBasePackages = [
         "org.jeongmo.migration.auth",
         "org.jeongmo.migration.common.token",
-        "org.jeongmo.migration.common.config"
+        "org.jeongmo.migration.common.config.api.payload"
     ]
 )
 class AuthApplication

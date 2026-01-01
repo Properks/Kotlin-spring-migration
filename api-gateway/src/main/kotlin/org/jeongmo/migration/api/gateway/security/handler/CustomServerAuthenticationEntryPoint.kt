@@ -1,7 +1,7 @@
 package org.jeongmo.migration.api.gateway.security.handler
 
 import org.jeongmo.migration.api.gateway.security.util.HttpResponseUtil
-import org.namul.api.payload.code.DefaultResponseErrorCode
+import org.namul.api.payload.code.supports.DefaultResponseErrorCode
 import org.slf4j.LoggerFactory
 import org.springframework.security.core.AuthenticationException
 import org.springframework.security.web.server.ServerAuthenticationEntryPoint
@@ -16,6 +16,6 @@ class CustomServerAuthenticationEntryPoint(
 
     override fun commence(exchange: ServerWebExchange, ex: AuthenticationException?): Mono<Void> {
         logger.warn("인증 실패 ${ex?.message}", ex)
-        return httpResponseUtil.writeResponse(exchange, DefaultResponseErrorCode._UNAUTHORIZED, ex?.message)
+        return httpResponseUtil.writeResponse(exchange, DefaultResponseErrorCode.UNAUTHORIZED, ex)
     }
 }

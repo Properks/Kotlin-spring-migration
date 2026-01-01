@@ -1,15 +1,13 @@
 package org.jeongmo.migration.member.application.error.code
 
-import org.namul.api.payload.code.BaseErrorCode
-import org.namul.api.payload.code.dto.ErrorReasonDTO
-import org.namul.api.payload.code.dto.supports.DefaultResponseErrorReasonDTO
+import org.namul.api.payload.code.supports.DefaultBaseErrorCode
 import org.springframework.http.HttpStatus
 
 enum class MemberErrorCode(
     private val httpStatus: HttpStatus,
     private val code: String,
     private val message: String,
-): BaseErrorCode {
+): DefaultBaseErrorCode{
 
     NOT_FOUND(HttpStatus.NOT_FOUND, "MEMBER_404_1", "사용자를 찾지 못했습니다."),
     INVALID_DATA(HttpStatus.BAD_REQUEST, "MEMBER_400_1", "사용자 유형에 따른 데이터 양식이 맞지 않습니다."),
@@ -18,10 +16,7 @@ enum class MemberErrorCode(
     CANNOT_DELETE(HttpStatus.INTERNAL_SERVER_ERROR, "MEMBER_500_1", "사용자를 삭제할 수 없습니다."),
     ;
 
-    override fun getReason(): ErrorReasonDTO =
-        DefaultResponseErrorReasonDTO.builder()
-            .httpStatus(this.httpStatus)
-            .code(this.code)
-            .message(this.message)
-            .build()
+    override fun getHttpStatus(): HttpStatus = this.httpStatus
+    override fun getCode(): String = this.code
+    override fun getMessage(): String = this.message
 }

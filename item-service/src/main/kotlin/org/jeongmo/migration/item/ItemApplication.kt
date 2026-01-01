@@ -6,7 +6,7 @@ import org.springframework.boot.runApplication
 @SpringBootApplication(
     scanBasePackages = [
         "org.jeongmo.migration.item",
-        "org.jeongmo.migration.common.config",
+        "org.jeongmo.migration.common.config.api.payload",
         "org.jeongmo.migration.common.domain.jpa",
         "org.jeongmo.migration.common.utils.retry",
     ]

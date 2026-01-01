@@ -7,7 +7,7 @@ import org.jeongmo.migration.member.application.dto.UpdateMemberInfoRequest
 import org.jeongmo.migration.member.application.dto.UpdateMemberInfoResponse
 import org.jeongmo.migration.member.application.port.inbound.MemberCommandUseCase
 import org.jeongmo.migration.member.application.port.inbound.MemberQueryUseCase
-import org.namul.api.payload.response.DefaultResponse
+import org.namul.api.payload.response.supports.DefaultResponse
 import org.springframework.web.bind.annotation.*
 
 @RestController

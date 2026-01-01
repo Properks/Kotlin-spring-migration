@@ -49,7 +49,7 @@ class JwtTokenUtil(
             TokenType.valueOf(claims.header.type)
         } catch (e: Exception) {
             logger.warn("Invalid Token Type: ${claims.header.type}", e)
-            throw TokenException(TokenErrorCode.INVALID_TOKEN_TYPE)
+            throw TokenException(TokenErrorCode.INVALID_TOKEN_TYPE, e)
         }
         val idPayload = claims.payload["id"]?.toString() ?: throw TokenException(TokenErrorCode.FAIL_READ_TOKEN)
         val username = claims.payload.subject
@@ -72,10 +72,10 @@ class JwtTokenUtil(
                 .parseSignedClaims(token)
         } catch (e: ExpiredJwtException) {
             logger.debug("Token expired", e)
-            throw TokenException(TokenErrorCode.TOKEN_EXPIRED)
+            throw TokenException(TokenErrorCode.TOKEN_EXPIRED, e)
         } catch (e: Exception) {
             logger.warn("Invalid Token", e)
-            throw TokenException(TokenErrorCode.TOKEN_NOT_VALID)
+            throw TokenException(TokenErrorCode.TOKEN_NOT_VALID, e)
         }
     }
 
