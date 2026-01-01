@@ -26,6 +26,8 @@ class MemberApiGateway(
                 logger.warn("[FAIL_API] auth-service | Cannot get response from member domain (sign-up request)")
                 throw AuthException(AuthErrorCode.FAIL_SIGN_UP)
             }
+        } catch (e: AuthException) {
+            throw e
         } catch (e: Exception) {
             logger.warn("[FAIL_API] auth-service | Fail api call to member service (sign-up request)")
             throw AuthException(AuthErrorCode.FAIL_SIGN_UP, e)
@@ -41,6 +43,8 @@ class MemberApiGateway(
                 logger.warn("[FAIL_API] auth-service | Cannot get response from member domain (login request)")
                 throw AuthException(AuthErrorCode.FAIL_TO_VERIFY)
             }
+        } catch (e: AuthException) {
+            throw e
         } catch (e: Exception) {
             logger.warn("[FAIL_API] auth-service | Fail api call to member service (login request)")
             throw AuthException(AuthErrorCode.FAIL_TO_VERIFY, e)
