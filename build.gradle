@@ -114,7 +114,7 @@ tasks.register('buildDomain') {
                 dependsOn buildImageTask
             }
             else {
-                logger.warn("Cannot find clean or jib task in $moduleName")
+                logger.warn("Cannot find clean or jibDockerBuild task in $moduleName")
             }
         }
     }
