@@ -48,7 +48,7 @@ class ItemApiGateway(
         try {
             sendDecreaseCountRequest("$endpointPrefix/${itemId}/decrease-stock", ownerId, decreaseItemStockRequest, type) ?: run {
                 log.warn("[FAIL_API] bought-item-service | Cannot get response from item domain (DecreaseItemCount)")
-                throw BoughtItemException(BoughtItemErrorCode.FAIL_TO_INCREASE_ITEM_COUNT)
+                throw BoughtItemException(BoughtItemErrorCode.FAIL_TO_DECREASE_ITEM_COUNT)
             }
         } catch (e: Exception) {
             log.warn("[FAIL_API] bought-item-service | Fail item-service api (DecreaseItemCount)")
