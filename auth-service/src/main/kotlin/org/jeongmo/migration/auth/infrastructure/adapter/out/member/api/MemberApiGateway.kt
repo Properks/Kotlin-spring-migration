@@ -19,10 +19,9 @@ class MemberApiGateway(
 
     override fun createMember(request: CreateMemberRequest): CreateMemberResponse {
         val type = object: ParameterizedTypeReference<DefaultResponse<CreateMemberResponse?>>() {}
-        val response = sendRequest("/internal/api/members", request, type)
 
         return try {
-            response?.result ?: throw AuthException(AuthErrorCode.FAIL_SIGN_UP)
+            sendRequest("/internal/api/members", request, type)?.result ?: throw AuthException(AuthErrorCode.FAIL_SIGN_UP)
         } catch (e: AuthException) {
             logger.warn("[FAIL_API] auth-service | Cannot get response from member domain (sign-up request)")
             throw e
@@ -34,10 +33,9 @@ class MemberApiGateway(
 
     override fun verifyMember(request: VerifyMemberRequest): VerifyMemberResponse {
         val type = object: ParameterizedTypeReference<DefaultResponse<VerifyMemberResponse?>>() {}
-        val response = sendRequest("/internal/api/members/verify", request, type)
 
         return try {
-            response?.result ?: throw AuthException(AuthErrorCode.FAIL_TO_VERIFY)
+            sendRequest("/internal/api/members/verify", request, type)?.result ?: throw AuthException(AuthErrorCode.FAIL_TO_VERIFY)
         } catch (e: AuthException) {
             logger.warn("[FAIL_API] auth-service | Cannot get response from member domain (login request)")
             throw e
