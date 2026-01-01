@@ -22,11 +22,9 @@ class MemberApiGateway(
         val response = sendRequest("/internal/api/members", request, type)
 
         return try {
-            response?.result ?: run {
-                logger.warn("[FAIL_API] auth-service | Cannot get response from member domain (sign-up request)")
-                throw AuthException(AuthErrorCode.FAIL_SIGN_UP)
-            }
+            response?.result ?: throw AuthException(AuthErrorCode.FAIL_SIGN_UP)
         } catch (e: AuthException) {
+            logger.warn("[FAIL_API] auth-service | Cannot get response from member domain (sign-up request)")
             throw e
         } catch (e: Exception) {
             logger.warn("[FAIL_API] auth-service | Fail api call to member service (sign-up request)")
@@ -39,11 +37,9 @@ class MemberApiGateway(
         val response = sendRequest("/internal/api/members/verify", request, type)
 
         return try {
-            response?.result ?: run {
-                logger.warn("[FAIL_API] auth-service | Cannot get response from member domain (login request)")
-                throw AuthException(AuthErrorCode.FAIL_TO_VERIFY)
-            }
+            response?.result ?: throw AuthException(AuthErrorCode.FAIL_TO_VERIFY)
         } catch (e: AuthException) {
+            logger.warn("[FAIL_API] auth-service | Cannot get response from member domain (login request)")
             throw e
         } catch (e: Exception) {
             logger.warn("[FAIL_API] auth-service | Fail api call to member service (login request)")
