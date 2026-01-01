@@ -30,12 +30,11 @@ class ItemApiGateway(
 
     override fun getItem(itemId: Long): ItemInfoResponse {
         val type = object: ParameterizedTypeReference<DefaultResponse<ItemInfoResponse?>?>() {}
-        val response = sendGetRequest("$endpointPrefix/$itemId", type)
         return try {
-            response?.result ?: run {
-                log.warn("[FAIL_API] bought-item-service | Cannot get response from item domain (getItem)")
-                throw BoughtItemException(BoughtItemErrorCode.ITEM_NOT_FOUND)
-            }
+            sendGetRequest("$endpointPrefix/$itemId", type).result ?: throw BoughtItemException(BoughtItemErrorCode.ITEM_NOT_FOUND)
+        } catch (e: BoughtItemException) {
+            log.warn("[FAIL_API] bought-item-service | Cannot get response from item domain (getItem)")
+            throw e
         } catch (e: Exception) {
             log.warn("[FAIL_API] bought-item-service | Fail item-service api (getItem)")
             throw BoughtItemException(BoughtItemErrorCode.ITEM_NOT_FOUND, e)
@@ -46,10 +45,10 @@ class ItemApiGateway(
         val type = object: ParameterizedTypeReference<DefaultResponse<Any?>?>() {}
         val decreaseItemStockRequest = DecreaseItemStockRequest(quantity)
         try {
-            sendDecreaseCountRequest("$endpointPrefix/${itemId}/decrease-stock", ownerId, decreaseItemStockRequest, type) ?: run {
-                log.warn("[FAIL_API] bought-item-service | Cannot get response from item domain (DecreaseItemCount)")
-                throw BoughtItemException(BoughtItemErrorCode.FAIL_TO_DECREASE_ITEM_COUNT)
-            }
+            sendDecreaseCountRequest("$endpointPrefix/${itemId}/decrease-stock", ownerId, decreaseItemStockRequest, type)
+        } catch (e: BoughtItemException) {
+            log.warn("[FAIL_API] bought-item-service | Cannot get response from item domain (DecreaseItemCount)")
+            throw e
         } catch (e: Exception) {
             log.warn("[FAIL_API] bought-item-service | Fail item-service api (DecreaseItemCount)")
             throw BoughtItemException(BoughtItemErrorCode.FAIL_TO_DECREASE_ITEM_COUNT, e)
@@ -60,19 +59,19 @@ class ItemApiGateway(
         val type = object: ParameterizedTypeReference<DefaultResponse<Any?>?>() {}
         val increaseRequest = IncreaseItemStockRequest(quantity)
         try {
-            sendIncreaseCountRequest("$endpointPrefix/${itemId}/increase-stock", ownerId, increaseRequest, type) ?: run {
-                log.warn("[FAIL_API] bought-item-service | Cannot get response from item domain (IncreaseItemCount)")
-                throw BoughtItemException(BoughtItemErrorCode.FAIL_TO_INCREASE_ITEM_COUNT)
-            }
+            sendIncreaseCountRequest("$endpointPrefix/${itemId}/increase-stock", ownerId, increaseRequest, type)
+        } catch (e: BoughtItemException) {
+            log.warn("[FAIL_API] bought-item-service | Cannot get response from item domain (IncreaseItemCount)")
+            throw e
         } catch (e: Exception) {
             log.warn("[FAIL_API] bought-item-service | Fail item-service api (IncreaseItemCount)")
             throw BoughtItemException(BoughtItemErrorCode.FAIL_TO_INCREASE_ITEM_COUNT, e)
         }
     }
 
-    private fun <T> sendGetRequest(endpoint: String, responseType: ParameterizedTypeReference<DefaultResponse<T?>?>): DefaultResponse<T?>? {
-        try {
-            return webClient.get()
+    private fun <T> sendGetRequest(endpoint: String, responseType: ParameterizedTypeReference<DefaultResponse<T?>?>): DefaultResponse<T?> {
+        return try {
+            webClient.get()
                 .uri(endpoint)
                 .retrieve()
                 .bodyToMono(responseType)
@@ -80,13 +79,13 @@ class ItemApiGateway(
         } catch (e: Exception) {
             handleException(e)
             throw e
-        }
+        } ?: throw BoughtItemException(BoughtItemErrorCode.ITEM_NOT_FOUND)
     }
 
-    private fun <T> sendDecreaseCountRequest(endpoint: String, ownerId: Long, request: DecreaseItemStockRequest, responseType: ParameterizedTypeReference<DefaultResponse<T?>?>): DefaultResponse<T?>? {
+    private fun <T> sendDecreaseCountRequest(endpoint: String, ownerId: Long, request: DecreaseItemStockRequest, responseType: ParameterizedTypeReference<DefaultResponse<T?>?>): DefaultResponse<T?> {
         val idempotencyKey = idempotencyKeyGenerator.generateKey("decrease-stock", HttpMethod.PATCH, endpoint, "ownerId$ownerId", "quantity${request.quantity}")
-        try {
-            return webClient.patch()
+        return try {
+            webClient.patch()
                 .uri(endpoint)
                 .header(IDEMPOTENCY_KEY_NAME, idempotencyKey)
                 .bodyValue(request)
@@ -101,13 +100,13 @@ class ItemApiGateway(
         } catch (e: Exception) {
             handleException(e)
             throw e
-        }
+        } ?: throw BoughtItemException(BoughtItemErrorCode.FAIL_TO_DECREASE_ITEM_COUNT)
     }
 
-    private fun <T> sendIncreaseCountRequest(endpoint: String, ownerId: Long, request: IncreaseItemStockRequest, responseType: ParameterizedTypeReference<DefaultResponse<T?>?>): DefaultResponse<T?>? {
+    private fun <T> sendIncreaseCountRequest(endpoint: String, ownerId: Long, request: IncreaseItemStockRequest, responseType: ParameterizedTypeReference<DefaultResponse<T?>?>): DefaultResponse<T?> {
         val idempotencyKey = idempotencyKeyGenerator.generateKey("increase-stock", HttpMethod.PATCH, endpoint, "ownerId$ownerId", "quantity${request.quantity}")
-        try {
-            return webClient.patch()
+        return try {
+            webClient.patch()
                 .uri(endpoint)
                 .header(IDEMPOTENCY_KEY_NAME, idempotencyKey)
                 .bodyValue(request)
@@ -122,7 +121,7 @@ class ItemApiGateway(
         } catch (e: Exception) {
             handleException(e)
             throw e
-        }
+        } ?: throw BoughtItemException(BoughtItemErrorCode.FAIL_TO_INCREASE_ITEM_COUNT)
     }
 
     private fun handleException(e: Exception) {
