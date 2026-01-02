@@ -41,6 +41,9 @@ class MemberJpaEntity(
 
     @Column(name = "deleted_at")
     var deletedAt : LocalDateTime?,
-): JpaBaseEntity() {
+
+    createdAt: LocalDateTime? = null,
+    updatedAt: LocalDateTime? = null,
+): JpaBaseEntity(createdAt, updatedAt) {
 
 }

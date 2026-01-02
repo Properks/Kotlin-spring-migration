@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component
 import java.time.LocalDateTime
 
 @Component
-class JpaMemberMapper {
+class MemberJpaMapper {
 
     fun fromDomain(member: Member): MemberJpaEntity {
         return MemberJpaEntity(
@@ -16,6 +16,8 @@ class JpaMemberMapper {
             providerType = member.providerType,
             nickname = member.nickname,
             role = member.role,
+            createdAt = member.createdAt,
+            updatedAt = member.updatedAt,
             deletedAt = member.deletedAt,
         ).apply {
             this.createdAt = member.createdAt ?: LocalDateTime.now()
