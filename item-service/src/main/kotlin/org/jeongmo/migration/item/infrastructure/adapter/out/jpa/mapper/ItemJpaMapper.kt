@@ -17,6 +17,8 @@ class ItemJpaMapper {
             version = item.version,
             itemCount = item.itemCount,
             itemStatus = item.itemStatus,
+            createdAt = item.createdAt,
+            updatedAt = item.updatedAt,
             deletedAt = item.deletedAt,
         ).apply {
             this.createdAt = item.createdAt

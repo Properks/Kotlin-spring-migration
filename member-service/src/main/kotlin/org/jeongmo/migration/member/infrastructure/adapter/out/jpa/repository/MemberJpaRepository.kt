@@ -3,7 +3,7 @@ package org.jeongmo.migration.member.infrastructure.adapter.out.jpa.repository
 import org.jeongmo.migration.common.enums.member.ProviderType
 import org.jeongmo.migration.member.domain.model.Member
 import org.jeongmo.migration.member.domain.repository.MemberRepository
-import org.jeongmo.migration.member.infrastructure.adapter.out.jpa.mapper.JpaMemberMapper
+import org.jeongmo.migration.member.infrastructure.adapter.out.jpa.mapper.MemberJpaMapper
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
 
@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional
 class MemberJpaRepository(
     private val jpaRepository: MemberSpringDataJpaRepository,
-    private val mapper: JpaMemberMapper,
+    private val mapper: MemberJpaMapper,
 ): MemberRepository {
 
     override fun save(member: Member): Member {
@@ -37,7 +37,7 @@ class MemberJpaRepository(
     }
 
     override fun delete(id: Long): Boolean {
-        var exist = jpaRepository.existsById(id)
+        val exist = jpaRepository.existsById(id)
         if (!exist) return false
         jpaRepository.deleteById(id)
         return true

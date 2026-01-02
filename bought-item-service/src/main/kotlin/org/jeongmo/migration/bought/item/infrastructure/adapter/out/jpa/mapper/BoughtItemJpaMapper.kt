@@ -14,6 +14,8 @@ class BoughtItemJpaMapper {
             itemId = domain.itemId,
             boughtStatus = domain.boughtStatus,
             version = domain.version,
+            createdAt = domain.createdAt,
+            updatedAt = domain.updatedAt,
             deletedAt = domain.deletedAt,
         )
     }
