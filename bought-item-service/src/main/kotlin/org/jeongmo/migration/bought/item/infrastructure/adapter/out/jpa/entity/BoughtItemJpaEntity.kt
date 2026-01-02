@@ -37,5 +37,7 @@ class BoughtItemJpaEntity(
     @Column(name = "version")
     var version: Long = 0L,
 
-    ): JpaBaseEntity() {
+    createdAt: LocalDateTime? = null,
+    updatedAt: LocalDateTime? = null,
+    ): JpaBaseEntity(createdAt, updatedAt) {
 }
