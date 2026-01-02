@@ -42,5 +42,8 @@ class ItemJpaEntity(
 
     @Column(name = "deleted_at")
     val deletedAt: LocalDateTime? = null,
-): JpaBaseEntity() {
+
+    createdAt: LocalDateTime? = null,
+    updatedAt: LocalDateTime? = null,
+): JpaBaseEntity(createdAt, updatedAt) {
 }
