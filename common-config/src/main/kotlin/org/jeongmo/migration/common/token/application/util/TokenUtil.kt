@@ -20,6 +20,7 @@ interface TokenUtil {
      * 토큰으로부터 정보 가져오기
      * @param token 정보를 가져오기 위한 토큰
      * @return 토큰 정보 DTO
+     * @throws TokenException 전달된 토큰이 유효하지 않거나 미리 지정된 토큰의 형식이 아닌 경우
      */
     fun parseToken(token: String): TokenInfoDTO
 }
