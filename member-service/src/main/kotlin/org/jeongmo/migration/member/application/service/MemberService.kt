@@ -38,7 +38,7 @@ class MemberService(
     }
 
     @Transactional
-    override fun verifyMember(request: VerifyMemberRequest): VerifyMemberResponse? {
+    override fun verifyMember(request: VerifyMemberRequest): VerifyMemberResponse {
         val foundMember: Member? = memberRepository.findByUsernameAndProviderType(request.username, request.providerType)
         return foundMember?.let {
             if (passwordEncoder.matches(request.password, it.password)) {

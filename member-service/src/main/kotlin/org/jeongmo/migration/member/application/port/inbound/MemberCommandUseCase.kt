@@ -17,7 +17,7 @@ interface MemberCommandUseCase {
      * @return 유효한 사용자인 경우 사용자의 데이터 반환
      * @throws MemberException 사용자를 찾지 못하거나 비밀번호가 유효하지 않은 경우 발생
      */
-    fun verifyMember(request: VerifyMemberRequest): VerifyMemberResponse?
+    fun verifyMember(request: VerifyMemberRequest): VerifyMemberResponse
 
     /**
      * 사용자의 정보를 수정하는 메서드
