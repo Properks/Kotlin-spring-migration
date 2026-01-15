@@ -1,6 +1,7 @@
 package org.jeongmo.migration.bought.item.application.port.out.item
 
 import org.jeongmo.migration.bought.item.application.port.out.item.dto.ItemInfoResponse
+import org.jeongmo.migration.bought.item.application.error.exception.BoughtItemException
 
 interface ItemServiceClient {
 

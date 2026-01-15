@@ -1,6 +1,7 @@
 package org.jeongmo.migration.member.application.port.inbound
 
 import org.jeongmo.migration.member.application.dto.MemberInfoResponse
+import org.jeongmo.migration.member.application.error.exception.MemberException
 
 interface MemberQueryUseCase {
     /**

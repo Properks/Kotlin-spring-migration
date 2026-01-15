@@ -1,6 +1,7 @@
 package org.jeongmo.migration.item.application.port.inbound
 
 import org.jeongmo.migration.item.application.dto.*
+import org.jeongmo.migration.item.application.error.exception.ItemException
 
 interface ItemCommandUseCase {
 

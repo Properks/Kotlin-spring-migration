@@ -1,6 +1,7 @@
 package org.jeongmo.migration.bought.item.application.port.inbound
 
 import org.jeongmo.migration.bought.item.application.dto.FindBoughtItemResponse
+import org.jeongmo.migration.bought.item.application.error.exception.BoughtItemException
 
 interface BoughtItemQueryUseCase {
 
