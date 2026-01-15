@@ -32,7 +32,7 @@ class MemberApiGateway(
     }
 
     override fun verifyMember(request: VerifyMemberRequest): VerifyMemberResponse {
-        val type = object: ParameterizedTypeReference<DefaultResponse<VerifyMemberResponse?>>() {}
+        val type = object: ParameterizedTypeReference<DefaultResponse<VerifyMemberResponse>>() {}
 
         return try {
             sendRequest("/internal/api/members/verify", request, type)?.result ?: throw AuthException(AuthErrorCode.FAIL_TO_VERIFY)

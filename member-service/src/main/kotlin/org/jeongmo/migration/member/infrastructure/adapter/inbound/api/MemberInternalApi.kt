@@ -27,6 +27,6 @@ class MemberInternalApi(
         DefaultResponse.ok(memberQueryUseCase.findById(memberId))
 
     @PostMapping("/verify")
-    fun verifyMember(@RequestBody request: VerifyMemberRequest): DefaultResponse<VerifyMemberResponse?> =
+    fun verifyMember(@RequestBody request: VerifyMemberRequest): DefaultResponse<VerifyMemberResponse> =
         DefaultResponse.ok(memberCommandUseCase.verifyMember(request))
 }
