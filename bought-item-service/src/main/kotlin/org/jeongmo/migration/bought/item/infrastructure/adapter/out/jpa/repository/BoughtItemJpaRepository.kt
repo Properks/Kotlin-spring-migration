@@ -19,6 +19,12 @@ class BoughtItemJpaRepository(
     }
 
     @Transactional(readOnly = true)
+    override fun findById(id: Long): BoughtItem? {
+        val foundBoughtItem = boughtItemSpringDataJpaRepository.findById(id).orElse(null)
+        return foundBoughtItem?.let { boughtItemJpaMapper.toDomain(foundBoughtItem) }
+    }
+
+    @Transactional(readOnly = true)
     override fun findById(ownerId: Long, id: Long): BoughtItem? {
         val foundBoughtItem = boughtItemSpringDataJpaRepository.findByIdAndMemberId(id, ownerId)
         return foundBoughtItem?.let {

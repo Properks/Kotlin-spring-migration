@@ -13,6 +13,13 @@ interface BoughtItemRepository {
 
     /**
      * 구매 상품 단일 조회 메서드
+     * @param id 구매 상품 ID
+     * @return 성공 시 구매 상품 데이터, 실패 시 null
+     */
+    fun findById(id: Long): BoughtItem?
+
+    /**
+     * 본인 구매 상품 단일 조회 메서드
      * @param ownerId 구매 사용자 id
      * @param id 구매 상품 id
      * @return 성공 시 구매 상품 데이터, 실패 시 null
