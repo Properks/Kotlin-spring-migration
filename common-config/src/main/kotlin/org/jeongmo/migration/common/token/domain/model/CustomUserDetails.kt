@@ -12,7 +12,7 @@ class CustomUserDetails(
 ): UserDetails {
     override fun getUsername(): String = this.username
     override fun getPassword(): String = this.password
-    override fun getAuthorities(): MutableCollection<out GrantedAuthority> = roles.map { SimpleGrantedAuthority(it) }.toMutableSet()
+    override fun getAuthorities(): MutableCollection<out GrantedAuthority> = roles.map { SimpleGrantedAuthority("ROLE_$it") }.toMutableSet()
     override fun isAccountNonExpired(): Boolean = true
     override fun isAccountNonLocked(): Boolean = true
     override fun isCredentialsNonExpired(): Boolean = true
