@@ -42,9 +42,8 @@ class BoughtItemController(
         ))
 
     @PatchMapping("/{boughtItemId}")
-    fun updateBoughtItem(@LoginUserId memberId: Long, @PathVariable("boughtItemId") id: Long, @RequestBody request: UpdateItemRequest): DefaultResponse<UpdateItemResponse> =
+    fun updateBoughtItem(@PathVariable("boughtItemId") id: Long, @RequestBody request: UpdateItemRequest): DefaultResponse<UpdateItemResponse> =
         DefaultResponse.ok(boughtItemCommandUseCase.updateItemStatus(
-            ownerId = memberId,
             boughtItemId = id,
             request = request
         ))

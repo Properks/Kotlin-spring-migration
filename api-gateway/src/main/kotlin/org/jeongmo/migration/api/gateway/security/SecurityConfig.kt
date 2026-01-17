@@ -8,6 +8,7 @@ import org.jeongmo.migration.common.token.application.util.TokenUtil
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.http.HttpMethod
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity
 import org.springframework.security.config.web.server.SecurityWebFiltersOrder
 import org.springframework.security.config.web.server.ServerHttpSecurity
@@ -19,6 +20,8 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.server.SecurityWebFilterChain
 import org.springframework.security.web.server.ServerAuthenticationEntryPoint
 import org.springframework.security.web.server.authorization.ServerAccessDeniedHandler
+import org.springframework.security.web.server.util.matcher.PathPatternParserServerWebExchangeMatcher
+import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatcher
 import org.springframework.web.server.WebFilter
 
 @Configuration
@@ -37,6 +40,15 @@ class SecurityConfig(
         "/actuator/health",
     )
 
+    private val merchantPatterns = arrayOf(
+        asPattern(HttpMethod.POST, "/items"),
+        asPattern(HttpMethod.PATCH, "/items/**"),
+        asPattern(HttpMethod.DELETE, "/items/**"),
+    )
+
+    private val adminPatterns = arrayOf(
+        asPattern(HttpMethod.PATCH, "/bought-items/**")
+    )
 
     @Bean
     fun securityWebFilterChain(http: ServerHttpSecurity): SecurityWebFilterChain {
@@ -44,6 +56,8 @@ class SecurityConfig(
         http
             .authorizeExchange {
                 it
+                    .matchers(*merchantPatterns).hasAnyRole("MERCHANT", "ADMIN")
+                    .matchers(*adminPatterns).hasRole("ADMIN")
                     .pathMatchers(*allowUrl).permitAll()
                     .anyExchange().authenticated()
             }
@@ -80,4 +94,8 @@ class SecurityConfig(
 
     @Bean
     fun passwordEncoder(): PasswordEncoder = BCryptPasswordEncoder()
+
+    private fun asPattern(method: HttpMethod, pattern: String): ServerWebExchangeMatcher {
+        return PathPatternParserServerWebExchangeMatcher(pattern, method)
+    }
 }

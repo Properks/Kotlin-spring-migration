@@ -18,13 +18,12 @@ interface BoughtItemCommandUseCase {
     fun buyItem(ownerId: Long, request: BuyItemRequest): BuyItemResponse
 
     /**
-     * 구매 상품 상태 수정
-     * @param ownerId 구매 사용자 id
+     * 구매 상품 상태 수정 (관리자 권한)
      * @param boughtItemId 구매 상품 id
      * @param request 상품 상태 수정에 필요한 RequestBody
      * @return 수정된 상품 데이터
      */
-    fun updateItemStatus(ownerId: Long, boughtItemId: Long, request: UpdateItemRequest): UpdateItemResponse
+    fun updateItemStatus(boughtItemId: Long, request: UpdateItemRequest): UpdateItemResponse
 
     /**
      * 상품 구매 취소
