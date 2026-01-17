@@ -12,9 +12,16 @@ class CustomUserDetails(
 ): UserDetails {
     override fun getUsername(): String = this.username
     override fun getPassword(): String = this.password
-    override fun getAuthorities(): MutableCollection<out GrantedAuthority> = roles.map { SimpleGrantedAuthority("ROLE_$it") }.toMutableSet()
+    override fun getAuthorities(): MutableCollection<out GrantedAuthority> =
+        roles.map {
+            SimpleGrantedAuthority(withAuthorityPrefix(it))
+        }.toMutableSet()
     override fun isAccountNonExpired(): Boolean = true
     override fun isAccountNonLocked(): Boolean = true
     override fun isCredentialsNonExpired(): Boolean = true
     override fun isEnabled(): Boolean = true
+
+    private val authorityPrefix = "ROLE_"
+    private fun withAuthorityPrefix(role: String) =
+        if (role.startsWith(authorityPrefix)) role else "$authorityPrefix$role"
 }
