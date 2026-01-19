@@ -24,14 +24,7 @@ interface TTLRepository {
      * @param ttl 해당 데이터를 유지할 시간 (sec)
      * @return 있는 경우 이미 있는 값, 없는 경우 저장 후 null 반환
      */
-    fun saveIfAbsent(key: String, value: Any, ttl: Long): Any? {
-        return if (has(key)) {
-            findByKey(key, Any::class.java)
-        } else {
-            save(key, value, ttl)
-            null
-        }
-    }
+    fun saveIfAbsent(key: String, value: Any, ttl: Long): Any?
 
     /**
      * 저장소가 해당 키를 가지고 있는지 확인

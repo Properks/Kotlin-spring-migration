@@ -23,6 +23,14 @@ class RedisRepository(
         }
     }
 
+    override fun saveIfAbsent(key: String, value: Any, ttl: Long): Any? {
+        return if (redisTemplate.opsForValue().setIfAbsent(key, value, Duration.ofSeconds(ttl)) == false) {
+            redisTemplate.opsForValue()[key]
+        }
+        else null
+
+    }
+
     override fun has(key: String): Boolean {
         return redisTemplate.hasKey(key)
     }
