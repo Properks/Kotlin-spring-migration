@@ -1,5 +1,7 @@
 package org.jeongmo.migration.item.infrastructure.adapter.out.idempotency
 
+import org.jeongmo.migration.common.utils.idempotency.IdempotencyErrorCode
+import org.jeongmo.migration.common.utils.idempotency.IdempotencyException
 import org.jeongmo.migration.common.utils.idempotency.IdempotencyKeyRepository
 import org.jeongmo.migration.common.utils.idempotency.IdempotencyKeyStatus
 import org.jeongmo.migration.item.infrastructure.adapter.out.ttl.TTLRepository
@@ -17,7 +19,10 @@ class IdempotencyKeyRepositoryImpl(
 
 
     override fun setStatus(key: String, status: IdempotencyKeyStatus) {
-        ttlRepository.save(key, status, ttl)
+        if (ttlRepository.save(key, status, ttl)) {
+            log.warn("Fail to save idempotency key status | key: {}", key)
+            throw IdempotencyException(IdempotencyErrorCode.FAIL_TO_SET_STATUS)
+        }
         log.info("Set status idempotency key | key: {}, status: {}", key, status)
     }
 
