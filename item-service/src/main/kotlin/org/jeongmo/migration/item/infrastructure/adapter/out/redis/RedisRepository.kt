@@ -1,6 +1,6 @@
 package org.jeongmo.migration.item.infrastructure.adapter.out.redis
 
-import org.jeongmo.migration.item.infrastructure.adapter.out.ttl.TTLRepository
+import org.jeongmo.migration.common.utils.ttl.TTLRepository
 import org.slf4j.LoggerFactory
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.stereotype.Repository

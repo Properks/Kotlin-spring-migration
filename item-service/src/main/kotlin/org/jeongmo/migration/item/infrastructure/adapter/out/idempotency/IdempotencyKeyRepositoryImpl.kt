@@ -4,7 +4,7 @@ import org.jeongmo.migration.common.utils.idempotency.IdempotencyErrorCode
 import org.jeongmo.migration.common.utils.idempotency.IdempotencyException
 import org.jeongmo.migration.common.utils.idempotency.IdempotencyKeyRepository
 import org.jeongmo.migration.common.utils.idempotency.IdempotencyKeyStatus
-import org.jeongmo.migration.item.infrastructure.adapter.out.ttl.TTLRepository
+import org.jeongmo.migration.common.utils.ttl.TTLRepository
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import kotlin.reflect.cast
@@ -15,7 +15,7 @@ class IdempotencyKeyRepositoryImpl(
 ): IdempotencyKeyRepository {
 
     private val log = LoggerFactory.getLogger(IdempotencyKeyRepositoryImpl::class.java)
-    private val ttl: Long = 30 // 30s
+    private val ttl: Long = 60 // 1m
 
 
     override fun setStatus(key: String, status: IdempotencyKeyStatus) {

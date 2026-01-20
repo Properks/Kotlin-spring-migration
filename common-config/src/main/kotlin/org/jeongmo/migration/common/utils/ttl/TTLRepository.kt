@@ -1,4 +1,4 @@
-package org.jeongmo.migration.item.infrastructure.adapter.out.ttl
+package org.jeongmo.migration.common.utils.ttl
 
 /**
  * TTL을 이용하여 데이터를 관리하는 Repository
