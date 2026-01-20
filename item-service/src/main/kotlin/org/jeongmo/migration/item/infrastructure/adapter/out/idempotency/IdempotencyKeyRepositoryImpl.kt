@@ -31,7 +31,7 @@ class IdempotencyKeyRepositoryImpl(
         val result = ttlRepository.saveIfAbsent(key, status, ttl)
         result?.let {
             log.info("Already exist idempotency key status | key: {}, status: {}", key, it)
-        } ?: let {
+        } ?: run {
             log.info("Set status idempotency key successfully | key: {}, status: {}", key, status)
         }
         return result?.let {
