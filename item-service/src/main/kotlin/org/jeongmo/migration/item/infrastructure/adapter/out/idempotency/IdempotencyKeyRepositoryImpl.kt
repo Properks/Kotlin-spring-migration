@@ -35,7 +35,8 @@ class IdempotencyKeyRepositoryImpl(
             log.info("Set status idempotency key successfully | key: {}, status: {}", key, status)
         }
         return result?.let {
-            IdempotencyKeyStatus::class.cast(result)
+            it as? IdempotencyKeyStatus
+                ?: throw IdempotencyException(IdempotencyErrorCode.INVALID_VALUE)
         }
     }
 
