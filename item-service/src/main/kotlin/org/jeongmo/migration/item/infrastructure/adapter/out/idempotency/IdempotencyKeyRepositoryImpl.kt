@@ -20,10 +20,11 @@ class IdempotencyKeyRepositoryImpl(
 
     override fun setStatus(key: String, status: IdempotencyKeyStatus) {
         if (ttlRepository.save(key, status, ttl)) {
-            log.warn("Fail to save idempotency key status | key: {}", key)
-            throw IdempotencyException(IdempotencyErrorCode.FAIL_TO_SET_STATUS)
+            log.info("Set status idempotency key | key: {}, status: {}", key, status)
+            return
         }
-        log.info("Set status idempotency key | key: {}, status: {}", key, status)
+        log.warn("Fail to save idempotency key status | key: {}", key)
+        throw IdempotencyException(IdempotencyErrorCode.FAIL_TO_SET_STATUS)
     }
 
     override fun setStatusIfAbsent(key: String, status: IdempotencyKeyStatus): IdempotencyKeyStatus? {
