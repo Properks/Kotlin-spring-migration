@@ -20,6 +20,21 @@ services:
       start_period: 30s
     restart: always
 
+  redis-server:
+    image: redis
+    container_name: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - my-network
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    restart: always
+
   eureka-server:
     build: ./eureka-server
     image: properks/eureka-server
@@ -96,6 +111,8 @@ services:
       eureka-server:
         condition: service_healthy
       mysql:
+        condition: service_healthy
+      redis-server:
         condition: service_healthy
 
   auth-service:
