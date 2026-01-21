@@ -7,7 +7,6 @@ import org.jeongmo.migration.common.utils.idempotency.IdempotencyKeyStatus
 import org.jeongmo.migration.common.utils.ttl.TTLRepository
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
-import kotlin.reflect.cast
 
 @Component
 class IdempotencyKeyRepositoryImpl(
@@ -20,7 +19,7 @@ class IdempotencyKeyRepositoryImpl(
 
     override fun setStatus(key: String, status: IdempotencyKeyStatus) {
         if (ttlRepository.save(key, status, ttl)) {
-            log.info("Set status idempotency key | key: {}, status: {}", key, status)
+            log.debug("Set status idempotency key | key: {}, status: {}", key, status)
             return
         }
         log.warn("Fail to save idempotency key status | key: {}", key)
@@ -30,9 +29,9 @@ class IdempotencyKeyRepositoryImpl(
     override fun setStatusIfAbsent(key: String, status: IdempotencyKeyStatus): IdempotencyKeyStatus? {
         val result = ttlRepository.saveIfAbsent(key, status, ttl)
         result?.let {
-            log.info("Already exist idempotency key status | key: {}, status: {}", key, it)
+            log.debug("Already exist idempotency key status | key: {}, status: {}", key, it)
         } ?: run {
-            log.info("Set status idempotency key successfully | key: {}, status: {}", key, status)
+            log.debug("Set status idempotency key successfully | key: {}, status: {}", key, status)
         }
         return result?.let {
             it as? IdempotencyKeyStatus
@@ -42,7 +41,7 @@ class IdempotencyKeyRepositoryImpl(
 
     override fun deleteKey(key: String) {
         if (ttlRepository.deleteValue(key)) {
-            log.info("Delete idempotency key | key: {}", key)
+            log.debug("Delete idempotency key | key: {}", key)
         }
         else {
             log.warn("Fail to delete idempotency key | key {}", key)
