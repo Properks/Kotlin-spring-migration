@@ -7,6 +7,7 @@ import org.jeongmo.migration.common.token.application.dto.TokenInfoDTO
 import org.jeongmo.migration.common.token.application.error.code.TokenErrorCode
 import org.jeongmo.migration.common.token.application.error.exception.TokenException
 import org.jeongmo.migration.common.token.application.util.TokenUtil
+import org.jeongmo.migration.common.token.domain.repository.TokenRepository
 import org.namul.api.payload.code.supports.DefaultBaseErrorCode
 import org.slf4j.LoggerFactory
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -20,6 +21,7 @@ import reactor.core.publisher.Mono
 abstract class TokenAuthenticationFilter(
     private val tokenUtil: TokenUtil,
     private val httpResponseUtil: HttpResponseUtil,
+    private val tokenRepository: TokenRepository,
 ): WebFilter  {
 
     private val logger = LoggerFactory.getLogger(TokenAuthenticationFilter::class.java)
@@ -27,6 +29,7 @@ abstract class TokenAuthenticationFilter(
     final override fun filter(exchange: ServerWebExchange, chain: WebFilterChain): Mono<Void> {
         val token = extractToken(exchange) ?: return chain.filter(exchange)
         val info = try {
+            if (tokenRepository.isBlackList(token)) throw TokenException(TokenErrorCode.BLACK_LIST_TOKEN)
             tokenUtil.parseToken(token).also {
                 if (it.type != TokenType.ACCESS) throw TokenException(TokenErrorCode.INVALID_TOKEN_TYPE)
             }
