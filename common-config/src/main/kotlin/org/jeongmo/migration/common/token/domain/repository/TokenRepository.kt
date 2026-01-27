@@ -22,11 +22,20 @@ interface TokenRepository {
     fun getToken(id: Long, type: TokenType): String?
 
     /**
+     * 토큰이 블랙리스트에 들어갔는지 확인
+     *
+     * @param token 확인할 토큰
+     * @return 블랙리스트면 true, 아니면 false
+     */
+    fun isBlackList(token: String): Boolean
+
+    /**
      * 저장소에서 토큰 제거 메서드
-     * @param token 제거할 토큰
+     * @param id 사용자 ID (REFRESH)
+     * @param token 제거할 토큰 (BLACK_LIST)
      * @param type 제거할 토큰의 형식
      * @return 제거에 성공했으면 true, 없는 데이터이거나 실패한 경우 false
      */
-    fun removeToken(token: String, type: TokenType): Boolean
+    fun removeToken(id: Long?, token: String?, type: TokenType): Boolean
 
 }
