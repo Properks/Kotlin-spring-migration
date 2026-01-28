@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration
 
 @Configuration
 class TokenRepositoryConfig(
-    @Value("\${token.jwt.expiration-time.access-token}") private val tokenExpirationTime: Long,
+    @Value("\${token.jwt.expiration-time.refresh-token}") private val tokenExpirationTime: Long,
 ) {
 
     @Bean
