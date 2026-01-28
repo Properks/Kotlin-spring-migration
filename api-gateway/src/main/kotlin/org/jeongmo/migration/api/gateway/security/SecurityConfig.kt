@@ -5,6 +5,7 @@ import org.jeongmo.migration.api.gateway.security.handler.CustomAccessDeniedHand
 import org.jeongmo.migration.api.gateway.security.handler.CustomServerAuthenticationEntryPoint
 import org.jeongmo.migration.api.gateway.security.util.HttpResponseUtil
 import org.jeongmo.migration.common.token.application.util.TokenUtil
+import org.jeongmo.migration.common.token.domain.repository.TokenRepository
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -31,6 +32,7 @@ class SecurityConfig(
     @Value("\${actuator.password}") private val password: String,
     private val tokenUtil: TokenUtil,
     private val httpResponseUtil: HttpResponseUtil,
+    private val tokenRepository: TokenRepository,
 ) {
 
     private val allowUrl = arrayOf(
@@ -74,7 +76,7 @@ class SecurityConfig(
     }
 
     @Bean
-    fun authenticationFilter(): WebFilter = HeaderTokenAuthenticationFilter(tokenUtil, httpResponseUtil)
+    fun authenticationFilter(): WebFilter = HeaderTokenAuthenticationFilter(tokenUtil, httpResponseUtil, tokenRepository)
 
     @Bean
     fun serverAccessDeniedHandler(): ServerAccessDeniedHandler = CustomAccessDeniedHandler(httpResponseUtil)
