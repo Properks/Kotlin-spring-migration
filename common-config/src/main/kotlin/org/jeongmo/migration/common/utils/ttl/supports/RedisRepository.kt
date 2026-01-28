@@ -1,24 +1,22 @@
-package org.jeongmo.migration.auth.infrastructure.config.redis
+package org.jeongmo.migration.common.utils.ttl.supports
 
 import org.jeongmo.migration.common.utils.ttl.TTLRepository
 import org.slf4j.LoggerFactory
 import org.springframework.data.redis.core.RedisTemplate
-import org.springframework.stereotype.Repository
 import java.time.Duration
 
-@Repository
-class RedisTTLRepository(
-    private val redisTemplate: RedisTemplate<String, Any?>
+class RedisRepository(
+    private val redisTemplate: RedisTemplate<String, Any?>,
 ): TTLRepository {
 
-    private val log = LoggerFactory.getLogger(this.javaClass)
+    private val log = LoggerFactory.getLogger(RedisRepository::class.java)
 
     override fun save(key: String, value: Any, ttl: Long): Boolean {
         try {
             redisTemplate.opsForValue().set(key, value, Duration.ofSeconds(ttl))
             return true
         } catch (e: Exception) {
-            log.warn("[REDIS_TTL_REPOSITORY] auth-service | Fail to save key and value")
+            log.warn("[FAIL_TO_SAVE_IN_TTL_REPOSITORY] RedisRepository | ${e.message}")
             return false
         }
     }
@@ -26,7 +24,13 @@ class RedisTTLRepository(
     override fun saveIfAbsent(key: String, value: Any, ttl: Long): Any? {
         return if (redisTemplate.opsForValue().setIfAbsent(key, value, Duration.ofSeconds(ttl)) == false) {
             redisTemplate.opsForValue()[key]
-        } else null
+        }
+        else null
+
+    }
+
+    override fun has(key: String): Boolean {
+        return redisTemplate.hasKey(key)
     }
 
     override fun <T> findByKey(key: String, clz: Class<T>): T? {
@@ -37,10 +41,6 @@ class RedisTTLRepository(
                 return null
             }
         }
-    }
-
-    override fun has(key: String): Boolean {
-        return redisTemplate.hasKey(key)
     }
 
     override fun deleteValue(key: String): Boolean {

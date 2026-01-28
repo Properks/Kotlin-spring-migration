@@ -1,17 +1,14 @@
-package org.jeongmo.migration.auth.infrastructure.adapter.out.token.repository
+package org.jeongmo.migration.common.token.infrastructure.adapter.out.redis
 
-import org.jeongmo.migration.auth.application.error.code.AuthErrorCode
-import org.jeongmo.migration.auth.application.error.exception.AuthException
 import org.jeongmo.migration.common.token.application.constants.TokenType
+import org.jeongmo.migration.common.token.application.error.code.TokenErrorCode
+import org.jeongmo.migration.common.token.application.error.exception.TokenException
 import org.jeongmo.migration.common.token.domain.repository.TokenRepository
 import org.jeongmo.migration.common.utils.ttl.TTLRepository
-import org.springframework.beans.factory.annotation.Value
-import org.springframework.stereotype.Repository
 
-@Repository
 class TokenTTLRepository(
     private val ttlRepository: TTLRepository,
-    @Value("\${token.jwt.expiration-time.access-token}") private val accessTokenExpiration: Long,
+    private val accessTokenExpiration: Long,
 ): TokenRepository {
 
     private val refreshPrefix: String = "REFRESH_TOKEN"
@@ -26,7 +23,7 @@ class TokenTTLRepository(
                 ttlRepository.save("${refreshPrefix}:id", token, accessTokenExpiration)
             }
             else -> {
-                throw AuthException(AuthErrorCode.UNSUPPORTED_TYPE)
+                throw TokenException(TokenErrorCode.UNSUPPORTED_TYPE)
             }
         }
     }
@@ -37,7 +34,7 @@ class TokenTTLRepository(
                 ttlRepository.findByKey(key = "${refreshPrefix}:id", String::class.java)
             }
             else -> {
-                throw AuthException(AuthErrorCode.UNSUPPORTED_TYPE)
+                throw TokenException(TokenErrorCode.UNSUPPORTED_TYPE)
             }
         }
     }
