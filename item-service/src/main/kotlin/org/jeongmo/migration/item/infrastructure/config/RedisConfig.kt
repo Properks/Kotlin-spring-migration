@@ -1,6 +1,5 @@
 package org.jeongmo.migration.item.infrastructure.config
 
-import org.jeongmo.migration.common.utils.ttl.supports.RedisRepository
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.data.redis.connection.RedisConnectionFactory
@@ -18,7 +17,4 @@ class RedisConfig {
         template.valueSerializer = RedisSerializer.java()
         return template
     }
-
-    @Bean
-    fun ttlRepository(redisConnectionFactory: RedisConnectionFactory) = RedisRepository(idempotencyKeyRedisTemplate(redisConnectionFactory))
 }
