@@ -52,7 +52,11 @@ class AuthService(
 
     override fun reissueToken(request: ReissueTokenRequest): ReissueTokenResponse {
         val tokenInfo = tokenAuthService.getTokenInfo(request.refreshToken)
-        if (tokenRepository.isBlackList(request.refreshToken) || tokenRepository.getToken(tokenInfo.id.toLong(), TokenType.REFRESH) != request.refreshToken) {
+        if (tokenRepository.isBlackList(request.refreshToken) ||
+            tokenRepository.getToken(
+                tokenInfo.id.toLongOrNull() ?: throw TokenException(TokenErrorCode.TOKEN_NOT_VALID),
+                TokenType.REFRESH
+            ) != request.refreshToken) {
             throw TokenException(TokenErrorCode.CANNOT_REISSUE)
         }
 
