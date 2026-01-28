@@ -17,10 +17,10 @@ class TokenTTLRepository(
     override fun saveToken(id: Long, token: String, type: TokenType): Boolean {
         return when (type) {
             TokenType.BLACK_LIST -> {
-                ttlRepository.save("${blackListPrefix}:token", true, accessTokenExpiration)
+                ttlRepository.save("${blackListPrefix}:$token", true, accessTokenExpiration)
             }
             TokenType.REFRESH -> {
-                ttlRepository.save("${refreshPrefix}:id", token, accessTokenExpiration)
+                ttlRepository.save("${refreshPrefix}:$id", token, accessTokenExpiration)
             }
             else -> {
                 throw TokenException(TokenErrorCode.UNSUPPORTED_TYPE)
@@ -31,7 +31,7 @@ class TokenTTLRepository(
     override fun getToken(id: Long, type: TokenType): String? {
         return when(type) {
             TokenType.REFRESH-> {
-                ttlRepository.findByKey(key = "${refreshPrefix}:id", String::class.java)
+                ttlRepository.findByKey(key = "${refreshPrefix}:$id", String::class.java)
             }
             else -> {
                 throw TokenException(TokenErrorCode.UNSUPPORTED_TYPE)
