@@ -9,5 +9,5 @@ import org.springframework.data.redis.core.RedisTemplate
 class TTLRepositoryConfig {
 
     @Bean
-    fun ttlRepository(redisTemplate: RedisTemplate<String, Any?>) = RedisRepository(redisTemplate)
+    fun idempotencyTTLRepository(idempotencyKeyRedisTemplate: RedisTemplate<String, Any?>) = RedisRepository(idempotencyKeyRedisTemplate)
 }
