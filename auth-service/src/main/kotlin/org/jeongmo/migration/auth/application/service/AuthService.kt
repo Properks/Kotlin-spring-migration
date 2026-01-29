@@ -75,10 +75,13 @@ class AuthService(
     private fun processLogin(userDetails: CustomUserDetails): LoginResponse {
         val accessToken = tokenAuthService.createAccessToken(userDetails)
         val refreshToken = tokenAuthService.createRefreshToken(userDetails)
-        tokenRepository.saveToken(userDetails.id, refreshToken, TokenType.REFRESH)
+        val savedRefreshToken = if (!tokenRepository.saveToken(userDetails.id, refreshToken, TokenType.REFRESH)) {
+            logger.warn("[FAIL_TO_SAVE_TOKEN] auth-service")
+            null
+        } else { refreshToken }
         return LoginResponse(
             accessToken = accessToken,
-            refreshToken = refreshToken,
+            refreshToken = savedRefreshToken,
             role = userDetails.authorities.map {it.authority},
             loginTime = LocalDateTime.now(),
         )
