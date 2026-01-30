@@ -1,6 +1,7 @@
 package org.jeongmo.migration.api.gateway.security
 
 import org.jeongmo.migration.api.gateway.security.filter.HeaderTokenAuthenticationFilter
+import org.jeongmo.migration.api.gateway.security.filter.LogoutFilter
 import org.jeongmo.migration.api.gateway.security.handler.CustomAccessDeniedHandler
 import org.jeongmo.migration.api.gateway.security.handler.CustomServerAuthenticationEntryPoint
 import org.jeongmo.migration.api.gateway.security.util.HttpResponseUtil
@@ -35,6 +36,7 @@ class SecurityConfig(
     private val tokenRepository: TokenRepository,
 ) {
 
+    private val logoutUrl = "/api/v1/auth/logout"
     private val allowUrl = arrayOf(
         "/auth/sign-up",
         "/auth/login",
@@ -64,6 +66,7 @@ class SecurityConfig(
                     .anyExchange().authenticated()
             }
             .addFilterAt(authenticationFilter(), SecurityWebFiltersOrder.FORM_LOGIN)
+            .addFilterAt(logoutFilter(), SecurityWebFiltersOrder.LOGOUT)
             .exceptionHandling {
                 it
                     .accessDeniedHandler(serverAccessDeniedHandler())
@@ -96,6 +99,9 @@ class SecurityConfig(
 
     @Bean
     fun passwordEncoder(): PasswordEncoder = BCryptPasswordEncoder()
+
+    @Bean
+    fun logoutFilter(): WebFilter = LogoutFilter(logoutUrl, tokenUtil, tokenRepository, httpResponseUtil)
 
     private fun asPattern(method: HttpMethod, pattern: String): ServerWebExchangeMatcher {
         return PathPatternParserServerWebExchangeMatcher(pattern, method)
