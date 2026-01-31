@@ -90,6 +90,8 @@ services:
         condition: service_healthy
       eureka-server:
         condition: service_healthy
+      redis-server:
+        condition: service_healthy
 
   item-service:
     build: ./item-service
@@ -135,6 +137,8 @@ services:
       eureka-server:
         condition: service_healthy
       mysql:
+        condition: service_healthy
+      redis-server:
         condition: service_healthy
 
   member-service:
