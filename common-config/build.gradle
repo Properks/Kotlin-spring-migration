@@ -4,6 +4,7 @@ dependencies {
     compileOnly 'org.springframework.boot:spring-boot-starter-data-jpa'
     compileOnly 'org.springframework.boot:spring-boot-starter-security'
     compileOnly 'org.springframework.boot:spring-boot-starter-data-redis'
+    compileOnly 'org.springframework.boot:spring-boot-starter-data-redis-reactive'
 
     // ETC
     testImplementation 'org.jetbrains.kotlin:kotlin-test'
