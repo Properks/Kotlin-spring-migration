@@ -7,6 +7,7 @@ import org.jeongmo.migration.common.token.application.error.exception.TokenExcep
 import org.jeongmo.migration.common.token.application.util.TokenUtil
 import org.jeongmo.migration.common.token.domain.repository.TokenRepository
 import org.namul.api.payload.code.supports.DefaultBaseErrorCode
+import org.namul.api.payload.code.supports.DefaultResponseErrorCode
 import org.namul.api.payload.code.supports.DefaultResponseSuccessCode
 import org.namul.api.payload.error.exception.ServerApplicationException
 import org.springframework.http.HttpMethod
@@ -45,6 +46,12 @@ class LogoutFilter(
                         e.code as DefaultBaseErrorCode,
                         e
                     )
+                } catch (e: Exception) {
+                    return@flatMap httpResponseUtil.writeResponse(
+                        exchange,
+                        DefaultResponseErrorCode.INTERNAL_SERVER_ERROR,
+                        e
+                    )
                 }
             }
             else {
@@ -54,10 +61,10 @@ class LogoutFilter(
     }
 
     private fun extractToken(exchange: ServerWebExchange): String? {
-        val header = (exchange.request.headers[authorizationHeader] ?: return null)[0]
+        val header = exchange.request.headers[authorizationHeader]?.toList() ?: return null
 
-        return if (header.isNotEmpty() && header.startsWith(prefix)) {
-            header.substring(prefix.length)
+        return if (header.isNotEmpty() && header[0].startsWith(prefix)) {
+            header[0].substring(prefix.length)
         } else {
             null
         }
