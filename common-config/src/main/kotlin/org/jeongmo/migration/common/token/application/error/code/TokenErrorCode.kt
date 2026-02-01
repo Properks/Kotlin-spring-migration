@@ -16,6 +16,7 @@ enum class TokenErrorCode(
     CANNOT_REISSUE(HttpStatus.UNAUTHORIZED, "TOKEN_401_5", "해당 토큰으로 재발급할 수 없습니다."),
     BLACK_LIST_TOKEN(HttpStatus.BAD_REQUEST, "TOKEN_400_1", "사용할 수 없는 토큰입니다."),
     UNSUPPORTED_TYPE(HttpStatus.BAD_REQUEST, "TOKEN_400_2", "지원하지 않는 형식입니다."),
+    FAIL_TO_LOGOUT(HttpStatus.INTERNAL_SERVER_ERROR, "TOKEN_500_1", "로그아웃에 실패했습니다."),
     ;
 
     override fun getHttpStatus(): HttpStatus = this.httpStatus

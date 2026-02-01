@@ -56,7 +56,7 @@ abstract class TokenAuthenticationFilter(
                     )
                 }
                 else {
-                    logger.error("Token Unkown Error", e)
+                    logger.error("Token Unknown Error", e)
                     httpResponseUtil.writeResponse(exchange, TokenErrorCode.TOKEN_NOT_VALID, TokenException(TokenErrorCode.TOKEN_NOT_VALID))
                 }
             }

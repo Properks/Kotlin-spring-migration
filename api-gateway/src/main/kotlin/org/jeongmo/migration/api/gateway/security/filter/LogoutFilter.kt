@@ -39,7 +39,7 @@ class LogoutFilter(
                             httpResponseUtil.writeResponse(exchange, DefaultResponseSuccessCode.OK, "로그아웃 성공")
                         }
                         else {
-                            Mono.error(TokenException(TokenErrorCode.TOKEN_NOT_VALID))
+                            httpResponseUtil.writeResponse(exchange, DefaultResponseErrorCode.INTERNAL_SERVER_ERROR, TokenException(TokenErrorCode.FAIL_TO_LOGOUT))
                         }
                     }
                 } catch (e: ServerApplicationException) {
