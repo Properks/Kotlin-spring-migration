@@ -7,7 +7,7 @@ import org.jeongmo.migration.common.token.application.dto.TokenInfoDTO
 import org.jeongmo.migration.common.token.application.error.code.TokenErrorCode
 import org.jeongmo.migration.common.token.application.error.exception.TokenException
 import org.jeongmo.migration.common.token.application.util.TokenUtil
-import org.jeongmo.migration.common.token.domain.repository.TokenRepository
+import org.jeongmo.migration.common.token.domain.repository.ReactiveTokenRepository
 import org.namul.api.payload.code.supports.DefaultBaseErrorCode
 import org.slf4j.LoggerFactory
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -21,36 +21,45 @@ import reactor.core.publisher.Mono
 abstract class TokenAuthenticationFilter(
     private val tokenUtil: TokenUtil,
     private val httpResponseUtil: HttpResponseUtil,
-    private val tokenRepository: TokenRepository,
+    private val tokenRepository: ReactiveTokenRepository,
 ): WebFilter  {
 
     private val logger = LoggerFactory.getLogger(TokenAuthenticationFilter::class.java)
 
     final override fun filter(exchange: ServerWebExchange, chain: WebFilterChain): Mono<Void> {
         val token = extractToken(exchange) ?: return chain.filter(exchange)
-        val info = try {
-            if (tokenRepository.isBlackList(token)) throw TokenException(TokenErrorCode.BLACK_LIST_TOKEN)
-            tokenUtil.parseToken(token).also {
-                if (it.type != TokenType.ACCESS) throw TokenException(TokenErrorCode.INVALID_TOKEN_TYPE)
+        return tokenRepository.isBlackList(token)
+            .flatMap {
+                if (it) {Mono.error<Void>(TokenException(TokenErrorCode.BLACK_LIST_TOKEN))} else {Mono.just(token)}
             }
-        } catch (e: TokenException) {
-            // tokenUtil에서 에러 로깅
-            return httpResponseUtil.writeResponse(
-                exchange,
-                code = when (e.code) {
-                    is DefaultBaseErrorCode -> e.code
-                    else -> TokenErrorCode.TOKEN_NOT_VALID
-                } as DefaultBaseErrorCode,
-                exception = e
-            )
-        } catch (e: Exception) {
-            logger.error("Token Unkown Error", e)
-            return httpResponseUtil.writeResponse(exchange, TokenErrorCode.TOKEN_NOT_VALID, e)
-        }
-
-        val modifiedExchange = addHeader(exchange, info)
-        return chain.filter(modifiedExchange)
-            .contextWrite(ReactiveSecurityContextHolder.withAuthentication(successfulAuthentication(info)))
+            .flatMap {
+                try {
+                    val info = tokenUtil.parseToken(token).also {
+                        if (it.type != TokenType.ACCESS) throw TokenException(TokenErrorCode.INVALID_TOKEN_TYPE)
+                    }
+                    val modifiedExchange = addHeader(exchange, info)
+                    return@flatMap chain.filter(modifiedExchange)
+                        .contextWrite(ReactiveSecurityContextHolder.withAuthentication(successfulAuthentication(info)))
+                } catch (e: TokenException) {
+                    Mono.error(e)
+                }
+            }
+            .onErrorResume { e ->
+                if (e is TokenException) {
+                    httpResponseUtil.writeResponse(
+                        exchange,
+                        code = when (e.code) {
+                            is DefaultBaseErrorCode -> e.code
+                            else -> TokenErrorCode.TOKEN_NOT_VALID
+                        } as DefaultBaseErrorCode,
+                        exception = e
+                    )
+                }
+                else {
+                    logger.error("Token Unkown Error", e)
+                    httpResponseUtil.writeResponse(exchange, TokenErrorCode.TOKEN_NOT_VALID, TokenException(TokenErrorCode.TOKEN_NOT_VALID))
+                }
+            }
     }
 
     protected abstract fun extractToken(exchange: ServerWebExchange): String?

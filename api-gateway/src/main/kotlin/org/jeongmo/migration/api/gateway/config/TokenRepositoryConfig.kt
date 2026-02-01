@@ -1,8 +1,8 @@
 package org.jeongmo.migration.api.gateway.config
 
-import org.jeongmo.migration.common.token.domain.repository.TokenRepository
-import org.jeongmo.migration.common.token.infrastructure.adapter.out.redis.TokenTTLRepository
-import org.jeongmo.migration.common.utils.ttl.TTLRepository
+import org.jeongmo.migration.common.token.domain.repository.ReactiveTokenRepository
+import org.jeongmo.migration.common.token.infrastructure.adapter.out.redis.TokenReactiveTTLRepository
+import org.jeongmo.migration.common.utils.ttl.ReactiveTTLRepository
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -13,5 +13,5 @@ class TokenRepositoryConfig(
 ) {
 
     @Bean
-    fun tokenRepository(ttlRepository: TTLRepository): TokenRepository = TokenTTLRepository(ttlRepository, tokenExpirationTime)
+    fun tokenRepository(ttlRepository: ReactiveTTLRepository): ReactiveTokenRepository = TokenReactiveTTLRepository(ttlRepository, tokenExpirationTime)
 }

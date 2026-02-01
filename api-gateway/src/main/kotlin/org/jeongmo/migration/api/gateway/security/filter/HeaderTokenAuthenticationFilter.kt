@@ -2,13 +2,13 @@ package org.jeongmo.migration.api.gateway.security.filter
 
 import org.jeongmo.migration.api.gateway.security.util.HttpResponseUtil
 import org.jeongmo.migration.common.token.application.util.TokenUtil
-import org.jeongmo.migration.common.token.domain.repository.TokenRepository
+import org.jeongmo.migration.common.token.domain.repository.ReactiveTokenRepository
 import org.springframework.web.server.ServerWebExchange
 
 class HeaderTokenAuthenticationFilter(
     tokenUtil: TokenUtil,
     httpResponseUtil: HttpResponseUtil,
-    tokenRepository: TokenRepository,
+    tokenRepository: ReactiveTokenRepository,
 ): TokenAuthenticationFilter(tokenUtil, httpResponseUtil, tokenRepository) {
 
     private val tokenHeader = "Authorization"

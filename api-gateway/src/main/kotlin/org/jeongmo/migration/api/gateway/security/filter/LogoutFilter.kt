@@ -5,7 +5,7 @@ import org.jeongmo.migration.common.token.application.constants.TokenType
 import org.jeongmo.migration.common.token.application.error.code.TokenErrorCode
 import org.jeongmo.migration.common.token.application.error.exception.TokenException
 import org.jeongmo.migration.common.token.application.util.TokenUtil
-import org.jeongmo.migration.common.token.domain.repository.TokenRepository
+import org.jeongmo.migration.common.token.domain.repository.ReactiveTokenRepository
 import org.namul.api.payload.code.supports.DefaultBaseErrorCode
 import org.namul.api.payload.code.supports.DefaultResponseErrorCode
 import org.namul.api.payload.code.supports.DefaultResponseSuccessCode
@@ -20,7 +20,7 @@ import reactor.core.publisher.Mono
 class LogoutFilter(
     logoutUrl: String,
     private val tokenUtil: TokenUtil,
-    private val tokenRepository: TokenRepository,
+    private val tokenRepository: ReactiveTokenRepository,
     private val httpResponseUtil: HttpResponseUtil,
 ): WebFilter{
 
@@ -34,11 +34,13 @@ class LogoutFilter(
                 val token = extractToken(exchange) ?: return@flatMap Mono.error(TokenException(TokenErrorCode.FAIL_READ_TOKEN))
                 try {
                     val tokenInfo = tokenUtil.parseToken(token)
-                    return@flatMap if (tokenRepository.saveToken(tokenInfo.id.toLong(), token, TokenType.BLACK_LIST)) {
-                        httpResponseUtil.writeResponse(exchange, DefaultResponseSuccessCode.OK, "로그아웃 성공")
-                    }
-                    else {
-                        Mono.error(TokenException(TokenErrorCode.TOKEN_NOT_VALID))
+                    return@flatMap tokenRepository.saveToken(tokenInfo.id.toLong(), token, TokenType.BLACK_LIST).flatMap {
+                        if (it) {
+                            httpResponseUtil.writeResponse(exchange, DefaultResponseSuccessCode.OK, "로그아웃 성공")
+                        }
+                        else {
+                            Mono.error(TokenException(TokenErrorCode.TOKEN_NOT_VALID))
+                        }
                     }
                 } catch (e: ServerApplicationException) {
                     return@flatMap httpResponseUtil.writeResponse(
