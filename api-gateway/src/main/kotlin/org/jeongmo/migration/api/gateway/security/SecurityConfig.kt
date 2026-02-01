@@ -33,7 +33,7 @@ class SecurityConfig(
     @Value("\${actuator.password}") private val password: String,
     private val tokenUtil: TokenUtil,
     private val httpResponseUtil: HttpResponseUtil,
-    private val tokenRepository: ReactiveTokenRepository,
+    private val reactiveTokenRepository: ReactiveTokenRepository,
 ) {
 
     private val logoutUrl = "/api/v1/auth/logout"
@@ -79,7 +79,7 @@ class SecurityConfig(
     }
 
     @Bean
-    fun authenticationFilter(): WebFilter = HeaderTokenAuthenticationFilter(tokenUtil, httpResponseUtil, tokenRepository)
+    fun authenticationFilter(): WebFilter = HeaderTokenAuthenticationFilter(tokenUtil, httpResponseUtil, reactiveTokenRepository)
 
     @Bean
     fun serverAccessDeniedHandler(): ServerAccessDeniedHandler = CustomAccessDeniedHandler(httpResponseUtil)
@@ -101,7 +101,7 @@ class SecurityConfig(
     fun passwordEncoder(): PasswordEncoder = BCryptPasswordEncoder()
 
     @Bean
-    fun logoutFilter(): WebFilter = LogoutFilter(logoutUrl, tokenUtil, tokenRepository, httpResponseUtil)
+    fun logoutFilter(): WebFilter = LogoutFilter(logoutUrl, tokenUtil, reactiveTokenRepository, httpResponseUtil)
 
     private fun asPattern(method: HttpMethod, pattern: String): ServerWebExchangeMatcher {
         return PathPatternParserServerWebExchangeMatcher(pattern, method)

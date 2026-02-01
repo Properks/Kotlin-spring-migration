@@ -12,13 +12,15 @@ import org.springframework.data.redis.serializer.StringRedisSerializer
 class RedisConfig {
 
     @Bean
-    fun redisTemplate(redisConnectionFactory: ReactiveRedisConnectionFactory): ReactiveRedisTemplate<String, Any?> {
+    fun reactiveRedisTemplate(reactiveRedisConnectionFactory: ReactiveRedisConnectionFactory): ReactiveRedisTemplate<String, Any?> {
         val context = RedisSerializationContext
             .newSerializationContext<String, Any?>()
             .key(StringRedisSerializer())
+            .hashKey(StringRedisSerializer())
             .value(GenericJackson2JsonRedisSerializer())
+            .hashValue(GenericJackson2JsonRedisSerializer())
             .build()
-        return ReactiveRedisTemplate<String, Any?>(redisConnectionFactory, context)
+        return ReactiveRedisTemplate<String, Any?>(reactiveRedisConnectionFactory, context)
     }
 
 }

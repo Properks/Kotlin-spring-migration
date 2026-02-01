@@ -20,7 +20,7 @@ import reactor.core.publisher.Mono
 class LogoutFilter(
     logoutUrl: String,
     private val tokenUtil: TokenUtil,
-    private val tokenRepository: ReactiveTokenRepository,
+    private val reactiveTokenRepository: ReactiveTokenRepository,
     private val httpResponseUtil: HttpResponseUtil,
 ): WebFilter{
 
@@ -34,7 +34,7 @@ class LogoutFilter(
                 val token = extractToken(exchange) ?: return@flatMap Mono.error(TokenException(TokenErrorCode.FAIL_READ_TOKEN))
                 try {
                     val tokenInfo = tokenUtil.parseToken(token)
-                    return@flatMap tokenRepository.saveToken(tokenInfo.id.toLong(), token, TokenType.BLACK_LIST).flatMap {
+                    return@flatMap reactiveTokenRepository.saveToken(tokenInfo.id.toLong(), token, TokenType.BLACK_LIST).flatMap {
                         if (it) {
                             httpResponseUtil.writeResponse(exchange, DefaultResponseSuccessCode.OK, "로그아웃 성공")
                         }

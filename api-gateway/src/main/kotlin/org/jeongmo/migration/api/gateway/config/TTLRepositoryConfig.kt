@@ -10,7 +10,7 @@ import org.springframework.data.redis.core.ReactiveRedisTemplate
 class TTLRepositoryConfig {
 
     @Bean
-    fun ttlRepository(redisTemplate: ReactiveRedisTemplate<String, Any?>): ReactiveTTLRepository = ReactiveRedisRepository(redisTemplate)
+    fun reactiveTTLRepository(reactiveRedisTemplate: ReactiveRedisTemplate<String, Any?>): ReactiveTTLRepository = ReactiveRedisRepository(reactiveRedisTemplate)
 
 
 }

@@ -8,8 +8,8 @@ import org.springframework.web.server.ServerWebExchange
 class HeaderTokenAuthenticationFilter(
     tokenUtil: TokenUtil,
     httpResponseUtil: HttpResponseUtil,
-    tokenRepository: ReactiveTokenRepository,
-): TokenAuthenticationFilter(tokenUtil, httpResponseUtil, tokenRepository) {
+    reactiveTokenRepository: ReactiveTokenRepository,
+): TokenAuthenticationFilter(tokenUtil, httpResponseUtil, reactiveTokenRepository) {
 
     private val tokenHeader = "Authorization"
     private val tokenPrefix = "Bearer "

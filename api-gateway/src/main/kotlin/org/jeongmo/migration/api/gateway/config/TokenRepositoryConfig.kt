@@ -13,5 +13,5 @@ class TokenRepositoryConfig(
 ) {
 
     @Bean
-    fun tokenRepository(ttlRepository: ReactiveTTLRepository): ReactiveTokenRepository = TokenReactiveTTLRepository(ttlRepository, tokenExpirationTime)
+    fun reactiveTokenRepository(reactiveTTLRepository: ReactiveTTLRepository): ReactiveTokenRepository = TokenReactiveTTLRepository(reactiveTTLRepository, tokenExpirationTime)
 }

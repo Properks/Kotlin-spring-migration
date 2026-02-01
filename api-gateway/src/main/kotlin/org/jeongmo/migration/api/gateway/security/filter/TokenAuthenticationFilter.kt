@@ -21,14 +21,14 @@ import reactor.core.publisher.Mono
 abstract class TokenAuthenticationFilter(
     private val tokenUtil: TokenUtil,
     private val httpResponseUtil: HttpResponseUtil,
-    private val tokenRepository: ReactiveTokenRepository,
+    private val reactiveTokenRepository: ReactiveTokenRepository,
 ): WebFilter  {
 
     private val logger = LoggerFactory.getLogger(TokenAuthenticationFilter::class.java)
 
     final override fun filter(exchange: ServerWebExchange, chain: WebFilterChain): Mono<Void> {
         val token = extractToken(exchange) ?: return chain.filter(exchange)
-        return tokenRepository.isBlackList(token)
+        return reactiveTokenRepository.isBlackList(token)
             .flatMap {
                 if (it) {Mono.error<Void>(TokenException(TokenErrorCode.BLACK_LIST_TOKEN))} else {Mono.just(token)}
             }
