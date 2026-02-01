@@ -13,19 +13,18 @@ class ReactiveRedisRepository(
     private val log = LoggerFactory.getLogger(RedisRepository::class.java)
 
     override fun save(key: String, value: Any, ttl: Long): Mono<Boolean> {
-        return Mono.just(try {
+        return try {
             reactiveRedisTemplate.opsForValue().set(key, value, Duration.ofSeconds(ttl))
-            true
         } catch (e: Exception) {
             log.warn("[FAIL_TO_SAVE_IN_TTL_REPOSITORY] RedisRepository | ${e.message}")
-            false
-        })
+            Mono.just(false)
+        }
     }
 
     override fun saveIfAbsent(key: String, value: Any, ttl: Long): Mono<Any?> {
         return reactiveRedisTemplate.opsForValue().setIfAbsent(key, value, Duration.ofSeconds(ttl)).flatMap {
             if (!it) {
-                Mono.just(reactiveRedisTemplate.opsForValue()[key])
+                reactiveRedisTemplate.opsForValue()[key]
             }
             else {
                 Mono.empty()

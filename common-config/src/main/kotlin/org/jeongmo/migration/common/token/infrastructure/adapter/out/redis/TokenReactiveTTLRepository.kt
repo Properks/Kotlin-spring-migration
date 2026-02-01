@@ -35,7 +35,7 @@ class TokenReactiveTTLRepository(
                 reactiveTTLRepository.findByKey(key = "${refreshPrefix}:$id", String::class.java)
             }
             else -> {
-                throw TokenException(TokenErrorCode.UNSUPPORTED_TYPE)
+                Mono.error(TokenException(TokenErrorCode.UNSUPPORTED_TYPE))
             }
         }
     }
