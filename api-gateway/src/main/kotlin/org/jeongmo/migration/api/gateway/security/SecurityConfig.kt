@@ -1,10 +1,12 @@
 package org.jeongmo.migration.api.gateway.security
 
 import org.jeongmo.migration.api.gateway.security.filter.HeaderTokenAuthenticationFilter
+import org.jeongmo.migration.api.gateway.security.filter.LogoutFilter
 import org.jeongmo.migration.api.gateway.security.handler.CustomAccessDeniedHandler
 import org.jeongmo.migration.api.gateway.security.handler.CustomServerAuthenticationEntryPoint
 import org.jeongmo.migration.api.gateway.security.util.HttpResponseUtil
 import org.jeongmo.migration.common.token.application.util.TokenUtil
+import org.jeongmo.migration.common.token.domain.repository.ReactiveTokenRepository
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -31,8 +33,10 @@ class SecurityConfig(
     @Value("\${actuator.password}") private val password: String,
     private val tokenUtil: TokenUtil,
     private val httpResponseUtil: HttpResponseUtil,
+    private val reactiveTokenRepository: ReactiveTokenRepository,
 ) {
 
+    private val logoutUrl = "/api/v1/auth/logout"
     private val allowUrl = arrayOf(
         "/auth/sign-up",
         "/auth/login",
@@ -62,6 +66,7 @@ class SecurityConfig(
                     .anyExchange().authenticated()
             }
             .addFilterAt(authenticationFilter(), SecurityWebFiltersOrder.FORM_LOGIN)
+            .addFilterAt(logoutFilter(), SecurityWebFiltersOrder.LOGOUT)
             .exceptionHandling {
                 it
                     .accessDeniedHandler(serverAccessDeniedHandler())
@@ -74,7 +79,7 @@ class SecurityConfig(
     }
 
     @Bean
-    fun authenticationFilter(): WebFilter = HeaderTokenAuthenticationFilter(tokenUtil, httpResponseUtil)
+    fun authenticationFilter(): WebFilter = HeaderTokenAuthenticationFilter(tokenUtil, httpResponseUtil, reactiveTokenRepository)
 
     @Bean
     fun serverAccessDeniedHandler(): ServerAccessDeniedHandler = CustomAccessDeniedHandler(httpResponseUtil)
@@ -94,6 +99,9 @@ class SecurityConfig(
 
     @Bean
     fun passwordEncoder(): PasswordEncoder = BCryptPasswordEncoder()
+
+    @Bean
+    fun logoutFilter(): WebFilter = LogoutFilter(logoutUrl, tokenUtil, reactiveTokenRepository, httpResponseUtil)
 
     private fun asPattern(method: HttpMethod, pattern: String): ServerWebExchangeMatcher {
         return PathPatternParserServerWebExchangeMatcher(pattern, method)

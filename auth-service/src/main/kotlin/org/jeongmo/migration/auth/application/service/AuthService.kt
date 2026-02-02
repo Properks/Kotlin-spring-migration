@@ -11,6 +11,7 @@ import org.jeongmo.migration.common.token.application.constants.TokenType
 import org.jeongmo.migration.common.token.application.error.code.TokenErrorCode
 import org.jeongmo.migration.common.token.application.error.exception.TokenException
 import org.jeongmo.migration.common.token.domain.model.CustomUserDetails
+import org.jeongmo.migration.common.token.domain.repository.TokenRepository
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
@@ -20,6 +21,7 @@ import java.util.*
 class AuthService(
     private val tokenAuthService: TokenAuthService,
     private val memberServiceClient: MemberServiceClient,
+    private val tokenRepository: TokenRepository,
 ): AuthCommandUseCase {
 
     private val logger = LoggerFactory.getLogger(AuthService::class.java)
@@ -50,6 +52,14 @@ class AuthService(
 
     override fun reissueToken(request: ReissueTokenRequest): ReissueTokenResponse {
         val tokenInfo = tokenAuthService.getTokenInfo(request.refreshToken)
+        if (tokenRepository.isBlackList(request.refreshToken) ||
+            tokenRepository.getToken(
+                tokenInfo.id.toLongOrNull() ?: throw TokenException(TokenErrorCode.TOKEN_NOT_VALID),
+                TokenType.REFRESH
+            ) != request.refreshToken) {
+            throw TokenException(TokenErrorCode.CANNOT_REISSUE)
+        }
+
         if (tokenInfo.type != TokenType.REFRESH) throw TokenException(TokenErrorCode.INVALID_TOKEN_TYPE)
         val userDetails = CustomUserDetails(
             id = tokenInfo.id.toLongOrNull() ?: throw TokenException(TokenErrorCode.TOKEN_NOT_VALID),
@@ -65,9 +75,13 @@ class AuthService(
     private fun processLogin(userDetails: CustomUserDetails): LoginResponse {
         val accessToken = tokenAuthService.createAccessToken(userDetails)
         val refreshToken = tokenAuthService.createRefreshToken(userDetails)
+        val savedRefreshToken = if (!tokenRepository.saveToken(userDetails.id, refreshToken, TokenType.REFRESH)) {
+            logger.warn("[FAIL_TO_SAVE_TOKEN] auth-service")
+            null
+        } else { refreshToken }
         return LoginResponse(
             accessToken = accessToken,
-            refreshToken = refreshToken,
+            refreshToken = savedRefreshToken,
             role = userDetails.authorities.map {it.authority},
             loginTime = LocalDateTime.now(),
         )

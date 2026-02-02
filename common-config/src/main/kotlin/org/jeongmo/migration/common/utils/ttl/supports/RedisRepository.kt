@@ -1,14 +1,12 @@
-package org.jeongmo.migration.item.infrastructure.adapter.out.redis
+package org.jeongmo.migration.common.utils.ttl.supports
 
 import org.jeongmo.migration.common.utils.ttl.TTLRepository
 import org.slf4j.LoggerFactory
 import org.springframework.data.redis.core.RedisTemplate
-import org.springframework.stereotype.Repository
 import java.time.Duration
 
-@Repository
 class RedisRepository(
-    private val redisTemplate: RedisTemplate<String, Any>,
+    private val redisTemplate: RedisTemplate<String, Any?>,
 ): TTLRepository {
 
     private val log = LoggerFactory.getLogger(RedisRepository::class.java)

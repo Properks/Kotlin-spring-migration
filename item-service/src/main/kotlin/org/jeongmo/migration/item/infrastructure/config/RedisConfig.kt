@@ -10,8 +10,8 @@ import org.springframework.data.redis.serializer.RedisSerializer
 class RedisConfig {
 
     @Bean
-    fun idempotencyKeyRedisTemplate(redisConnectionFactory: RedisConnectionFactory): RedisTemplate<String, Any> {
-        val template: RedisTemplate<String, Any> = RedisTemplate()
+    fun idempotencyKeyRedisTemplate(redisConnectionFactory: RedisConnectionFactory): RedisTemplate<String, Any?> {
+        val template: RedisTemplate<String, Any?> = RedisTemplate()
         template.connectionFactory = redisConnectionFactory
         template.keySerializer = RedisSerializer.string()
         template.valueSerializer = RedisSerializer.java()
