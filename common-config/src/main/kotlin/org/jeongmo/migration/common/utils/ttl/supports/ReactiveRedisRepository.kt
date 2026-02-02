@@ -42,7 +42,8 @@ class ReactiveRedisRepository(
                 val data = clz.cast(it)
                 Mono.justOrEmpty(data)
             } catch (e: Exception) {
-                Mono.empty()
+                log.warn("[FAIL_TO_FIND] ReactiveRedisRepository | ${e.message}")
+                Mono.error(e)
             }
         }
     }
