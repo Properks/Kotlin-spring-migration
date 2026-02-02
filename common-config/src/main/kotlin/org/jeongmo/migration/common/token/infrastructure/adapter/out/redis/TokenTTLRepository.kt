@@ -8,7 +8,8 @@ import org.jeongmo.migration.common.utils.ttl.TTLRepository
 
 class TokenTTLRepository(
     private val ttlRepository: TTLRepository,
-    private val tokenExpiration: Long,
+    private val accessTokenExpiration: Long,
+    private val refreshTokenExpiration: Long,
 ): TokenRepository {
 
     private val refreshPrefix: String = "REFRESH_TOKEN"
@@ -17,10 +18,10 @@ class TokenTTLRepository(
     override fun saveToken(id: Long, token: String, type: TokenType): Boolean {
         return when (type) {
             TokenType.BLACK_LIST -> {
-                ttlRepository.save("${blackListPrefix}:$token", true, tokenExpiration)
+                ttlRepository.save("${blackListPrefix}:$token", true, accessTokenExpiration)
             }
             TokenType.REFRESH -> {
-                ttlRepository.save("${refreshPrefix}:$id", token, tokenExpiration)
+                ttlRepository.save("${refreshPrefix}:$id", token, refreshTokenExpiration)
             }
             else -> {
                 throw TokenException(TokenErrorCode.UNSUPPORTED_TYPE)

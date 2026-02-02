@@ -9,7 +9,8 @@ import reactor.core.publisher.Mono
 
 class TokenReactiveTTLRepository(
     private val reactiveTTLRepository: ReactiveTTLRepository,
-    private val tokenExpiration: Long,
+    private val accessTokenExpiration: Long,
+    private val refreshTokenExpiration: Long,
 ): ReactiveTokenRepository{
 
     private val refreshPrefix: String = "REFRESH_TOKEN"
@@ -18,10 +19,10 @@ class TokenReactiveTTLRepository(
     override fun saveToken(id: Long, token: String, type: TokenType): Mono<Boolean> {
         return when (type) {
             TokenType.BLACK_LIST -> {
-                reactiveTTLRepository.save("${blackListPrefix}:$token", true, tokenExpiration)
+                reactiveTTLRepository.save("${blackListPrefix}:$token", true, accessTokenExpiration)
             }
             TokenType.REFRESH -> {
-                reactiveTTLRepository.save("${refreshPrefix}:$id", token, tokenExpiration)
+                reactiveTTLRepository.save("${refreshPrefix}:$id", token, refreshTokenExpiration)
             }
             else -> {
                 Mono.error(TokenException(TokenErrorCode.UNSUPPORTED_TYPE))

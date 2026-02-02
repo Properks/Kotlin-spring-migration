@@ -9,9 +9,10 @@ import org.springframework.context.annotation.Configuration
 
 @Configuration
 class TokenRepositoryConfig(
-    @Value("\${token.jwt.expiration-time.refresh-token}") private val tokenExpirationTime: Long,
+    @Value("\${token.jwt.expiration-time.access-token}") private val accessTokenExpiration: Long,
+    @Value("\${token.jwt.expiration-time.refresh-token}") private val refreshTokenExpiration: Long,
 ) {
 
     @Bean
-    fun reactiveTokenRepository(reactiveTTLRepository: ReactiveTTLRepository): ReactiveTokenRepository = TokenReactiveTTLRepository(reactiveTTLRepository, tokenExpirationTime)
+    fun reactiveTokenRepository(reactiveTTLRepository: ReactiveTTLRepository): ReactiveTokenRepository = TokenReactiveTTLRepository(reactiveTTLRepository, accessTokenExpiration, refreshTokenExpiration)
 }
