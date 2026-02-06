@@ -1,6 +1,8 @@
 package org.jeongmo.migration.auth.application.service
 
 import org.jeongmo.migration.auth.application.dto.*
+import org.jeongmo.migration.auth.application.error.code.AuthErrorCode
+import org.jeongmo.migration.auth.application.error.exception.AuthException
 import org.jeongmo.migration.auth.application.port.inbound.AuthCommandUseCase
 import org.jeongmo.migration.auth.application.port.out.member.MemberServiceClient
 import org.jeongmo.migration.auth.application.port.out.member.dto.CreateMemberRequest
@@ -16,6 +18,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 import java.util.*
+import kotlin.math.log
 
 @Service
 class AuthService(
@@ -70,6 +73,23 @@ class AuthService(
         return ReissueTokenResponse(
             accessToken = tokenAuthService.createAccessToken(userDetails)
         ).also { logger.info("[SUCCESS_REISSUE_TOKEN] auth-service") }
+    }
+
+    override fun authorize(token: String): AuthorizeResponse {
+        try {
+            val info = tokenAuthService.getTokenInfo(token)
+            return AuthorizeResponse(
+                id = info.id.toLongOrNull() ?: throw AuthException(AuthErrorCode.FAIL_TO_VERIFY),
+                roles = info.roles,
+            )
+        } catch (e: TokenException) {
+            logger.warn("[FAIL_TO_AUTHORIZE_TOKEN] auth-service")
+            throw AuthException(AuthErrorCode.UNAUTHORIZED_DATA, e)
+        }
+        catch (e: Exception) {
+            logger.error("[FAIL_TO_VERIFY_TOKEN] auth-service")
+            throw AuthException(AuthErrorCode.FAIL_TO_VERIFY, e)
+        }
     }
 
     private fun processLogin(userDetails: CustomUserDetails): LoginResponse {
