@@ -18,7 +18,6 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 import java.util.*
-import kotlin.math.log
 
 @Service
 class AuthService(
@@ -80,7 +79,7 @@ class AuthService(
             val info = tokenAuthService.getTokenInfo(token)
             return AuthorizeResponse(
                 id = info.id.toLongOrNull() ?: throw AuthException(AuthErrorCode.FAIL_TO_VERIFY),
-                roles = info.roles,
+                roles = info.roles.map { it.authority },
             )
         } catch (e: TokenException) {
             logger.warn("[FAIL_TO_AUTHORIZE_TOKEN] auth-service")
