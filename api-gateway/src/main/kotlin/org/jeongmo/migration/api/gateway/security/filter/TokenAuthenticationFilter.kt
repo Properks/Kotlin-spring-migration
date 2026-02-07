@@ -1,7 +1,7 @@
 package org.jeongmo.migration.api.gateway.security.filter
 
 import org.jeongmo.migration.api.gateway.security.util.HttpResponseUtil
-import org.jeongmo.migration.common.auth.constants.INTERNAL_SERVER_AUTH_HEADER_NAME
+import org.jeongmo.migration.common.auth.constants.INTERNAL_SERVER_AUTH_ID_NAME
 import org.jeongmo.migration.common.token.application.constants.TokenType
 import org.jeongmo.migration.common.token.application.dto.TokenInfoDTO
 import org.jeongmo.migration.common.token.application.error.code.TokenErrorCode
@@ -66,7 +66,7 @@ abstract class TokenAuthenticationFilter(
 
     private fun addHeader(exchange: ServerWebExchange, tokenInfo: TokenInfoDTO): ServerWebExchange {
         val request = exchange.request.mutate()
-            .header(INTERNAL_SERVER_AUTH_HEADER_NAME, tokenInfo.id)
+            .header(INTERNAL_SERVER_AUTH_ID_NAME, tokenInfo.id)
             .build()
         return exchange.mutate().request(request).build()
 

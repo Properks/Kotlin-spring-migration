@@ -2,7 +2,7 @@ package org.jeongmo.migration.api.gateway.security.filter
 
 import org.jeongmo.migration.api.gateway.security.port.out.auth.AuthApiGateway
 import org.jeongmo.migration.api.gateway.security.util.HttpResponseUtil
-import org.jeongmo.migration.common.auth.constants.INTERNAL_SERVER_AUTH_HEADER_NAME
+import org.jeongmo.migration.common.auth.constants.INTERNAL_SERVER_AUTH_ID_NAME
 import org.jeongmo.migration.common.auth.constants.INTERNAL_SERVER_AUTH_ROLE_NAME
 import org.namul.api.payload.code.supports.DefaultResponseErrorCode
 import org.namul.api.payload.error.exception.ServerApplicationException
@@ -44,7 +44,7 @@ class AuthorizationFilter(
 
     private fun addHeader(exchange: ServerWebExchange, id: String, roles: String): ServerWebExchange {
         val request = exchange.request.mutate()
-            .header(INTERNAL_SERVER_AUTH_HEADER_NAME, id)
+            .header(INTERNAL_SERVER_AUTH_ID_NAME, id)
             .header(INTERNAL_SERVER_AUTH_ROLE_NAME, roles)
             .build()
         return exchange.mutate().request(request).build()
