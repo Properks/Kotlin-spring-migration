@@ -31,6 +31,14 @@ class AuthController(
         return DefaultResponse.ok(response)
     }
 
+    @PostMapping("/logout")
+    fun logout(httpServletRequest: HttpServletRequest): DefaultResponse<Unit> {
+        authCommandUseCase.logout(
+            token = tokenExtractor.extractToken(httpServletRequest) ?: throw AuthException(AuthErrorCode.UNAUTHORIZED_DATA)
+        )
+        return DefaultResponse.noContent()
+    }
+
     @PostMapping("/sign-up")
     fun signUp(@Valid @RequestBody request: SignUpRequest): DefaultResponse<Unit> {
         authCommandUseCase.signUp(request)

@@ -99,6 +99,22 @@ class AuthService(
         }
     }
 
+    override fun logout(token: String) {
+        try {
+            if (!tokenRepository.blackListToken(token)) {
+                throw AuthException(AuthErrorCode.FAIL_TO_LOGOUT)
+            }
+        }
+        catch (e: AuthException) {
+            logger.warn("[FAIL_TO_LOGOUT] auth-service | fail to blacklist a token")
+            throw e
+        }
+        catch (e: Exception) {
+            logger.error("[FAIL_TO_LOGOUT] auth-service | Unknown error", e)
+            throw AuthException(AuthErrorCode.FAIL_TO_LOGOUT, e)
+        }
+    }
+
     private fun processLogin(userDetails: CustomUserDetails): LoginResponse {
         val accessToken = createAccessToken(userDetails)
         val refreshToken = createRefreshToken(userDetails)
