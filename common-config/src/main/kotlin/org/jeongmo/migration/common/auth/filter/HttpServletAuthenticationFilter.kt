@@ -28,7 +28,7 @@ class HttpServletAuthenticationFilter(
         val roleHeader = request.getHeader(INTERNAL_SERVER_AUTH_ROLE_NAME)
 
         if (idHeader.isNullOrEmpty() || roleHeader.isNullOrEmpty()) {
-            filterChain.doFilter(request, response)
+            return filterChain.doFilter(request, response)
         }
 
         val userRole = roleHeader.let {
