@@ -9,21 +9,26 @@ import org.jeongmo.migration.auth.application.port.out.member.dto.CreateMemberRe
 import org.jeongmo.migration.auth.application.port.out.member.dto.VerifyMemberRequest
 import org.jeongmo.migration.common.enums.member.ProviderType
 import org.jeongmo.migration.common.enums.member.Role
-import org.jeongmo.migration.common.token.application.constants.TokenType
-import org.jeongmo.migration.common.token.application.error.code.TokenErrorCode
-import org.jeongmo.migration.common.token.application.error.exception.TokenException
-import org.jeongmo.migration.common.token.domain.model.CustomUserDetails
-import org.jeongmo.migration.common.token.domain.repository.TokenRepository
+import org.jeongmo.migration.auth.application.constants.TokenType
+import org.jeongmo.migration.auth.application.error.code.TokenErrorCode
+import org.jeongmo.migration.auth.application.error.exception.TokenException
+import org.jeongmo.migration.auth.application.port.out.token.TokenRepository
+import org.jeongmo.migration.auth.application.port.out.token.TokenUtil
+import org.jeongmo.migration.auth.domain.model.CustomUserDetails
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 import java.util.*
 
 @Service
 class AuthService(
-    private val tokenAuthService: TokenAuthService,
+    @Value("\${token.jwt.expiration-time.access-token}") private val accessTokenExpiration: Long,
+    @Value("\${token.jwt.expiration-time.refresh-token}") private val refreshTokenExpiration: Long,
+
     private val memberServiceClient: MemberServiceClient,
     private val tokenRepository: TokenRepository,
+    private val tokenUtil: TokenUtil,
 ): AuthCommandUseCase {
 
     private val logger = LoggerFactory.getLogger(AuthService::class.java)
@@ -53,7 +58,7 @@ class AuthService(
     }
 
     override fun reissueToken(request: ReissueTokenRequest): ReissueTokenResponse {
-        val tokenInfo = tokenAuthService.getTokenInfo(request.refreshToken)
+        val tokenInfo = tokenUtil.parseToken(request.refreshToken)
         if (tokenRepository.isBlackList(request.refreshToken) ||
             tokenRepository.getToken(
                 tokenInfo.id.toLongOrNull() ?: throw TokenException(TokenErrorCode.TOKEN_NOT_VALID),
@@ -70,13 +75,16 @@ class AuthService(
             roles = tokenInfo.roles.map {it.authority},
         )
         return ReissueTokenResponse(
-            accessToken = tokenAuthService.createAccessToken(userDetails)
+            accessToken = createAccessToken(userDetails)
         ).also { logger.info("[SUCCESS_REISSUE_TOKEN] auth-service") }
     }
 
     override fun authorize(token: String): AuthorizeResponse {
         try {
-            val info = tokenAuthService.getTokenInfo(token)
+            if (tokenRepository.isBlackList(token)) {
+                throw TokenException(TokenErrorCode.BLACK_LIST_TOKEN)
+            }
+            val info = tokenUtil.parseToken(token)
             return AuthorizeResponse(
                 id = info.id.toLongOrNull() ?: throw AuthException(AuthErrorCode.FAIL_TO_VERIFY),
                 roles = info.roles.map { it.authority },
@@ -92,9 +100,9 @@ class AuthService(
     }
 
     private fun processLogin(userDetails: CustomUserDetails): LoginResponse {
-        val accessToken = tokenAuthService.createAccessToken(userDetails)
-        val refreshToken = tokenAuthService.createRefreshToken(userDetails)
-        val savedRefreshToken = if (!tokenRepository.saveToken(userDetails.id, refreshToken, TokenType.REFRESH)) {
+        val accessToken = createAccessToken(userDetails)
+        val refreshToken = createRefreshToken(userDetails)
+        val savedRefreshToken = if (!tokenRepository.saveRefreshToken(userDetails.id, refreshToken)) {
             logger.warn("[FAIL_TO_SAVE_TOKEN] auth-service")
             null
         } else { refreshToken }
@@ -103,6 +111,22 @@ class AuthService(
             refreshToken = savedRefreshToken,
             role = userDetails.authorities.map {it.authority},
             loginTime = LocalDateTime.now(),
+        )
+    }
+
+    private fun createAccessToken(userDetails: CustomUserDetails): String {
+        return tokenUtil.createToken(
+            userDetails = userDetails,
+            expiration = accessTokenExpiration,
+            type = TokenType.ACCESS,
+        )
+    }
+
+    private fun createRefreshToken(userDetails: CustomUserDetails): String {
+        return tokenUtil.createToken(
+            userDetails = userDetails,
+            expiration = refreshTokenExpiration,
+            type = TokenType.REFRESH,
         )
     }
 }

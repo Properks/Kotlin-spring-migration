@@ -2,7 +2,7 @@ package org.jeongmo.migration.auth.application.port.inbound
 
 import org.jeongmo.migration.auth.application.dto.*
 import org.jeongmo.migration.auth.application.error.exception.AuthException
-import org.jeongmo.migration.common.token.application.error.exception.TokenException
+import org.jeongmo.migration.auth.application.error.exception.TokenException
 
 interface AuthCommandUseCase {
 

@@ -1,4 +1,4 @@
-package org.jeongmo.migration.common.token.application.constants
+package org.jeongmo.migration.auth.application.constants
 
 enum class TokenType {
     ACCESS,

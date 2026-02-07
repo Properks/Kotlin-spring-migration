@@ -1,33 +1,26 @@
-package org.jeongmo.migration.common.token.infrastructure.adapter.out.redis
+package org.jeongmo.migration.auth.infrastructure.adapter.out.token
 
-import org.jeongmo.migration.common.token.application.constants.TokenType
-import org.jeongmo.migration.common.token.application.error.code.TokenErrorCode
-import org.jeongmo.migration.common.token.application.error.exception.TokenException
-import org.jeongmo.migration.common.token.domain.repository.TokenRepository
+import org.jeongmo.migration.auth.application.constants.TokenType
+import org.jeongmo.migration.auth.application.error.code.TokenErrorCode
+import org.jeongmo.migration.auth.application.error.exception.TokenException
+import org.jeongmo.migration.auth.application.port.out.token.TokenRepository
 import org.jeongmo.migration.common.utils.ttl.TTLRepository
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.stereotype.Repository
 
+@Repository
 class TokenTTLRepository(
+    @Value("\${token.jwt.expiration-time.access-token}") private val accessTokenExpiration: Long,
+    @Value("\${token.jwt.expiration-time.refresh-token}") private val refreshTokenExpiration: Long,
     private val ttlRepository: TTLRepository,
-    private val accessTokenExpiration: Long,
-    private val refreshTokenExpiration: Long,
 ): TokenRepository {
 
     private val refreshPrefix: String = "REFRESH_TOKEN"
     private val blackListPrefix: String = "BLACK_LIST"
 
-    override fun saveToken(id: Long, token: String, type: TokenType): Boolean {
-        return when (type) {
-            TokenType.BLACK_LIST -> {
-                ttlRepository.save("${blackListPrefix}:$token", true, accessTokenExpiration)
-            }
-            TokenType.REFRESH -> {
-                ttlRepository.save("${refreshPrefix}:$id", token, refreshTokenExpiration)
-            }
-            else -> {
-                throw TokenException(TokenErrorCode.UNSUPPORTED_TYPE)
-            }
-        }
-    }
+    override fun saveRefreshToken(id: Long, token: String): Boolean = ttlRepository.save("${refreshPrefix}:$id", token, refreshTokenExpiration)
+
+    override fun blackListToken(token: String): Boolean = ttlRepository.save("${blackListPrefix}:$token", true, accessTokenExpiration)
 
     override fun getToken(id: Long, type: TokenType): String? {
         return when(type) {

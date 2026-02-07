@@ -1,4 +1,4 @@
-package org.jeongmo.migration.common.token.application.error.code
+package org.jeongmo.migration.auth.application.error.code
 
 import org.namul.api.payload.code.supports.DefaultBaseErrorCode
 import org.springframework.http.HttpStatus

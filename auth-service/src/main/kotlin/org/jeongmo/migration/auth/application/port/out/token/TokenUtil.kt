@@ -1,9 +1,9 @@
-package org.jeongmo.migration.common.token.application.util
+package org.jeongmo.migration.auth.application.port.out.token
 
-import org.jeongmo.migration.common.token.application.constants.TokenType
-import org.jeongmo.migration.common.token.application.dto.TokenInfoDTO
-import org.jeongmo.migration.common.token.domain.model.CustomUserDetails
-import org.jeongmo.migration.common.token.application.error.exception.TokenException
+import org.jeongmo.migration.auth.application.constants.TokenType
+import org.jeongmo.migration.auth.application.dto.TokenInfoDTO
+import org.jeongmo.migration.auth.domain.model.CustomUserDetails
+import org.jeongmo.migration.auth.application.error.exception.TokenException
 
 
 interface TokenUtil {
