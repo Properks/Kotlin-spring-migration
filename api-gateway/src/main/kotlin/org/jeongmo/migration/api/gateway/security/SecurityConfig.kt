@@ -20,6 +20,10 @@ class SecurityConfig(
     @Value("\${actuator.password}") private val password: String,
 ) {
 
+    private val allowUrl = arrayOf(
+        "/eureka/**",
+    )
+
     private val endpointRole = "ENDPOINT_ADMIN"
 
     @Bean
@@ -28,6 +32,7 @@ class SecurityConfig(
         http
             .authorizeExchange {
                 it
+                    .pathMatchers(*allowUrl).permitAll()
                     .pathMatchers("/actuator/**").hasRole(endpointRole)
                     .anyExchange().permitAll()
             }
