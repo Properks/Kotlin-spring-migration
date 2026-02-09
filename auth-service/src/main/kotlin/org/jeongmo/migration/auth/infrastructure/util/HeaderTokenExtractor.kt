@@ -6,7 +6,7 @@ abstract class HeaderTokenExtractor: TokenExtractor {
 
     final override fun extractToken(httpServletRequest: HttpServletRequest): String? {
         val header = httpServletRequest.getHeader(getHeaderName()) ?: return null
-        return if (header.startsWith(getTokenPrefix())) {header.substring(getTokenPrefix().length)} else {null}
+        return if (header.lowercase().startsWith(getTokenPrefix().lowercase())) {header.substring(getTokenPrefix().length)} else {null}
     }
 
     /**
