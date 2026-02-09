@@ -6,8 +6,8 @@ import org.jeongmo.migration.auth.application.dto.*
 import org.jeongmo.migration.auth.application.error.code.AuthErrorCode
 import org.jeongmo.migration.auth.application.error.exception.AuthException
 import org.jeongmo.migration.auth.application.port.inbound.AuthCommandUseCase
-import org.jeongmo.migration.auth.infrastructure.util.HeaderTokenExtractor
 import org.jeongmo.migration.auth.infrastructure.util.TokenExtractor
+import org.jeongmo.migration.common.auth.annotation.LoginUserId
 import org.namul.api.payload.response.supports.DefaultResponse
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.PostMapping
@@ -32,8 +32,9 @@ class AuthController(
     }
 
     @PostMapping("/logout")
-    fun logout(httpServletRequest: HttpServletRequest): DefaultResponse<Unit> {
+    fun logout(@LoginUserId userId: Long, httpServletRequest: HttpServletRequest): DefaultResponse<Unit> {
         authCommandUseCase.logout(
+            id = userId,
             token = tokenExtractor.extractToken(httpServletRequest) ?: throw AuthException(AuthErrorCode.UNAUTHORIZED_DATA)
         )
         return DefaultResponse.noContent()

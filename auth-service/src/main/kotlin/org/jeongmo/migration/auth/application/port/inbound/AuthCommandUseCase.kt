@@ -40,7 +40,8 @@ interface AuthCommandUseCase {
 
     /**
      * 로그아웃 메서드
+     * @param id 사용자 ID
      * @param token 로그아웃 진행할 토큰
      */
-    fun logout(token: String)
+    fun logout(id: Long, token: String)
 }

@@ -85,6 +85,9 @@ class AuthService(
                 throw TokenException(TokenErrorCode.BLACK_LIST_TOKEN)
             }
             val info = tokenUtil.parseToken(token)
+            if (info.type != TokenType.ACCESS) {
+                throw TokenException(TokenErrorCode.INVALID_TOKEN_TYPE)
+            }
             return AuthorizeResponse(
                 id = info.id.toLongOrNull() ?: throw AuthException(AuthErrorCode.FAIL_TO_VERIFY),
                 roles = info.roles.map { it.authority },
@@ -99,10 +102,15 @@ class AuthService(
         }
     }
 
-    override fun logout(token: String) {
+    override fun logout(id: Long, token: String) {
         try {
             if (!tokenRepository.blackListToken(token)) {
                 throw AuthException(AuthErrorCode.FAIL_TO_LOGOUT)
+            }
+            val refresh = tokenRepository.getToken(id, TokenType.REFRESH)
+            refresh?.let {
+                tokenRepository.removeToken(id, null, TokenType.REFRESH)
+                tokenRepository.blackListToken(it)
             }
         }
         catch (e: AuthException) {
