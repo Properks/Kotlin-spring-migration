@@ -37,5 +37,8 @@ class AuthApiGateway(
                 it.result?.let {result ->  Mono.just(result) }
                     ?: Mono.error(ServerApplicationException(DefaultResponseErrorCode.UNAUTHORIZED))
             }
+            .onErrorResume { e ->
+                Mono.error(ServerApplicationException(DefaultResponseErrorCode.UNAUTHORIZED, e))
+            }
     }
 }

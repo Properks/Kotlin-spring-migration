@@ -4,6 +4,7 @@ import org.jeongmo.migration.api.gateway.security.port.out.auth.AuthApiGateway
 import org.jeongmo.migration.api.gateway.security.util.HttpResponseUtil
 import org.jeongmo.migration.common.auth.constants.INTERNAL_SERVER_AUTH_ID_NAME
 import org.jeongmo.migration.common.auth.constants.INTERNAL_SERVER_AUTH_ROLE_NAME
+import org.namul.api.payload.code.supports.DefaultBaseErrorCode
 import org.namul.api.payload.code.supports.DefaultResponseErrorCode
 import org.namul.api.payload.error.exception.ServerApplicationException
 import org.springframework.cloud.gateway.filter.GatewayFilterChain
@@ -31,7 +32,13 @@ class AuthorizationFilter(
                         chain.filter(modifiedExchange)
                     }
                     .onErrorResume { e ->
-                        httpResponseUtil.writeResponse(exchange, DefaultResponseErrorCode.UNAUTHORIZED, ServerApplicationException(DefaultResponseErrorCode.UNAUTHORIZED, e))
+                        if (e is ServerApplicationException) {
+                            val code = e.code as? DefaultBaseErrorCode ?: DefaultResponseErrorCode.UNAUTHORIZED
+                            httpResponseUtil.writeResponse(exchange, code, e)
+                        }
+                        else {
+                            httpResponseUtil.writeResponse(exchange, DefaultResponseErrorCode.UNAUTHORIZED, ServerApplicationException(DefaultResponseErrorCode.UNAUTHORIZED, e))
+                        }
                     }
             }
             else {
