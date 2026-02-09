@@ -2,6 +2,7 @@ package org.jeongmo.migration.auth.application.port.inbound
 
 import org.jeongmo.migration.auth.application.dto.*
 import org.jeongmo.migration.auth.application.error.exception.AuthException
+import org.jeongmo.migration.auth.application.error.exception.TokenException
 
 interface AuthCommandUseCase {
 
@@ -27,4 +28,20 @@ interface AuthCommandUseCase {
      * @throws TokenException 재발급을 위해 전달된 토큰이나 내부 데이터가 유효하지 않은 경우 발생
      */
     fun reissueToken(request: ReissueTokenRequest): ReissueTokenResponse
+
+
+    /**
+     * 인증 메서드, 해당 토큰을 통해 인증을 진행
+     * @param token 인증에 사용할 토큰
+     * @return 인증 완료된 사용자의 데이터
+     * @throws AuthException 인증 실패의 경우 에러 발생
+     */
+    fun authorize(token: String): AuthorizeResponse
+
+    /**
+     * 로그아웃 메서드
+     * @param id 사용자 ID
+     * @param token 로그아웃 진행할 토큰
+     */
+    fun logout(id: Long, token: String)
 }

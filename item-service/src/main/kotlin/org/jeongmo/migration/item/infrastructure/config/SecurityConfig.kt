@@ -1,4 +1,4 @@
-package org.jeongmo.migration.member.infrastructure.config.security
+package org.jeongmo.migration.item.infrastructure.config
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.servlet.Filter
@@ -9,14 +9,15 @@ import org.namul.api.payload.code.supports.DefaultBaseErrorCode
 import org.namul.api.payload.writer.FailureResponseWriter
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.http.HttpMethod
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.http.SessionCreationPolicy
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
-import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.AuthenticationEntryPoint
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.access.AccessDeniedHandler
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
+import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher
+import org.springframework.security.web.util.matcher.RequestMatcher
 
 @Configuration
 class SecurityConfig(
@@ -26,23 +27,29 @@ class SecurityConfig(
 
     private val allowUrl = arrayOf(
         "/eureka/**",
-        "/internal/api/members/**",
+        "/internal/api/items/**",
+    )
 
+   private val merchantPatterns = arrayOf(
+        asPattern(HttpMethod.POST, "/items"),
+        asPattern(HttpMethod.PATCH, "/items/**"),
+        asPattern(HttpMethod.DELETE, "/items/**"),
     )
 
     @Bean
-    fun disableFilterChain(http: HttpSecurity): SecurityFilterChain {
+    fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
         http
             .authorizeHttpRequests {
                 it
                     .requestMatchers(*allowUrl).permitAll()
+                    .requestMatchers(*merchantPatterns).hasAnyRole("MERCHANT", "ADMIN")
                     .anyRequest().authenticated()
             }
-            .addFilterAt(authenticationFilter(), UsernamePasswordAuthenticationFilter::class.java)
-            .httpBasic { it.disable() }
-            .csrf { it.disable() }
-            .formLogin { it.disable() }
+            .csrf {it.disable()}
+            .httpBasic {it.disable()}
+            .formLogin {it.disable()}
             .sessionManagement {it.sessionCreationPolicy(SessionCreationPolicy.STATELESS)}
+            .addFilterAt(authenticationFilter(), UsernamePasswordAuthenticationFilter::class.java)
             .exceptionHandling {
                 it
                     .accessDeniedHandler(authorizationHandler())
@@ -52,8 +59,6 @@ class SecurityConfig(
         return http.build()
     }
 
-    @Bean
-    fun passwordEncoder(): PasswordEncoder = BCryptPasswordEncoder()
 
     @Bean
     fun authenticationFilter(): Filter = HttpServletAuthenticationFilter()
@@ -63,4 +68,8 @@ class SecurityConfig(
 
     @Bean
     fun authorizationHandler(): AccessDeniedHandler = AuthorizationHandler(failureResponseWriter, objectMapper)
+
+    private fun asPattern(method: HttpMethod, pattern: String): RequestMatcher {
+        return PathPatternRequestMatcher.withDefaults().matcher(method, pattern)
+    }
 }

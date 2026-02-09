@@ -2,7 +2,9 @@ package org.jeongmo.migration.common.auth.annotation.resolver
 
 import jakarta.servlet.http.HttpServletRequest
 import org.jeongmo.migration.common.auth.annotation.LoginUserId
-import org.jeongmo.migration.common.auth.constants.INTERNAL_SERVER_AUTH_HEADER_NAME
+import org.jeongmo.migration.common.auth.constants.INTERNAL_SERVER_AUTH_ID_NAME
+import org.namul.api.payload.code.supports.DefaultResponseErrorCode
+import org.namul.api.payload.error.exception.ServerApplicationException
 import org.slf4j.LoggerFactory
 import org.springframework.core.MethodParameter
 import org.springframework.web.bind.support.WebDataBinderFactory
@@ -22,13 +24,13 @@ class LoginUserIdResolver: HandlerMethodArgumentResolver {
         mavContainer: ModelAndViewContainer?,
         webRequest: NativeWebRequest,
         binderFactory: WebDataBinderFactory?
-    ): Any? {
+    ): Any {
         val request = webRequest.getNativeRequest(HttpServletRequest::class.java)
         return try {
-            request?.getHeader(INTERNAL_SERVER_AUTH_HEADER_NAME)?.toLong()
+            request?.getHeader(INTERNAL_SERVER_AUTH_ID_NAME)?.toLongOrNull() ?: throw ServerApplicationException(DefaultResponseErrorCode.UNAUTHORIZED)
         } catch (e: NumberFormatException) {
             logger.warn("인증 헤더는 있지만 타입 변환에 실패했습니다.")
-            null
+            throw ServerApplicationException(DefaultResponseErrorCode.UNAUTHORIZED)
         }
     }
 }

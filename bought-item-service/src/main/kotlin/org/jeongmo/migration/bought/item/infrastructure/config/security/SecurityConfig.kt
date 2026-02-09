@@ -1,4 +1,4 @@
-package org.jeongmo.migration.member.infrastructure.config.security
+package org.jeongmo.migration.bought.item.infrastructure.config.security
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.servlet.Filter
@@ -9,10 +9,9 @@ import org.namul.api.payload.code.supports.DefaultBaseErrorCode
 import org.namul.api.payload.writer.FailureResponseWriter
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.http.HttpMethod
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.http.SessionCreationPolicy
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
-import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.AuthenticationEntryPoint
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.access.AccessDeniedHandler
@@ -26,34 +25,31 @@ class SecurityConfig(
 
     private val allowUrl = arrayOf(
         "/eureka/**",
-        "/internal/api/members/**",
-
+        "/internal/api/bought-items/**"
     )
 
     @Bean
-    fun disableFilterChain(http: HttpSecurity): SecurityFilterChain {
+    fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
         http
             .authorizeHttpRequests {
                 it
                     .requestMatchers(*allowUrl).permitAll()
+                    .requestMatchers(HttpMethod.PATCH, "/bought-items/**").hasRole("ADMIN")
                     .anyRequest().authenticated()
+
             }
             .addFilterAt(authenticationFilter(), UsernamePasswordAuthenticationFilter::class.java)
-            .httpBasic { it.disable() }
-            .csrf { it.disable() }
-            .formLogin { it.disable() }
+            .csrf {it.disable()}
+            .httpBasic {it.disable()}
+            .formLogin {it.disable()}
             .sessionManagement {it.sessionCreationPolicy(SessionCreationPolicy.STATELESS)}
             .exceptionHandling {
                 it
                     .accessDeniedHandler(authorizationHandler())
                     .authenticationEntryPoint(authenticationHandler())
             }
-
         return http.build()
     }
-
-    @Bean
-    fun passwordEncoder(): PasswordEncoder = BCryptPasswordEncoder()
 
     @Bean
     fun authenticationFilter(): Filter = HttpServletAuthenticationFilter()
