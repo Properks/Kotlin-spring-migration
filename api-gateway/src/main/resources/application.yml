@@ -25,3 +25,7 @@ eureka:
 actuator:
   username: ${ACTUATOR_USERNAME}
   password: ${ACTUATOR_PASSWORD}
+
+web-client:
+  base-url:
+    auth: ${AUTH_DOMAIN_URL}
