@@ -18,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional
 import org.springframework.transaction.support.TransactionTemplate
 
 @Service
-@Transactional
 class BoughtItemCommandService(
     private val boughtItemRepository: BoughtItemRepository,
     private val itemServiceClient: ItemServiceClient,
@@ -29,6 +28,7 @@ class BoughtItemCommandService(
 
     private val log = LoggerFactory.getLogger(this::class.java)
 
+    @Transactional
     override fun buyItem(ownerId: Long, request: BuyItemRequest): BuyItemResponse {
         var decreaseStock = false
         try {
@@ -59,6 +59,7 @@ class BoughtItemCommandService(
         }
     }
 
+    @Transactional
     override fun updateItemStatus(boughtItemId: Long, request: UpdateItemRequest): UpdateItemResponse {
         val foundItem = boughtItemRepository.findById(boughtItemId) ?: throw BoughtItemException(BoughtItemErrorCode.NOT_FOUND)
         foundItem.updateBoughtStatus(boughtStatus = request.boughtItemStatus)
