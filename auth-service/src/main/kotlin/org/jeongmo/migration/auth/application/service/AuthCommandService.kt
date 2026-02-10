@@ -22,7 +22,7 @@ import java.time.LocalDateTime
 import java.util.*
 
 @Service
-class AuthService(
+class AuthCommandService(
     @Value("\${token.jwt.expiration-time.access-token}") private val accessTokenExpiration: Long,
     @Value("\${token.jwt.expiration-time.refresh-token}") private val refreshTokenExpiration: Long,
 
@@ -31,7 +31,7 @@ class AuthService(
     private val tokenUtil: TokenUtil,
 ): AuthCommandUseCase {
 
-    private val logger = LoggerFactory.getLogger(AuthService::class.java)
+    private val logger = LoggerFactory.getLogger(AuthCommandService::class.java)
 
     override fun signUp(request: SignUpRequest) {
         val clientRequest = CreateMemberRequest(

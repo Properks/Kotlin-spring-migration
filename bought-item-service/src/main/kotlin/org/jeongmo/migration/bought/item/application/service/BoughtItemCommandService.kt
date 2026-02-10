@@ -1,10 +1,12 @@
 package org.jeongmo.migration.bought.item.application.service
 
-import org.jeongmo.migration.bought.item.application.dto.*
+import org.jeongmo.migration.bought.item.application.dto.BuyItemRequest
+import org.jeongmo.migration.bought.item.application.dto.BuyItemResponse
+import org.jeongmo.migration.bought.item.application.dto.UpdateItemRequest
+import org.jeongmo.migration.bought.item.application.dto.UpdateItemResponse
 import org.jeongmo.migration.bought.item.application.error.code.BoughtItemErrorCode
 import org.jeongmo.migration.bought.item.application.error.exception.BoughtItemException
 import org.jeongmo.migration.bought.item.application.port.inbound.BoughtItemCommandUseCase
-import org.jeongmo.migration.bought.item.application.port.inbound.BoughtItemQueryUseCase
 import org.jeongmo.migration.bought.item.application.port.out.item.ItemServiceClient
 import org.jeongmo.migration.bought.item.domain.repository.BoughtItemRepository
 import org.jeongmo.migration.common.utils.compensation.transaction.CompensationExecutor
@@ -16,25 +18,28 @@ import org.springframework.transaction.annotation.Transactional
 import org.springframework.transaction.support.TransactionTemplate
 
 @Service
-class BoughtItemService(
+@Transactional
+class BoughtItemCommandService(
     private val boughtItemRepository: BoughtItemRepository,
     private val itemServiceClient: ItemServiceClient,
     private val compensationExecutor: CompensationExecutor,
     private val transactionTemplate: TransactionTemplate,
     private val retryUtils: RetryUtils,
-): BoughtItemCommandUseCase, BoughtItemQueryUseCase {
+): BoughtItemCommandUseCase {
 
-    private val log = LoggerFactory.getLogger(BoughtItemService::class.java)
+    private val log = LoggerFactory.getLogger(this::class.java)
 
-    @Transactional
     override fun buyItem(ownerId: Long, request: BuyItemRequest): BuyItemResponse {
         var decreaseStock = false
         try {
             itemServiceClient.decreaseItemCount(ownerId, request.itemId, request.quantity)
             decreaseStock = true
             val boughtItem = boughtItemRepository.save(request.toDomain(ownerId))
-            return BuyItemResponse.fromDomain(boughtItem)
+            return BuyItemResponse.fromDomain(boughtItem).also {
+                log.info("[SUCCESS_TO_BUY_ITEM] bought-item-service | item id: ${request.itemId}")
+            }
         } catch (e: Exception) {
+            log.error("[FAIL_TO_BUY_ITEM] bought-item-service", e)
             compensationExecutor.compensateTransaction(
                 CompensationOperator(
                     title = "BUY_ITEM",
@@ -54,24 +59,13 @@ class BoughtItemService(
         }
     }
 
-    @Transactional(readOnly = true)
-    override fun findById(ownerId: Long, boughtItemId: Long): FindBoughtItemResponse {
-        val foundBoughtItem = boughtItemRepository.findById(ownerId, boughtItemId) ?: throw BoughtItemException(BoughtItemErrorCode.NOT_FOUND)
-        return FindBoughtItemResponse.fromDomain(foundBoughtItem)
-    }
-
-    @Transactional(readOnly = true)
-    override fun findAll(ownerId: Long): List<FindBoughtItemResponse> {
-        val foundBoughtItems = boughtItemRepository.findAll(ownerId)
-        return foundBoughtItems.map { FindBoughtItemResponse.fromDomain(it) }
-    }
-
-    @Transactional
     override fun updateItemStatus(boughtItemId: Long, request: UpdateItemRequest): UpdateItemResponse {
         val foundItem = boughtItemRepository.findById(boughtItemId) ?: throw BoughtItemException(BoughtItemErrorCode.NOT_FOUND)
         foundItem.updateBoughtStatus(boughtStatus = request.boughtItemStatus)
         val savedBoughtItem= boughtItemRepository.save(foundItem)
-        return UpdateItemResponse.fromDomain(savedBoughtItem)
+        return UpdateItemResponse.fromDomain(savedBoughtItem).also {
+            log.info("[SUCCESS_TO_UPDATE_ITEM] bought-item-service | $boughtItemId")
+        }
     }
 
     override fun cancelBoughtItem(ownerId: Long, boughtItemId: Long) {
@@ -88,8 +82,11 @@ class BoughtItemService(
                     domain.markAsDeleted()
                     boughtItemRepository.save(domain)
                 }
+            }.also {
+                log.info("[SUCCESS_TO_CANCEL_ITEM] bought-item-service | item id: ${foundBoughtItem.itemId}")
             }
         } catch (e: Exception) {
+            log.error("[FAIL_TO_CANCEL_ITEM] bought-item-service | bought-item-id: $boughtItemId", e)
             compensationExecutor.compensateTransaction(
                 CompensationOperator(
                     title = "CANCEL_ITEM",
