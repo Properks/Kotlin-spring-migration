@@ -15,7 +15,7 @@ class Item(
     var itemStatus: ItemStatus,
     var deletedAt: LocalDateTime? = null,
     var score: Double? = null,
-    var ownerId: Long = 0L,
+    var ownerId: Long,
     var version: Long = 0L,
     createdAt: LocalDateTime? = null,
     updatedAt: LocalDateTime? = null,
@@ -44,6 +44,8 @@ class Item(
     fun changeItemCount(itemCount: Long) {
         this.itemCount = itemCount
     }
+
+    fun checkOwner(ownerId: Long): Boolean = this.ownerId == ownerId
 
     fun decreaseItemCount(quantity: Long) {
         validate(quantity) {it > 0}

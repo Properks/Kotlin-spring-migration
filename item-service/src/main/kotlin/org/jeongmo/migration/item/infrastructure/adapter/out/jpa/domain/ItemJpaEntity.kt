@@ -5,7 +5,6 @@ import org.hibernate.annotations.SQLDelete
 import org.hibernate.annotations.SQLRestriction
 import org.jeongmo.migration.common.domain.jpa.JpaBaseEntity
 import org.jeongmo.migration.item.domain.enums.ItemStatus
-import org.springframework.data.annotation.CreatedBy
 import java.time.LocalDateTime
 
 @Entity
@@ -31,7 +30,6 @@ class ItemJpaEntity(
     var score : Double? = null,
 
     @Column(name = "owner_id")
-    @CreatedBy
     var ownerId: Long = 0L,
 
     @Version

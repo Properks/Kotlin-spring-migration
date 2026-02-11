@@ -1,6 +1,7 @@
 package org.jeongmo.migration.item.infrastructure.adapter.inbound.web
 
 import jakarta.validation.Valid
+import org.jeongmo.migration.common.auth.annotation.LoginUserId
 import org.jeongmo.migration.item.application.dto.*
 import org.jeongmo.migration.item.application.port.inbound.ItemCommandUseCase
 import org.jeongmo.migration.item.application.port.inbound.ItemQueryUseCase
@@ -22,8 +23,8 @@ class ItemController(
 ) {
 
     @PostMapping
-    fun createItem(@Valid @RequestBody request: CreateItemRequest): DefaultResponse<CreateItemResponse> =
-        DefaultResponse.ok(itemCommandUseCase.createItem(request))
+    fun createItem(@LoginUserId ownerId: Long, @Valid @RequestBody request: CreateItemRequest): DefaultResponse<CreateItemResponse> =
+        DefaultResponse.ok(itemCommandUseCase.createItem(ownerId, request))
 
     @GetMapping("/{itemId}")
     fun getItem(@PathVariable itemId: Long): DefaultResponse<ItemInfoResponse> =
@@ -34,12 +35,12 @@ class ItemController(
         DefaultResponse.ok(itemQueryUseCase.findAll())
 
     @PatchMapping("/{itemId}")
-    fun updateItem(@PathVariable itemId: Long, @Valid @RequestBody request: UpdateItemRequest): DefaultResponse<UpdateItemResponse> =
-        DefaultResponse.ok(itemCommandUseCase.updateItem(itemId, request))
+    fun updateItem(@LoginUserId ownerId: Long, @PathVariable itemId: Long, @Valid @RequestBody request: UpdateItemRequest): DefaultResponse<UpdateItemResponse> =
+        DefaultResponse.ok(itemCommandUseCase.updateItem(ownerId, itemId, request))
 
     @DeleteMapping("/{itemId}")
-    fun deleteItem(@PathVariable itemId: Long): DefaultResponse<Unit> {
-        itemCommandUseCase.deleteItem(itemId)
+    fun deleteItem(@LoginUserId ownerId: Long, @PathVariable itemId: Long): DefaultResponse<Unit> {
+        itemCommandUseCase.deleteItem(ownerId, itemId)
         return DefaultResponse.noContent()
     }
 }
