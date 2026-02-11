@@ -15,6 +15,7 @@ class Item(
     var itemStatus: ItemStatus,
     var deletedAt: LocalDateTime? = null,
     var score: Double? = null,
+    var ownerId: Long = 0L,
     var version: Long = 0L,
     createdAt: LocalDateTime? = null,
     updatedAt: LocalDateTime? = null,
