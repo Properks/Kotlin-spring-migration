@@ -29,6 +29,9 @@ class ItemJpaEntity(
     @Column(name = "score")
     var score : Double? = null,
 
+    @Column(name = "owner_id")
+    var ownerId: Long = 0L,
+
     @Version
     @Column(name = "version")
     var version: Long = 0L,

@@ -16,12 +16,13 @@ data class CreateItemRequest(
     @field:PositiveOrZero
     val itemCount: Long,
 ) {
-    fun toDomain(): Item {
+    fun toDomain(ownerId: Long): Item {
         return Item(
             name = this.name,
             price = this.price,
             itemCount = itemCount,
             itemStatus = ItemStatus.IN_STOCK,
+            ownerId = ownerId,
         )
     }
 }

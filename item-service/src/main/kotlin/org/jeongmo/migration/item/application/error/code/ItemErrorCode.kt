@@ -15,6 +15,7 @@ enum class ItemErrorCode(
     INVALID_DOMAIN_DATA(HttpStatus.BAD_REQUEST, "ITEM_400_2", "상품 정보가 유효하지 않습니다."),
     OPTIMISTIC_LOCKING_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "ITEM_500_2", "낙관적 락 충돌이 발생하였습니다."),
     NO_ITEM_STOCK(HttpStatus.BAD_REQUEST, "ITEM_400_3", "상품 재고가 없습니다."),
+    NOT_OWNER(HttpStatus.BAD_REQUEST, "ITEM_400_4", "사용자의 제품이 아닙니다."),
     ;
 
     override fun getHttpStatus(): HttpStatus = this.httpStatus

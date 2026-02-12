@@ -21,15 +21,21 @@ class ItemCommandService(
     private val logger = LoggerFactory.getLogger(ItemCommandService::class.java)
 
     @Transactional
-    override fun createItem(request: CreateItemRequest): CreateItemResponse {
-        val item = itemRepository.save(request.toDomain())
+    override fun createItem(ownerId: Long, request: CreateItemRequest): CreateItemResponse {
+        val item = itemRepository.save(request.toDomain(ownerId))
         logger.info("[SUCCESS_CREATE] item-service | id: ${item.id}")
         return CreateItemResponse.fromDomain(item)
     }
 
     @Transactional
-    override fun updateItem(id: Long, request: UpdateItemRequest): UpdateItemResponse {
-        val item = itemRepository.findById(id) ?: throw ItemException(ItemErrorCode.NOT_FOUND)
+    override fun updateItem(ownerId: Long, itemId: Long, request: UpdateItemRequest): UpdateItemResponse {
+        val item = itemRepository.findById(itemId) ?: throw ItemException(ItemErrorCode.NOT_FOUND)
+
+        if (!item.checkOwner(ownerId)) {
+            logger.warn("[NOT_OWNER] item-service | id: ${item.id}")
+            throw ItemException(ItemErrorCode.NOT_OWNER)
+        }
+
         request.name?.let { item.changeName(it) }
         request.price?.let { item.changePrice(it) }
         request.discount?.let { item.changeDiscount(it) }
@@ -38,9 +44,14 @@ class ItemCommandService(
     }
 
     @Transactional
-    override fun deleteItem(id: Long) {
+    override fun deleteItem(ownerId: Long, itemId: Long) {
         try {
-            if (!itemRepository.deleteById(id)) {
+            itemRepository.findById(itemId)?.also {
+                if (!it.checkOwner(ownerId)) {
+                    throw ItemException(ItemErrorCode.NOT_OWNER)
+                }
+            }
+            if (!itemRepository.deleteById(itemId)) {
                 throw ItemException(ItemErrorCode.ALREADY_DELETE)
             }
         } catch (e: ItemException) {
@@ -53,14 +64,14 @@ class ItemCommandService(
     }
 
 
-    override fun decreaseItemCount(id: Long, request: DecreaseItemStockRequest) {
+    override fun decreaseItemCount(itemId: Long, request: DecreaseItemStockRequest) {
         val logTitle = "FAIL_DECREASE_ITEM_COUNT"
         try {
             retryUtils.execute(
                 failLogTitle = logTitle
             ) {
                 transactionTemplate.execute {
-                    val foundItem = itemRepository.findById(id) ?: throw ItemException(ItemErrorCode.NOT_FOUND)
+                    val foundItem = itemRepository.findById(itemId) ?: throw ItemException(ItemErrorCode.NOT_FOUND)
                     foundItem.decreaseItemCount(quantity = request.quantity)
                     itemRepository.save(foundItem)
                 }
@@ -68,19 +79,19 @@ class ItemCommandService(
         } catch (e: ItemException) {
             throw e
         } catch (e: Exception) {
-            logger.warn("[$logTitle] item-service | id: $id, ${e.javaClass}: ${e.message}")
+            logger.warn("[$logTitle] item-service | id: $itemId, ${e.javaClass}: ${e.message}")
             throw ItemException(ItemErrorCode.OPTIMISTIC_LOCKING_ERROR, e)
         }
     }
 
-    override fun increaseItemCount(id: Long, request: IncreaseItemStockRequest) {
+    override fun increaseItemCount(itemId: Long, request: IncreaseItemStockRequest) {
         val logTitle = "FAIL_INCREASE_STOCK"
         try {
             retryUtils.execute(
                 failLogTitle = logTitle
             ) {
                 transactionTemplate.execute {
-                    val foundItem = itemRepository.findById(id) ?: throw ItemException(ItemErrorCode.NOT_FOUND)
+                    val foundItem = itemRepository.findById(itemId) ?: throw ItemException(ItemErrorCode.NOT_FOUND)
                     foundItem.increaseItemCount(quantity = request.quantity)
                     itemRepository.save(foundItem)
                 }
@@ -88,7 +99,7 @@ class ItemCommandService(
         } catch (e: ItemException) {
             throw e
         } catch (e: Exception) {
-            logger.warn("[$logTitle] item-service | id: $id")
+            logger.warn("[$logTitle] item-service | id: $itemId")
             throw ItemException(ItemErrorCode.OPTIMISTIC_LOCKING_ERROR, e)
         }
     }
