@@ -27,7 +27,6 @@ class SecurityConfig(
 
     private val allowUrl = arrayOf(
         "/eureka/**",
-        "/internal/api/items/**",
     )
 
    private val merchantPatterns = arrayOf(

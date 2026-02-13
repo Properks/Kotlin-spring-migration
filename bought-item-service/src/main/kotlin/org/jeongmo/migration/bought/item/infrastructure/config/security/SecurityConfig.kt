@@ -25,7 +25,6 @@ class SecurityConfig(
 
     private val allowUrl = arrayOf(
         "/eureka/**",
-        "/internal/api/bought-items/**"
     )
 
     @Bean
