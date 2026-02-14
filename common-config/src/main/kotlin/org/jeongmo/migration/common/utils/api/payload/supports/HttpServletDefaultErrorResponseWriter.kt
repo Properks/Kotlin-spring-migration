@@ -15,7 +15,7 @@ class HttpServletDefaultErrorResponseWriter(
 
     override fun writeResponse(response: HttpServletResponse, errorCode: DefaultBaseErrorCode, e: Exception?) {
         response.status = errorCode.httpStatus.value()
-        response.contentType = MediaType.APPLICATION_JSON_VALUE
+        response.contentType = "${MediaType.APPLICATION_JSON_VALUE};charset=UTF-8"
 
         val responseData = failureResponseWriter.onFailure(e ?: ServerApplicationException(errorCode), errorCode)
         objectMapper.writeValue(response.outputStream, responseData)
