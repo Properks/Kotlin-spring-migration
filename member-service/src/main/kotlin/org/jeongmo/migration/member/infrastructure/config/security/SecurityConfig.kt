@@ -7,6 +7,8 @@ import org.jeongmo.migration.common.auth.filter.InternalServerAuthenticationFilt
 import org.jeongmo.migration.common.auth.handler.AuthenticationHandler
 import org.jeongmo.migration.common.auth.handler.AuthorizationHandler
 import org.jeongmo.migration.common.enums.member.Role
+import org.jeongmo.migration.common.utils.api.payload.HttpServletErrorResponseWriter
+import org.jeongmo.migration.common.utils.api.payload.supports.HttpServletDefaultErrorResponseWriter
 import org.namul.api.payload.code.supports.DefaultBaseErrorCode
 import org.namul.api.payload.writer.FailureResponseWriter
 import org.springframework.beans.factory.annotation.Value
@@ -71,8 +73,11 @@ class SecurityConfig(
     fun authenticationFilter(): Filter = HttpServletAuthenticationFilter()
 
     @Bean
-    fun authenticationHandler(): AuthenticationEntryPoint = AuthenticationHandler(failureResponseWriter, objectMapper)
+    fun authenticationHandler(): AuthenticationEntryPoint = AuthenticationHandler(httpServletErrorResponseWriter())
 
     @Bean
-    fun authorizationHandler(): AccessDeniedHandler = AuthorizationHandler(failureResponseWriter, objectMapper)
+    fun authorizationHandler(): AccessDeniedHandler = AuthorizationHandler(httpServletErrorResponseWriter())
+
+    @Bean
+    fun httpServletErrorResponseWriter(): HttpServletErrorResponseWriter<DefaultBaseErrorCode> = HttpServletDefaultErrorResponseWriter(failureResponseWriter, objectMapper)
 }
