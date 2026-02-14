@@ -29,15 +29,12 @@ class InternalServerAuthenticationFilter(
 
         if (request.requestURI.startsWith(internalApiPrefix) && !isAuthenticated(request)) {
 
-            log.info("$authenticationToken")
             authenticationToken?.let {
                 val header = request.getHeader(INTERNAL_SERVER_TOKEN_NAME)
-                log.info("$header")
                 if (header != null && it == header) {
                     successfulAuthentication(request, response)
                 }
             }
-            log.info("${SecurityContextHolder.getContext().authentication}")
             filterChain.doFilter(request, response)
         }
         else {
