@@ -28,3 +28,7 @@ management:
 web-client:
   base-url:
     member: ${MEMBER_DOMAIN_URL}
+
+internal-service:
+  authentication:
+    token: ${INTERNAL_SERVICE_TOKEN}

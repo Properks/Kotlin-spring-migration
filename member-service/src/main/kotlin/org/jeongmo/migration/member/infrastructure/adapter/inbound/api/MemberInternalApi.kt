@@ -1,11 +1,11 @@
 package org.jeongmo.migration.member.infrastructure.adapter.inbound.api
 
+import org.jeongmo.migration.common.auth.annotation.LoginUserId
 import org.jeongmo.migration.member.application.dto.*
 import org.jeongmo.migration.member.application.port.inbound.MemberCommandUseCase
 import org.jeongmo.migration.member.application.port.inbound.MemberQueryUseCase
 import org.namul.api.payload.response.supports.DefaultResponse
 import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -22,8 +22,8 @@ class MemberInternalApi(
     fun createMember(@RequestBody request: CreateMemberRequest): DefaultResponse<CreateMemberResponse> =
         DefaultResponse.ok(memberCommandUseCase.createMember(request))
 
-    @GetMapping("/{memberId}")
-    fun getMember(@PathVariable("memberId") memberId: Long): DefaultResponse<MemberInfoResponse> =
+    @GetMapping
+    fun getMember(@LoginUserId memberId: Long): DefaultResponse<MemberInfoResponse> =
         DefaultResponse.ok(memberQueryUseCase.findById(memberId))
 
     @PostMapping("/verify")

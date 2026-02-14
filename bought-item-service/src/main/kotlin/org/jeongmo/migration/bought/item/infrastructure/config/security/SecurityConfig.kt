@@ -5,6 +5,8 @@ import jakarta.servlet.Filter
 import org.jeongmo.migration.common.auth.filter.HttpServletAuthenticationFilter
 import org.jeongmo.migration.common.auth.handler.AuthenticationHandler
 import org.jeongmo.migration.common.auth.handler.AuthorizationHandler
+import org.jeongmo.migration.common.utils.api.payload.HttpServletErrorResponseWriter
+import org.jeongmo.migration.common.utils.api.payload.supports.HttpServletDefaultErrorResponseWriter
 import org.namul.api.payload.code.supports.DefaultBaseErrorCode
 import org.namul.api.payload.writer.FailureResponseWriter
 import org.springframework.context.annotation.Bean
@@ -25,7 +27,6 @@ class SecurityConfig(
 
     private val allowUrl = arrayOf(
         "/eureka/**",
-        "/internal/api/bought-items/**"
     )
 
     @Bean
@@ -55,8 +56,12 @@ class SecurityConfig(
     fun authenticationFilter(): Filter = HttpServletAuthenticationFilter()
 
     @Bean
-    fun authenticationHandler(): AuthenticationEntryPoint = AuthenticationHandler(failureResponseWriter, objectMapper)
+    fun authenticationHandler(): AuthenticationEntryPoint = AuthenticationHandler(httpServletErrorResponseWriter())
 
     @Bean
-    fun authorizationHandler(): AccessDeniedHandler = AuthorizationHandler(failureResponseWriter, objectMapper)
+    fun authorizationHandler(): AccessDeniedHandler = AuthorizationHandler(httpServletErrorResponseWriter())
+
+    @Bean
+    fun httpServletErrorResponseWriter(): HttpServletErrorResponseWriter<DefaultBaseErrorCode> = HttpServletDefaultErrorResponseWriter(failureResponseWriter, objectMapper)
+
 }
