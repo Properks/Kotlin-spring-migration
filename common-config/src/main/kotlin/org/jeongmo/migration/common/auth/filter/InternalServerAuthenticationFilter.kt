@@ -32,7 +32,7 @@ class InternalServerAuthenticationFilter(
         filterChain: FilterChain
     ) {
 
-        if (request.requestURI.startsWith(internalApiPrefix) && !isAuthenticated(request)) {
+        if (request.requestURI.startsWith(internalApiPrefix)) {
 
             val header = request.getHeader(INTERNAL_SERVER_TOKEN_NAME)
             if (authenticationToken != null && header != null && header == authenticationToken) {
@@ -54,8 +54,4 @@ class InternalServerAuthenticationFilter(
         securityContextHolderStrategy.context = context
         securityContextRepository.saveContext(context, request, response)
     }
-
-    private fun isAuthenticated(request: HttpServletRequest): Boolean =
-        securityContextRepository.loadDeferredContext(request).get()?.authentication?.isAuthenticated ?: false || securityContextHolderStrategy.context?.authentication?.isAuthenticated
-                ?: false
 }
