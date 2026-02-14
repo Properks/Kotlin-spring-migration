@@ -41,6 +41,7 @@ class SecurityConfig(
 
     @Bean
     fun disableFilterChain(http: HttpSecurity): SecurityFilterChain {
+        val authFilter = authenticationFilter()
         http
             .authorizeHttpRequests {
                 it
@@ -48,8 +49,8 @@ class SecurityConfig(
                     .requestMatchers(*internalServiceUrl).hasRole(Role.INTERNAL_SERVICE.name)
                     .anyRequest().authenticated()
             }
-            .addFilterAt(authenticationFilter(), UsernamePasswordAuthenticationFilter::class.java)
-            .addFilterAfter(internalServiceAuthenticationFilter(), UsernamePasswordAuthenticationFilter::class.java)
+            .addFilterAt(authFilter, UsernamePasswordAuthenticationFilter::class.java)
+            .addFilterAfter(internalServiceAuthenticationFilter(), authFilter::class.java)
             .httpBasic { it.disable() }
             .csrf { it.disable() }
             .formLogin { it.disable() }
