@@ -13,11 +13,11 @@ class HttpServletDefaultErrorResponseWriter(
     private val objectMapper: ObjectMapper,
 ): HttpServletErrorResponseWriter<DefaultBaseErrorCode> {
 
-    override fun writeResponse(response: HttpServletResponse, errorCode: DefaultBaseErrorCode, e: Throwable?) {
+    override fun writeResponse(response: HttpServletResponse, errorCode: DefaultBaseErrorCode, e: Exception?) {
         response.status = errorCode.httpStatus.value()
         response.contentType = MediaType.APPLICATION_JSON_VALUE
 
-        val responseData = failureResponseWriter.onFailure(e as? Exception ?: ServerApplicationException(errorCode), errorCode)
+        val responseData = failureResponseWriter.onFailure(e ?: ServerApplicationException(errorCode), errorCode)
         objectMapper.writeValue(response.outputStream, responseData)
     }
 }
