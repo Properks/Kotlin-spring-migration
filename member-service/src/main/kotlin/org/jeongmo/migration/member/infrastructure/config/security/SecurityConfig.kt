@@ -47,7 +47,7 @@ class SecurityConfig(
                     .anyRequest().authenticated()
             }
             .addFilterAt(authenticationFilter(), UsernamePasswordAuthenticationFilter::class.java)
-            .addFilterAt(internalServiceAuthenticationFilter(), UsernamePasswordAuthenticationFilter::class.java)
+            .addFilterAfter(internalServiceAuthenticationFilter(), UsernamePasswordAuthenticationFilter::class.java)
             .httpBasic { it.disable() }
             .csrf { it.disable() }
             .formLogin { it.disable() }
