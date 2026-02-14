@@ -64,7 +64,7 @@ class SecurityConfig(
     }
 
     @Bean
-    fun internalServiceAuthenticationFilter(): Filter = InternalServerAuthenticationFilter(token)
+    fun internalServiceAuthenticationFilter(): Filter = InternalServerAuthenticationFilter(token, httpServletErrorResponseWriter())
 
     @Bean
     fun passwordEncoder(): PasswordEncoder = BCryptPasswordEncoder()
