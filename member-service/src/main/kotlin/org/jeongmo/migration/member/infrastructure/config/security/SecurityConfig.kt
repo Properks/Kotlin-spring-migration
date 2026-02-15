@@ -34,6 +34,10 @@ class SecurityConfig(
         "/eureka/**",
     )
 
+    private val adminUrl = arrayOf(
+        "/members/roles"
+    )
+
     private val internalServiceUrl = arrayOf(
         "/internal/api/members",
         "/internal/api/members/verify",
@@ -47,6 +51,7 @@ class SecurityConfig(
                 it
                     .requestMatchers(*allowUrl).permitAll()
                     .requestMatchers(*internalServiceUrl).hasRole(Role.INTERNAL_SERVICE.name)
+                    .requestMatchers(*adminUrl).hasRole(Role.ADMIN.name)
                     .anyRequest().authenticated()
             }
             .addFilterAt(authFilter, UsernamePasswordAuthenticationFilter::class.java)
