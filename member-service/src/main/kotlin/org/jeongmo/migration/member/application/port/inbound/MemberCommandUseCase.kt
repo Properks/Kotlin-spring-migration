@@ -31,7 +31,7 @@ interface MemberCommandUseCase {
 
     /**
      * 사용자 역할을 수정하는 메서드
-     * @param id 수정하는 사용자의 ID
+     * @param request 사용자 권한 변경에 필요한 요청
      */
     fun updateMemberRole(request: UpdateMemberRoleRequest): UpdateMemberRoleResponse
 

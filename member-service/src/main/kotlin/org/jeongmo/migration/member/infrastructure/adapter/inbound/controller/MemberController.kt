@@ -24,7 +24,7 @@ class MemberController(
         DefaultResponse.ok(memberCommandUseCase.updateMemberInfos(userId, request))
 
     @PatchMapping("/roles")
-    fun updateMemberAuthorities(@RequestBody request: UpdateMemberRoleRequest): DefaultResponse<UpdateMemberRoleResponse> =
+    fun updateMemberAuthorities(@Valid @RequestBody request: UpdateMemberRoleRequest): DefaultResponse<UpdateMemberRoleResponse> =
         DefaultResponse.ok(memberCommandUseCase.updateMemberRole(request))
 
     @DeleteMapping

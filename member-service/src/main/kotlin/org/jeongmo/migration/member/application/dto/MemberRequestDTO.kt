@@ -1,6 +1,8 @@
 package org.jeongmo.migration.member.application.dto
 
 import jakarta.validation.constraints.NotBlank
+import jakarta.validation.constraints.NotNull
+import jakarta.validation.constraints.Positive
 import org.jeongmo.migration.common.enums.member.ProviderType
 import org.jeongmo.migration.common.enums.member.Role
 import org.jeongmo.migration.member.domain.model.Member
@@ -40,8 +42,8 @@ data class UpdateMemberRoleRequest(
     /**
      * 수정할 사용자의 id
      */
-    @field:NotBlank
+    @field:Positive
     val userId: Long,
-    @field:NotBlank
+    @field:NotNull
     val role: Role,
 )
