@@ -73,3 +73,22 @@ data class UpdateMemberInfoResponse(
             )
     }
 }
+
+data class UpdateMemberRoleResponse(
+    val id: Long,
+    val username: String,
+    val nickname: String,
+    val role: Role,
+    val updatedAt: LocalDateTime,
+) {
+    companion object {
+        fun fromDomain(member: Member): UpdateMemberRoleResponse =
+            UpdateMemberRoleResponse(
+                id = member.id,
+                username = member.username,
+                nickname = member.nickname,
+                role = member.role,
+                updatedAt = member.updatedAt ?: LocalDateTime.now(),
+            )
+    }
+}

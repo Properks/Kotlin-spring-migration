@@ -35,3 +35,13 @@ data class UpdateMemberInfoRequest(
     @field:NotBlank
     val nickname: String,
 )
+
+data class UpdateMemberRoleRequest(
+    /**
+     * 수정할 사용자의 id
+     */
+    @field:NotBlank
+    val userId: Long,
+    @field:NotBlank
+    val role: Role,
+)
