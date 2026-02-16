@@ -30,6 +30,12 @@ interface MemberCommandUseCase {
     fun updateMemberInfos(id: Long, request: UpdateMemberInfoRequest): UpdateMemberInfoResponse
 
     /**
+     * 사용자 역할을 수정하는 메서드
+     * @param request 사용자 권한 변경에 필요한 요청
+     */
+    fun updateMemberRole(request: UpdateMemberRoleRequest): UpdateMemberRoleResponse
+
+    /**
      * 사용자 삭제 메서드
      * @param id 삭제할 사용자의 ID
      * @throws MemberException 이미 삭제된 사용자의 경우 에러 발생

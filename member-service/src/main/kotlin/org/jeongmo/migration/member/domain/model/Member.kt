@@ -34,4 +34,14 @@ class Member(
         this.nickname = nickname
         return true
     }
+
+    /**
+     * @return 변경되었으면 true, 이미 같은 값이면 false
+     */
+    fun changeRole(role: Role): Boolean {
+        return if (this.role == role) false else {
+            this.role = role
+            true
+        }
+    }
 }

@@ -43,8 +43,14 @@ class MemberCommandService(
 
     override fun updateMemberInfos(id: Long, request: UpdateMemberInfoRequest): UpdateMemberInfoResponse {
         val foundMember = memberRepository.findById(id) ?: throw MemberException(MemberErrorCode.NOT_FOUND)
-        val updatedMember = if (foundMember.changeNickname(request.nickname)) memberRepository.save(member = foundMember) else foundMember
-        return UpdateMemberInfoResponse.fromDomain(updatedMember).also { logger.info("[SUCCESS_UPDATE] member-service") }
+        val updatedMember = if (foundMember.changeNickname(request.nickname)) memberRepository.save(member = foundMember) else throw MemberException(MemberErrorCode.ALREADY_UPDATE)
+        return UpdateMemberInfoResponse.fromDomain(updatedMember).also { logger.info("[SUCCESS_UPDATE_INFO] member-service") }
+    }
+
+    override fun updateMemberRole(request: UpdateMemberRoleRequest): UpdateMemberRoleResponse {
+        val foundMember = memberRepository.findById(request.userId) ?: throw MemberException(MemberErrorCode.NOT_FOUND)
+        val updatedMember = if (foundMember.changeRole(request.role)) memberRepository.save(member = foundMember) else throw MemberException(MemberErrorCode.ALREADY_UPDATE)
+        return UpdateMemberRoleResponse.fromDomain(updatedMember).also { logger.info("[SUCCESS_UPDATE_ROLE] member-service") }
     }
 
     override fun deleteMember(id: Long) {
